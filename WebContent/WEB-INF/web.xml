@@ -17,8 +17,16 @@
 			<param-value>300000</param-value>
 		</init-param>
 		<init-param>
-			<param-name>DefaultRule</param-name>
+			<param-name>DefaultRules</param-name>
 			<param-value>https://mgskjaeveland.github.io/rdfvizler/rules/rdf.jrule</param-value>
+		</init-param>
+		<init-param>
+			<param-name>DefaultFormatRDF</param-name>
+			<param-value>TTL</param-value>
+		</init-param>
+		<init-param>
+			<param-name>DefaultFormatDot</param-name>
+			<param-value>svg</param-value>
 		</init-param>
 	</servlet>
 	<servlet-mapping>

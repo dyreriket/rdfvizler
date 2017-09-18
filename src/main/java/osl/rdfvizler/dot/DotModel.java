@@ -30,7 +30,7 @@ public abstract class DotModel {
 		return dotModel;
 	}
 
-	// check that (1) URL resolves, (2) with code 200, (3) content not larger than max limit.
+	// check that (1) URL resolves, (2) with code 200, and (3) content not larger than max limit.
 	public static void checkURIInput (String path, int maxSize) throws IOException, IllegalArgumentException {
 		HttpURLConnection connection;
 		int code;
