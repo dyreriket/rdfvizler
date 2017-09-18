@@ -28,12 +28,14 @@ public class RDFVizlerCLI {
 
 
 	public static void main(String[] args) throws IOException {
-	    RDFVizlerCLI rdfVizlerCLI = new RDFVizlerCLI(args);
-	    rdfVizlerCLI.execute();
+	    RDFVizlerCLI rdfVizlerCLI = new RDFVizlerCLI();
+
+	    if (rdfVizlerCLI.parse(args))
+	        rdfVizlerCLI.execute();
 
     }
 
-    private RDFVizlerCLI(String[] args) {
+    private boolean parse(String[] args) {
         // create Options object
         options = new Options();
 
@@ -55,46 +57,44 @@ public class RDFVizlerCLI {
             rulesPath = require(RULES, l);
             inputPath = require(INPUT, l);
             execPath = require(EXEC, l);
-            formatRDF = l.hasOption(XML) ? "rdf" : "ttl";
+            formatRDF = l.hasOption(XML) ? "RDF/XML" : null;
 
-        } catch (ParseException e) {
-            e.printStackTrace();
+        } catch (ParseException | MissingConfigurationException e) {
+            System.out.println(e.getMessage());
+            HelpFormatter formatter = new HelpFormatter();
+            formatter.printHelp(110, "java -jar \\ \n          rdfvizler --input <rdfFile> --rules <rulesFile> [--output <outputFile> | -x  | -dotformat <arg>]", "" , options , "\nbe nice!");
+            return false;
         }
+        return true;
     }
 
 
 
+
     private void execute() throws IOException {
-        //protected static void execute(String dotExec, String pathRDF, String pathRules, String formatRDF, String formatDot, String outputFile) throws
-
-
-            // default values
             try {
-
-//            Misc.checkURIInput(pathRDF, MaxFileSize);
-                //          Misc.checkURIInput(pathRules, MaxFileSize);
 
                 Model model = DotModel.getDotModel(inputPath, formatRDF, rulesPath);
                 String dot = RDF2Dot.toDot(model);
 
                 DotProcess dotProcess = new DotProcess(execPath);
                 String out;
-                String mimetype;
 
-                if (formatDot.equalsIgnoreCase("svg")) {
-                    out = dotProcess.runDot(dot, formatDot);
-                } else if (formatDot.equals("png")) {
-                    out = dotProcess.runDot(dot, formatDot);
-                } else if (formatDot.equals("ttl")) {
+                if (formatDot.equalsIgnoreCase("ttl"))
                     out = Models.writeModel(model, "TTL");
-                } else {
+                else if (formatDot.equalsIgnoreCase("dot"))
                     out = dot;
-                }
+                else  out = dotProcess.runDot(dot, formatDot);
 
-                FileWriter fw = new FileWriter(outputPath);
-                BufferedWriter bw = new BufferedWriter(fw);
-                bw.write(out);
-                bw.close();
+
+                if (outputPath!=null) {
+                    FileWriter fw = new FileWriter(outputPath);
+                    BufferedWriter bw = new BufferedWriter(fw);
+                    bw.write(out);
+                    bw.close();
+                }
+                else
+                    System.out.println(out);
 
             } catch (RuntimeException | IOException e) {
                 throw e;
@@ -118,17 +118,21 @@ public class RDFVizlerCLI {
             return null;
     }
 
-    private static String require(String option, CommandLine l) {
+    private static String require(String option, CommandLine l) throws MissingConfigurationException {
         if (l.hasOption(option))
             return l.getOptionValue(option);
         else
             missing(option);
-
-        return ""; //never reached
+        return "";
     }
 
-    private static void missing(String option) {
-	    throw new RuntimeException("Missing value for options " + option);
+    private static void missing(String option) throws MissingConfigurationException {
+	    throw new MissingConfigurationException("Missing value for options " + option);
     }
 
+    private static class MissingConfigurationException extends Exception {
+	    public MissingConfigurationException(String msg) {
+	        super(msg);
+        }
+    }
 }
