@@ -9,6 +9,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.jena.rdf.model.Model;
@@ -30,38 +31,43 @@ public class RDFVizlerServlet extends HttpServlet {
 	pDotFormat = "out";
 
 	// defaults, some settings available in web.xml
-	private String MaxFileSize = "500000";
-	private String DotExec = "/usr/bin/dot";
-	private String pathRules = "https://mgskjaeveland.github.io/rdfvizler/rules/rdf.jrule";
-	private String formatRDF = "TTL";
-	private String formatDot = "svg";
+	private String defaultMaxFileSize = "500000";
+	private String defaultDotExec = "/usr/bin/dot";
+	private String defaultPathRules = "https://mgskjaeveland.github.io/rdfvizler/rules/rdf.jrule";
+	private String defaultFormatRDF = "TTL";
+	private String defaultFormatDot = "svg";
 	
+	private String MaxFileSize;
+	private String DotExec;
+
 	private final String UTF8 = "UTF-8";
 
 	private <T> T getValue (T value, T defaultValue) {
-		return value == null ? defaultValue : value;
+		return value != null ? value : defaultValue;
 	}
 
+	
+	// possibly overwrite defaults
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
-		DotExec      = getValue(config.getInitParameter("DotExec"), DotExec);
-		MaxFileSize  = getValue(config.getInitParameter("MaxInput"), MaxFileSize);
-		pathRules    = getValue(config.getInitParameter("DefaultRule"), pathRules);
+		DotExec           = getValue(config.getInitParameter("DotExec"), defaultDotExec);
+		MaxFileSize       = getValue(config.getInitParameter("MaxInput"), defaultMaxFileSize);
+		defaultPathRules  = getValue(config.getInitParameter("DefaultRule"), defaultPathRules);
 	}
 
 	@Override
 	protected void doGet (HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-		String pathRDF = null;
+		String pathRDF = null, pathRules = null, formatRDF, formatDot;
 
 		try {
 			pathRDF   = getValue(request.getParameter(pRDF), pathRDF);
-			pathRules = getValue(request.getParameter(pRules), pathRules);
-			formatRDF = getValue(request.getParameter(pRDFFormat), formatRDF);
-			formatDot = getValue(request.getParameter(pDotFormat), formatDot);
-			
+			pathRules = getValue(request.getParameter(pRules), defaultPathRules);
+			formatRDF = getValue(request.getParameter(pRDFFormat), defaultFormatRDF);
+			formatDot = getValue(request.getParameter(pDotFormat), defaultFormatDot);
+
 			int maxSize = Integer.parseInt(MaxFileSize);
-			
+
 			DotModel.checkURIInput(pathRDF, maxSize);
 			DotModel.checkURIInput(pathRules, maxSize);
 
@@ -81,7 +87,7 @@ public class RDFVizlerServlet extends HttpServlet {
 				out = dotProcess.runDot(dot, formatDot);
 				mimetype = "image/png";
 			}*/
-			 else if (formatDot.equals("ttl")) {
+			else if (formatDot.equals("ttl")) {
 				out = Models.writeModel(model, "TTL");
 				mimetype = "text/turtle";
 			} else {
