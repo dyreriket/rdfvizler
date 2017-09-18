@@ -29,34 +29,31 @@ public class RDFVizlerServlet extends HttpServlet {
 	pRDFFormat = "in",
 	pDotFormat = "out";
 
-	// settings available in web.xml
+	// defaults, some settings available in web.xml
 	private String MaxFileSize = "500000";
 	private String DotExec = "/usr/bin/dot";
-	private String DefaultRule = null;
-
+	private String pathRules = "https://mgskjaeveland.github.io/rdfvizler/rules/rdf.jrule";
+	private String formatRDF = "TTL";
+	private String formatDot = "svg";
+	
 	private final String UTF8 = "UTF-8";
 
-
-	public <T> T getValue (T value, T defaultValue) {
+	private <T> T getValue (T value, T defaultValue) {
 		return value == null ? defaultValue : value;
 	}
 
+	@Override
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
-		DotExec     = getValue(config.getInitParameter("DotExec"), DotExec);
-		MaxFileSize = getValue(config.getInitParameter("MaxInput"), MaxFileSize);
-		// TODO DefaultRule = getValue(config.getInitParameter("DefaultRule"), DefaultRule);
+		DotExec      = getValue(config.getInitParameter("DotExec"), DotExec);
+		MaxFileSize  = getValue(config.getInitParameter("MaxInput"), MaxFileSize);
+		pathRules    = getValue(config.getInitParameter("DefaultRule"), pathRules);
 	}
 
 	@Override
 	protected void doGet (HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-		// default values
-		String 
-		pathRDF = null, 
-		pathRules = DefaultRule, 
-		formatRDF = "TTL",
-		formatDot = "svg";
+		String pathRDF = null;
 
 		try {
 			pathRDF   = getValue(request.getParameter(pRDF), pathRDF);
