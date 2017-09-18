@@ -42,7 +42,6 @@ public class RDFVizlerServlet extends HttpServlet {
 		return value == null ? defaultValue : value;
 	}
 
-	@Override
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
 		DotExec      = getValue(config.getInitParameter("DotExec"), DotExec);

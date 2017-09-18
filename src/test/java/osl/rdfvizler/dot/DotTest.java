@@ -1,4 +1,4 @@
-package osl.rdfviz;
+package osl.rdfvizler.dot;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,6 +27,21 @@ public class DotTest {
 	@Test public void shouldOutputDotsvg () throws IOException {
 		print(file1 + ".svg", runDot(toDot(file1), "svg"));
 	}
+	
+	@ Test public void should () throws IllegalArgumentException, IOException {
+		
+		Model model = DotModel.getDotModel(
+				"http://folk.uio.no/martige/foaf.rdf", "RDF/XML",
+				"docs/rules/rdf.jrule");
+				//"https://mgskjaeveland.github.io/rdfvizler/rules/rdf.jrule");
+		String dotmodel = Models.writeModel(model, "TTL");
+		print(resources + "foaf.ttl" + ".dot", dotmodel);
+		String dot = RDF2Dot.toDot(model);
+		print(resources + "foaf.rdf" + ".dot", dot);
+		String out = runDot(dot, "svg");
+		print(resources + "foaf.rdf" + ".svg", out);
+	}
+	
 	
 	/*
 	@Test public void shouldOutputDotpng () throws IOException {

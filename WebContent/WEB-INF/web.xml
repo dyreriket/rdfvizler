@@ -7,7 +7,7 @@
 
 	<servlet>
 		<servlet-name>rdfvizler</servlet-name>
-		<servlet-class>osl.rdfviz.servlet.RDFVizlerServlet</servlet-class>
+		<servlet-class>osl.rdfvizler.ui.servlet.RDFVizlerServlet</servlet-class>
 		<init-param>
 			<param-name>DotExec</param-name>
 			<param-value>/usr/bin/dot</param-value>

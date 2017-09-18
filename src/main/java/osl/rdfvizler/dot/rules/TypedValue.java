@@ -4,16 +4,11 @@ import org.apache.jena.graph.Node;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.reasoner.rulesys.BindingEnvironment;
 import org.apache.jena.reasoner.rulesys.BuiltinException;
-import org.apache.jena.reasoner.rulesys.BuiltinRegistry;
 import org.apache.jena.reasoner.rulesys.RuleContext;
 import org.apache.jena.reasoner.rulesys.builtins.BaseBuiltin;
 
 public class TypedValue extends BaseBuiltin {
 	
-	static {
-		BuiltinRegistry.theRegistry.register(new TypedValue());
-	}
-
 	public String getName() {
 		return "typedvalue";
 	}
