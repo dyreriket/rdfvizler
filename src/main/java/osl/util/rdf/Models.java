@@ -1,26 +1,23 @@
-package osl.rdfviz;
+package osl.util.rdf;
 
 import java.io.StringWriter;
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.reasoner.Reasoner;
-import org.apache.jena.reasoner.rulesys.BuiltinRegistry;
 import org.apache.jena.reasoner.rulesys.GenericRuleReasoner;
 import org.apache.jena.reasoner.rulesys.Rule;
 import org.apache.jena.util.FileManager;
 import org.apache.jena.util.FileUtils;
+import org.apache.jena.vocabulary.RDF;
 
-import osl.rdfviz.rules.builtin.*;
+import osl.util.Strings;
 
 public abstract class Models {
 
-	static {
-		BuiltinRegistry.theRegistry.register(new ShortValue());
-		BuiltinRegistry.theRegistry.register(new Namespace());
-		BuiltinRegistry.theRegistry.register(new TypedValue());
-	}
 
 	public static Model readModel (String file) {
 		return readModel(file, FileUtils.guessLang(file, "TTL"));
@@ -43,6 +40,24 @@ public abstract class Models {
 		Model inf = ModelFactory.createInfModel(reasoner, model);
 		inf.setNsPrefixes(model);
 		return inf;
+	}
+
+
+
+	public static boolean isOfType (Model model, Resource instance, Resource klass) {
+		return model.contains(instance, RDF.type, klass);
+	}
+
+	public static List<Resource> listInstancesOfClass (Model model, Resource cls) {
+		List<Resource> instances = model.listResourcesWithProperty(RDF.type, cls).toList();
+		return instances;
+	}
+
+	public static String shortName (Model model, Resource r) {
+		return model.shortForm(r.getURI());
+	}
+	public static String shortName (Model model, Collection<Resource> rs) {
+		return "[" + Strings.toString(rs, r -> shortName(model, r), ", ") + "]";
 	}
 
 }

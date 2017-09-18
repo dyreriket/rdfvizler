@@ -1,11 +1,8 @@
-package osl.rdfviz.servlet;
+package osl.rdfvizler.ui.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.Arrays;
-import java.util.List;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -15,12 +12,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.jena.rdf.model.Model;
-import org.apache.jena.reasoner.rulesys.Rule;
 
-import osl.rdfviz.DotProcess;
-import osl.rdfviz.Models;
-import osl.rdfviz.RDF2Dot;
-
+import osl.rdfvizler.dot.DotModel;
+import osl.rdfvizler.dot.DotProcess;
+import osl.rdfvizler.dot.RDF2Dot;
+import osl.util.rdf.Models;
 
 public class RDFVizlerServlet extends HttpServlet {
 
@@ -49,7 +45,7 @@ public class RDFVizlerServlet extends HttpServlet {
 		super.init(config);
 		DotExec     = getValue(config.getInitParameter("DotExec"), DotExec);
 		MaxFileSize = getValue(config.getInitParameter("MaxInput"), MaxFileSize);
-		DefaultRule = getValue(config.getInitParameter("DefaultRule"), DefaultRule);
+		// TODO DefaultRule = getValue(config.getInitParameter("DefaultRule"), DefaultRule);
 	}
 
 	@Override
@@ -67,11 +63,13 @@ public class RDFVizlerServlet extends HttpServlet {
 			pathRules = getValue(request.getParameter(pRules), pathRules);
 			formatRDF = getValue(request.getParameter(pRDFFormat), formatRDF);
 			formatDot = getValue(request.getParameter(pDotFormat), formatDot);
+			
+			int maxSize = Integer.parseInt(MaxFileSize);
+			
+			DotModel.checkURIInput(pathRDF, maxSize);
+			DotModel.checkURIInput(pathRules, maxSize);
 
-			checkURIInput(pathRDF);
-			checkURIInput(pathRules);
-
-			Model model = getDotModel(pathRDF, formatRDF, pathRules);
+			Model model = DotModel.getDotModel(pathRDF, formatRDF, pathRules);
 			String dot = RDF2Dot.toDot(model);
 
 			DotProcess dotProcess = new DotProcess(DotExec);
@@ -81,10 +79,13 @@ public class RDFVizlerServlet extends HttpServlet {
 			if (formatDot.equals("svg")) {
 				out = dotProcess.runDot(dot, formatDot);
 				mimetype = "image/svg+xml";
-			} else if (formatDot.equals("png")) {
+			} 
+			/* TODO does not work, needs to output as image
+			else if (formatDot.equals("png")) {
 				out = dotProcess.runDot(dot, formatDot);
 				mimetype = "image/png";
-			} else if (formatDot.equals("ttl")) {
+			}*/
+			 else if (formatDot.equals("ttl")) {
 				out = Models.writeModel(model, "TTL");
 				mimetype = "text/turtle";
 			} else {
@@ -92,17 +93,9 @@ public class RDFVizlerServlet extends HttpServlet {
 				mimetype = "text/plain";
 			}
 			respond (response, out, mimetype);
-		} catch (RuntimeException | IOException | ServletException e) {
+		} catch (RuntimeException | IOException e) {
 			printError(request, response, 500, pathRDF, pathRules, e); 
 		}
-	}
-
-	// apply rules to input RDF to saturate with DOT vocabulary
-	private Model getDotModel (String pathRDF, String formatRDF, String pathRules) {
-		Model model = Models.readModel(pathRDF, formatRDF);
-		List<Rule> rules = Rule.rulesFromURL(pathRules);
-		Model dotModel = Models.applyRules(model, rules);
-		return dotModel;
 	}
 
 	// pass content on to response's writer
@@ -113,28 +106,6 @@ public class RDFVizlerServlet extends HttpServlet {
 		writer.write(content);
 		writer.flush();
 		writer.close();
-	}
-
-	// check that (1) URL resolves, (2) with code 200, (3) content not larger than max limit.
-	private void checkURIInput (String path) throws IOException, ServletException {
-		HttpURLConnection connection;
-		int code;
-		try{
-			URL u = new URL(path);
-			connection = (HttpURLConnection) u.openConnection();
-			connection.connect();
-			code = connection.getResponseCode();
-		} catch (java.net.MalformedURLException ex) {
-			throw new IllegalArgumentException ("Error handling URI: '" + path + "': Malformed URL " + ex.getMessage());
-		}
-		if (code != 200) {
-			throw new IllegalArgumentException ("Error retrieving URI: '" + path + "'. URI returned code " + code);
-		}
-		int size = connection.getContentLength();
-		int max = Integer.parseInt(MaxFileSize);
-		if (size > max) {
-			throw new ServletException("Error loading URI: '"+path+"'. File size ("+size+") exceeds the max file size set to: " + max);
-		}
 	}
 
 	// nice-ish error page

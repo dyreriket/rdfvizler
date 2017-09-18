@@ -1,4 +1,4 @@
-package osl.rdfviz.rules.builtin;
+package osl.rdfvizler.dot.rules;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,7 +9,7 @@ import org.apache.jena.graph.Node;
 import org.apache.jena.reasoner.rulesys.RuleContext;
 import org.apache.jena.vocabulary.RDF;
 
-import osl.rdfviz.Strings;
+import osl.util.Strings;
 
 public abstract class BuiltInUtils {
 	

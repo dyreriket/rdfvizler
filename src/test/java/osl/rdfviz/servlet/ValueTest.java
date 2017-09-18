@@ -2,6 +2,8 @@ package osl.rdfviz.servlet;
 
 import org.junit.Test;
 
+import osl.rdfvizler.ui.servlet.RDFVizlerServlet;
+
 public class ValueTest {
 	
 	@Test public void shouldAssign () {

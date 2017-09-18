@@ -1,4 +1,4 @@
-package osl.rdfviz;
+package osl.rdfvizler.dot;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;

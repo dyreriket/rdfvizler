@@ -1,4 +1,4 @@
-package osl.rdfviz;
+package osl.util;
 
 import java.util.Collection;
 import java.util.function.Function;

@@ -1,7 +1,6 @@
-package osl.rdfviz;
+package osl.rdfvizler.dot;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
@@ -10,11 +9,12 @@ import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.shared.PrefixMapping;
-import org.apache.jena.vocabulary.RDF;
 
+import osl.util.Strings;
+import osl.util.rdf.Models;
 import osl.util.rdf.vocab.DOT;
 
-public class RDF2Dot {
+public abstract class RDF2Dot {
 
 	private final static String 
 	STRICT = "strict ",
@@ -40,7 +40,7 @@ public class RDF2Dot {
 
 	public static String toDot (Model model) {
 		addPrefixes(model);
-		Resource rootGraph = Selector.getRootGraph(model);
+		Resource rootGraph = getRootGraph(model);
 		return parseRootGraph(model, rootGraph);
 	}
 
@@ -48,15 +48,15 @@ public class RDF2Dot {
 		StringBuffer str = new StringBuffer();
 
 		// strict or not
-		if (Selector.isOfType(model, rootGraph, DOT.StrictDiRootGraph) 
-				|| Selector.isOfType(model, rootGraph, DOT.StrictRootGraph)) {
+		if (Models.isOfType(model, rootGraph, DOT.StrictDiRootGraph) 
+				|| Models.isOfType(model, rootGraph, DOT.StrictRootGraph)) {
 			str.append(STRICT);
 		}
 
 		// digraph or not
 		String graphtype;
-		if (Selector.isOfType(model, rootGraph, DOT.StrictDiRootGraph) 
-				|| Selector.isOfType(model, rootGraph, DOT.DiRootGraph)) {
+		if (Models.isOfType(model, rootGraph, DOT.StrictDiRootGraph) 
+				|| Models.isOfType(model, rootGraph, DOT.DiRootGraph)) {
 			graphtype = DIGRAPH;
 			EDGE_OP = EDGE_OP_DIGRAPH;
 		} else {
@@ -163,43 +163,15 @@ public class RDF2Dot {
 		return "\"" + ID + "\"";
 	}
 
-
-
-	static class Selector {
-
-		private static boolean isOfType (Model model, Resource instance, Resource klass) {
-			return model.contains(instance, RDF.type, klass);
+	private static Resource getRootGraph (Model model) {
+		List<Resource> graphs = new ArrayList<>();
+		for (Resource g : DOT._Graphs) {
+			graphs.addAll(Models.listInstancesOfClass(model, g));
 		}
-
-		public static Resource getRootGraph (Model model) {
-			List<Resource> graphs = new ArrayList<>();
-			for (Resource g : DOT._Graphs) {
-				graphs.addAll(Selector.listInstancesOfClass(model, g));
-			}
-			if (graphs.size() != 1) {
-				throw new RuntimeException("Error getting root graph. Expected exactly 1 instance, but found " 
-						+ graphs.size() + ": " + Printer.shortName(model, graphs));
-			}
-			return graphs.get(0);		
+		if (graphs.size() != 1) {
+			throw new RuntimeException("Error getting root graph. Expected exactly 1 instance, but found " 
+					+ graphs.size() + ": " + Models.shortName(model, graphs));
 		}
-
-		public static List<Resource> listInstancesOfClass (Model model, Resource cls) {
-			List<Resource> instances = model.listResourcesWithProperty(RDF.type, cls).toList();
-			return instances;
-		}
-
+		return graphs.get(0);		
 	}
-
-	static class Printer {
-
-
-		public static String shortName (Model model, Resource r) {
-			return model.shortForm(r.getURI());
-		}
-		public static String shortName (Model model, Collection<Resource> rs) {
-			return "[" + Strings.toString(rs, r -> shortName(model, r), ", ") + "]";
-		}
-		
-	}
-
 }

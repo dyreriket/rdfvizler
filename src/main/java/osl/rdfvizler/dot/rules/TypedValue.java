@@ -1,16 +1,21 @@
-package osl.rdfviz.rules.builtin;
+package osl.rdfvizler.dot.rules;
 
 import org.apache.jena.graph.Node;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.reasoner.rulesys.BindingEnvironment;
 import org.apache.jena.reasoner.rulesys.BuiltinException;
+import org.apache.jena.reasoner.rulesys.BuiltinRegistry;
 import org.apache.jena.reasoner.rulesys.RuleContext;
 import org.apache.jena.reasoner.rulesys.builtins.BaseBuiltin;
 
-public class ShortValue extends BaseBuiltin {
+public class TypedValue extends BaseBuiltin {
+	
+	static {
+		BuiltinRegistry.theRegistry.register(new TypedValue());
+	}
 
 	public String getName() {
-		return "shortvalue";
+		return "typedvalue";
 	}
 
 	public int getArgLength() {
@@ -24,15 +29,21 @@ public class ShortValue extends BaseBuiltin {
 	}
 
 	protected Node value(Node n, RuleContext context) {
-		String s;
+		String s = "";
 		if (n.isBlank() || n.isURI()) {
-			s = BuiltInUtils.getShortForm(n, context);
+			s = BuiltInUtils.getTypes(n, context);
+			if (n.isURI()) {
+				if (!s.isEmpty()) {
+					s += "\\n";
+				}
+				s += BuiltInUtils.getShortForm(n, context);
+			}
 		} else if (n.isLiteral()) {
-			s = n.getLiteralLexicalForm();
 			String dt = n.getLiteralDatatypeURI();
 			if (dt != null && dt.length() > 0) {
-				s += "^^" + BuiltInUtils.getShortForm(dt, context);
+				s = BuiltInUtils.getShortForm(dt, context) + "\\n";
 			}
+			s += n.getLiteralLexicalForm();
 		} else {
 			throw new BuiltinException(this, context, "Illegal node type: " + n);
 		}

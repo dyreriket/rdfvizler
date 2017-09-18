@@ -1,16 +1,21 @@
-package osl.rdfviz.rules.builtin;
+package osl.rdfvizler.dot.rules;
 
 import org.apache.jena.graph.Node;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.reasoner.rulesys.BindingEnvironment;
 import org.apache.jena.reasoner.rulesys.BuiltinException;
+import org.apache.jena.reasoner.rulesys.BuiltinRegistry;
 import org.apache.jena.reasoner.rulesys.RuleContext;
 import org.apache.jena.reasoner.rulesys.builtins.BaseBuiltin;
 
-public class TypedValue extends BaseBuiltin {
+public class Namespace extends BaseBuiltin {
+	
+	static {
+		BuiltinRegistry.theRegistry.register(new Namespace());
+	}
 
 	public String getName() {
-		return "typedvalue";
+		return "namespace";
 	}
 
 	public int getArgLength() {
@@ -24,24 +29,10 @@ public class TypedValue extends BaseBuiltin {
 	}
 
 	protected Node value(Node n, RuleContext context) {
-		String s = "";
-		if (n.isBlank() || n.isURI()) {
-			s = BuiltInUtils.getTypes(n, context);
-			if (n.isURI()) {
-				if (!s.isEmpty()) {
-					s += "\\n";
-				}
-				s += BuiltInUtils.getShortForm(n, context);
-			}
-		} else if (n.isLiteral()) {
-			String dt = n.getLiteralDatatypeURI();
-			if (dt != null && dt.length() > 0) {
-				s = BuiltInUtils.getShortForm(dt, context) + "\\n";
-			}
-			s += n.getLiteralLexicalForm();
+		if (n.isURI()) {
+			return ResourceFactory.createPlainLiteral(n.getNameSpace()).asNode();
 		} else {
 			throw new BuiltinException(this, context, "Illegal node type: " + n);
 		}
-		return ResourceFactory.createPlainLiteral(s).asNode();
 	}
 }
