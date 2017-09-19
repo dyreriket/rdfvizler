@@ -17,14 +17,20 @@ import org.apache.jena.vocabulary.RDF;
 import osl.util.Strings;
 
 public abstract class Models {
+	
+	public static final String DefaultFormat = "TTL";
 
 
 	public static Model readModel (String file) {
-		return readModel(file, FileUtils.guessLang(file, "TTL"));
+		return readModel(file, FileUtils.guessLang(file, DefaultFormat));
 	}
 
 	public static Model readModel (String file, String serialisation) {
-		return FileManager.get().loadModel(file, serialisation);
+		if (serialisation == null) {
+			return readModel(file);
+		} else {
+			return FileManager.get().loadModel(file, serialisation);
+		}
 	}
 
 	public static String writeModel (Model model, String format) {
