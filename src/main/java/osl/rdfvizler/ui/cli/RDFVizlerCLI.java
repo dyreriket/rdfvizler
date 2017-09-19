@@ -25,8 +25,7 @@ public class RDFVizlerCLI {
 	public static final String EXEC = "exec";
 	public static final String OUTPUT = "output";
 	private static final String FORMATDOT = "dotformat";
-	private Options options;
-
+	
 	private String rulesPath, inputPath, outputPath, execPath, formatDot, formatRDF;
 
 
@@ -39,7 +38,7 @@ public class RDFVizlerCLI {
 	}
 
 	private boolean parse(String[] args) {
-		options = new Options();
+		Options options = new Options();
 		options.addOption("r", RULES, true,     "Path to rules file");
 		options.addOption("i", INPUT, true,     "Path to RDF file");
 		options.addOption("x", XML, false,      "RDF format is RDF/XML. Default is " + Models.DefaultFormat);
