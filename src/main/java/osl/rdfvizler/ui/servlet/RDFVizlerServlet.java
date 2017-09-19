@@ -79,16 +79,16 @@ public class RDFVizlerServlet extends HttpServlet {
 			String out;
 			String mimetype;
 
-			if (formatDot.equals("svg")) {
+			if ("svg".equals(formatDot)) {
 				out = dotProcess.runDot(dot, formatDot);
 				mimetype = "image/svg+xml";
 			} 
 			/* TODO does not work, needs to output as image
-			else if (formatDot.equals("png")) {
+			else if ("png".equals(formatDot)) {
 				out = dotProcess.runDot(dot, formatDot);
 				mimetype = "image/png";
 			}*/
-			else if (formatDot.equals("ttl")) {
+			else if ("ttl".equals(formatDot)) {
 				out = Models.writeModel(model, "TTL");
 				mimetype = "text/turtle";
 			} else {
