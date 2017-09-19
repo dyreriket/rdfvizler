@@ -8,8 +8,10 @@ import java.nio.charset.StandardCharsets;
 import org.apache.commons.io.IOUtils;
 
 public class DotProcess {
+	
+	public final static String DefaultExec = "/usr/bin/dot";
 
-	private String exec = "/usr/bin/dot";
+	private String exec = DefaultExec;
 
 	public DotProcess () {}
 	public DotProcess (String execpath) {
