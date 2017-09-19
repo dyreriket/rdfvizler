@@ -24,7 +24,10 @@ public abstract class DotModel {
 
 	// apply rules to input RDF to saturate with DOT vocabulary
 	public static Model getDotModel (String pathRDF, String formatRDF, String pathRules) throws IllegalArgumentException, IOException {
-		Model model = Models.readModel(pathRDF, formatRDF);
+
+		Model model = (formatRDF != null)
+				? Models.readModel(pathRDF, formatRDF)
+				: Models.readModel(pathRDF);
 		List<Rule> rules = Rule.rulesFromURL(pathRules);
 		Model dotModel = Models.applyRules(model, rules);
 		return dotModel;
