@@ -28,13 +28,10 @@ public class RDFVizlerCLI {
 	
 	private String rulesPath, inputPath, outputPath, execPath, formatDot, formatRDF;
 
-
 	public static void main(String[] args) throws IOException {
 		RDFVizlerCLI rdfVizlerCLI = new RDFVizlerCLI();
-
 		if (rdfVizlerCLI.parse(args))
 			rdfVizlerCLI.execute();
-
 	}
 
 	private boolean parse(String[] args) {
@@ -90,9 +87,9 @@ public class RDFVizlerCLI {
 				BufferedWriter bw = new BufferedWriter(fw);
 				bw.write(out);
 				bw.close();
-			}
-			else
+			} else {
 				System.out.println(out);
+			}
 
 		} catch (RuntimeException | IOException e) {
 			throw e;
@@ -102,33 +99,37 @@ public class RDFVizlerCLI {
 
 
 	private static String want(String option, CommandLine l, String defaultValue) {
-		if (l.hasOption(option))
+		if (l.hasOption(option)) {
 			return l.getOptionValue(option);
-		else
+		} else {
 			return defaultValue;
+		}
 	}
 
 
 	private static String want(String option, CommandLine l) {
-		if (l.hasOption(option))
+		if (l.hasOption(option)) {
 			return l.getOptionValue(option);
-		else
+		} else {
 			return null;
+		}
 	}
 
 	private static String require(String option, CommandLine l) throws MissingConfigurationException {
-		if (l.hasOption(option))
+		if (l.hasOption(option)) {
 			return l.getOptionValue(option);
-		else
+		} else {
 			missing(option);
+		}
 		return "";
 	}
 
 	private static void missing(String option) throws MissingConfigurationException {
-		throw new MissingConfigurationException("Missing value for options " + option);
+		throw new MissingConfigurationException("Missing value for option " + option);
 	}
 
 	private static class MissingConfigurationException extends Exception {
+		private static final long serialVersionUID = 1169386320837465674L;
 		public MissingConfigurationException(String msg) {
 			super(msg);
 		}
