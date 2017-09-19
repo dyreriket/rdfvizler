@@ -110,9 +110,9 @@ public abstract class RDF2Dot {
 		if (!str.isEmpty()) {
 			return "\n" 
 					+ space + "// " + element.getLocalName().replaceAll("has", "").toUpperCase() + "S\n" 
-					+ space + str.toString();
+					+ space + str;
 		}
-		return str.toString();
+		return str;
 	}
 
 	private static String parseAttributes(Resource r, String namespace) {
