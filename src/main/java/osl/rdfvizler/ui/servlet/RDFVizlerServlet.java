@@ -59,7 +59,10 @@ public class RDFVizlerServlet extends HttpServlet {
 	@Override
 	protected void doGet (HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-		String pathRDF = null, pathRules = null, formatRDF, formatDot;
+		String pathRDF = null, 
+				pathRules = null, 
+				formatRDF, 
+				formatDot;
 
 		try {
 			pathRDF   = getValue(request.getParameter(pRDF), pathRDF);
