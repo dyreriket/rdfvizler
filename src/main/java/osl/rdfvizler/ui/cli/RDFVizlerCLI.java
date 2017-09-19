@@ -30,8 +30,9 @@ public class RDFVizlerCLI {
 
 	public static void main(String[] args) throws IOException {
 		RDFVizlerCLI rdfVizlerCLI = new RDFVizlerCLI();
-		if (rdfVizlerCLI.parse(args))
+		if (rdfVizlerCLI.parse(args)) {
 			rdfVizlerCLI.execute();
+		}
 	}
 
 	private boolean parse(String[] args) {
