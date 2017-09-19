@@ -169,7 +169,7 @@ public abstract class RDF2Dot {
 			graphs.addAll(Models.listInstancesOfClass(model, g));
 		}
 		if (graphs.size() != 1) {
-			throw new RuntimeException("Error getting root graph. Expected exactly 1 instance, but found " 
+			throw new IllegalArgumentException("Error getting root graph. Expected exactly 1 instance, but found " 
 					+ graphs.size() + ": " + Models.shortName(model, graphs));
 		}
 		return graphs.get(0);		
