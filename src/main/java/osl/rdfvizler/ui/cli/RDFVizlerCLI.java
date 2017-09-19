@@ -19,11 +19,11 @@ public class RDFVizlerCLI {
 	private final static String defaultDotFormat = "svg";
 
 	// CLI options
-	public static final String RULES = "rules";
-	public static final String INPUT = "input";
-	public static final String XML = "xml";
-	public static final String EXEC = "exec";
-	public static final String OUTPUT = "output";
+	private static final String RULES = "rules";
+	private static final String INPUT = "input";
+	private static final String XML = "xml";
+	private static final String EXEC = "exec";
+	private static final String OUTPUT = "output";
 	private static final String FORMATDOT = "dotformat";
 	
 	private String rulesPath, inputPath, outputPath, execPath, formatDot, formatRDF;
