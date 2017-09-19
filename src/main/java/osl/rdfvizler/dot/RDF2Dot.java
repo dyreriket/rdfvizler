@@ -90,8 +90,8 @@ public abstract class RDF2Dot {
 			str.append(indent).append(EDGE).append(attredge).append(";\n"); }
 
 		// nodes and egdes
-		str.append(_parseElements(r, DOT.hasNode, x -> parseNode(x), indent));
-		str.append(_parseElements(r, DOT.hasEdge, x -> parseEdge(x), indent));
+		str.append(parseElements(r, DOT.hasNode, x -> parseNode(x), indent));
+		str.append(parseElements(r, DOT.hasEdge, x -> parseEdge(x), indent));
 
 		// subgraphs
 		for (Statement g : r.listProperties(DOT.hasSubGraph).toList()) {
@@ -102,7 +102,7 @@ public abstract class RDF2Dot {
 		return str.toString();
 	}
 
-	private static String _parseElements (Resource r, Property element, Function<Resource, String> parser, String space) {
+	private static String parseElements (Resource r, Property element, Function<Resource, String> parser, String space) {
 		String str = Strings.toString(
 				r.listProperties(element).toList(), 
 				s-> parser.apply(s.getObject().asResource()),
