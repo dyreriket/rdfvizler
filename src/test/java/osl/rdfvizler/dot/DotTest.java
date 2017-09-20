@@ -5,17 +5,22 @@ import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.jena.rdf.model.Model;
+import org.junit.Rule;
 import org.junit.Test;
 
+import org.junit.rules.TemporaryFolder;
+import osl.rdfvizler.dot.DotProcess;
+import osl.rdfvizler.dot.RDF2Dot;
 import osl.util.rdf.Models;
 
 public class DotTest {
 	
 	private final boolean stdout = true; // print files also to stdout?
-	
-	private final String resources = "src/test/resources/";
-	
-	private final String file1 = resources + "test1.ttl";
+
+	@Rule
+	public TemporaryFolder testFolder = new TemporaryFolder();
+
+	private final String file1 = "test1.ttl";
 	
 	@Test public void shouldOutputDot () throws IOException {
 		String dot = toDot(file1);
@@ -33,11 +38,11 @@ public class DotTest {
 				"docs/rules/rdf.jrule");
 				//"https://mgskjaeveland.github.io/rdfvizler/rules/rdf.jrule");
 		String dotmodel = Models.writeModel(model, "TTL");
-		print(resources + "foaf.ttl" + ".dot", dotmodel);
+		print( "foaf.ttl" + ".dot", dotmodel);
 		String dot = RDF2Dot.toDot(model);
-		print(resources + "foaf.rdf" + ".dot", dot);
+		print( "foaf.rdf" + ".dot", dot);
 		String out = runDot(dot, "svg");
-		print(resources + "foaf.rdf" + ".svg", out);
+		print( "foaf.rdf" + ".svg", out);
 	}
 	
 	////////////////////////////////////////
@@ -57,6 +62,10 @@ public class DotTest {
 		if (stdout) {
 			System.out.println(content);
 		}
-		FileUtils.writeStringToFile(new File(file), content, "UTF-8");
+		System.out.println("File:" + file);
+		File tempFile = testFolder.newFile(file);
+		System.out.println("Tempfile: " + tempFile.getAbsolutePath());
+
+		FileUtils.writeStringToFile(tempFile, content, "UTF-8");
 	}
 }
