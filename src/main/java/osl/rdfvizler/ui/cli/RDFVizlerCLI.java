@@ -16,7 +16,7 @@ import java.io.IOException;
 
 public class RDFVizlerCLI {
 
-	private final static String defaultDotFormat = "svg";
+	private static final String defaultDotFormat = "svg";
 
 	// CLI options
 	private static final String RULES = "rules";
@@ -131,7 +131,7 @@ public class RDFVizlerCLI {
 
 	private static class MissingConfigurationException extends Exception {
 		private static final long serialVersionUID = 1169386320837465674L;
-		public MissingConfigurationException(String msg) {
+		MissingConfigurationException(String msg) {
 			super(msg);
 		}
 	}

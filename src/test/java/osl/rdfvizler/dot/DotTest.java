@@ -7,8 +7,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.jena.rdf.model.Model;
 import org.junit.Test;
 
-import osl.rdfvizler.dot.DotProcess;
-import osl.rdfvizler.dot.RDF2Dot;
 import osl.util.rdf.Models;
 
 public class DotTest {

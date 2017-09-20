@@ -23,7 +23,7 @@ public class RDFVizlerServlet extends HttpServlet {
 	private static final long serialVersionUID = 7193847752589093476L;
 
 	// URL params
-	private final static String
+	private static final String
 	pRDF = "rdf",
 	pRules = "rules",
 	pRDFFormat = "in",

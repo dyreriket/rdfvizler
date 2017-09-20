@@ -16,7 +16,7 @@ import osl.util.rdf.vocab.DOT;
 
 public abstract class RDF2Dot {
 
-	private final static String 
+	private static final String 
 	STRICT = "strict ",
 	GRAPH = "graph ",
 	DIGRAPH = "digraph ",
