@@ -62,10 +62,7 @@ public class DotTest {
 		if (stdout) {
 			System.out.println(content);
 		}
-		System.out.println("File:" + file);
 		File tempFile = testFolder.newFile(file);
-		System.out.println("Tempfile: " + tempFile.getAbsolutePath());
-
 		FileUtils.writeStringToFile(tempFile, content, "UTF-8");
 	}
 }
