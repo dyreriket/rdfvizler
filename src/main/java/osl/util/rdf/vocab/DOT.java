@@ -12,11 +12,13 @@ public class DOT {
 	private static final String root = "http://rdfvizler.gitlab.com/vocab/";
 	private static final String ns = root + "core#";
 
+	// namespaces
 	public static final String NAMESPACE = ns;
 	public static final String NAMESPACE_ATTR = root + "attribute#";
 	public static final String NAMESPACE_ATTRNODE = root + "attribute/default/node#";
 	public static final String NAMESPACE_ATTREDGE = root + "attribute/default/edge#";
 	
+	// prefixes
 	public static final String NAMESPACE_PREFIX           = "gv";
 	public static final String NAMESPACE_ATTR_PREFIX      = "gva";
 	public static final String NAMESPACE_ATTRNODE_PREFIX  = "gvn";

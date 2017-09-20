@@ -7,8 +7,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.jena.rdf.model.Model;
 import org.junit.Test;
 
-import osl.rdfvizler.dot.DotProcess;
-import osl.rdfvizler.dot.RDF2Dot;
 import osl.util.rdf.Models;
 
 public class DotTest {
@@ -28,7 +26,7 @@ public class DotTest {
 		print(file1 + ".svg", runDot(toDot(file1), "svg"));
 	}
 	
-	@ Test public void should () throws IllegalArgumentException, IOException {
+	@Test public void should () throws IllegalArgumentException, IOException {
 		
 		Model model = DotModel.getDotModel(
 				"http://folk.uio.no/martige/foaf.rdf", "RDF/XML",
@@ -41,12 +39,6 @@ public class DotTest {
 		String out = runDot(dot, "svg");
 		print(resources + "foaf.rdf" + ".svg", out);
 	}
-	
-	
-	/*
-	@Test public void shouldOutputDotpng () throws IOException {
-		print(file1 + ".png", runDot(toDot(file1), "png"));
-	}*/
 	
 	////////////////////////////////////////
 	

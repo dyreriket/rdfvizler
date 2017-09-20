@@ -9,7 +9,7 @@ import org.apache.commons.io.IOUtils;
 
 public class DotProcess {
 	
-	public final static String DefaultExec = "/usr/bin/dot";
+	public static final String DefaultExec = "/usr/bin/dot";
 
 	private String exec = DefaultExec;
 

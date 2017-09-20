@@ -16,30 +16,27 @@ import java.io.IOException;
 
 public class RDFVizlerCLI {
 
-	private final static String defaultDotFormat = "svg";
+	private static final String defaultDotFormat = "svg";
 
 	// CLI options
-	public static final String RULES = "rules";
-	public static final String INPUT = "input";
-	public static final String XML = "xml";
-	public static final String EXEC = "exec";
-	public static final String OUTPUT = "output";
+	private static final String RULES = "rules";
+	private static final String INPUT = "input";
+	private static final String XML = "xml";
+	private static final String EXEC = "exec";
+	private static final String OUTPUT = "output";
 	private static final String FORMATDOT = "dotformat";
-	private Options options;
-
+	
 	private String rulesPath, inputPath, outputPath, execPath, formatDot, formatRDF;
-
 
 	public static void main(String[] args) throws IOException {
 		RDFVizlerCLI rdfVizlerCLI = new RDFVizlerCLI();
-
-		if (rdfVizlerCLI.parse(args))
+		if (rdfVizlerCLI.parse(args)) {
 			rdfVizlerCLI.execute();
-
+		}
 	}
 
 	private boolean parse(String[] args) {
-		options = new Options();
+		Options options = new Options();
 		options.addOption("r", RULES, true,     "Path to rules file");
 		options.addOption("i", INPUT, true,     "Path to RDF file");
 		options.addOption("x", XML, false,      "RDF format is RDF/XML. Default is " + Models.DefaultFormat);
@@ -91,9 +88,9 @@ public class RDFVizlerCLI {
 				BufferedWriter bw = new BufferedWriter(fw);
 				bw.write(out);
 				bw.close();
-			}
-			else
+			} else {
 				System.out.println(out);
+			}
 
 		} catch (RuntimeException | IOException e) {
 			throw e;
@@ -103,34 +100,38 @@ public class RDFVizlerCLI {
 
 
 	private static String want(String option, CommandLine l, String defaultValue) {
-		if (l.hasOption(option))
+		if (l.hasOption(option)) {
 			return l.getOptionValue(option);
-		else
+		} else {
 			return defaultValue;
+		}
 	}
 
 
 	private static String want(String option, CommandLine l) {
-		if (l.hasOption(option))
+		if (l.hasOption(option)) {
 			return l.getOptionValue(option);
-		else
+		} else {
 			return null;
+		}
 	}
 
 	private static String require(String option, CommandLine l) throws MissingConfigurationException {
-		if (l.hasOption(option))
+		if (l.hasOption(option)) {
 			return l.getOptionValue(option);
-		else
+		} else {
 			missing(option);
+		}
 		return "";
 	}
 
 	private static void missing(String option) throws MissingConfigurationException {
-		throw new MissingConfigurationException("Missing value for options " + option);
+		throw new MissingConfigurationException("Missing value for option " + option);
 	}
 
 	private static class MissingConfigurationException extends Exception {
-		public MissingConfigurationException(String msg) {
+		private static final long serialVersionUID = 1169386320837465674L;
+		MissingConfigurationException(String msg) {
 			super(msg);
 		}
 	}

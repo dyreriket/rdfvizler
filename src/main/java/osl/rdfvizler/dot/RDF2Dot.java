@@ -16,7 +16,7 @@ import osl.util.rdf.vocab.DOT;
 
 public abstract class RDF2Dot {
 
-	private final static String 
+	private static final String 
 	STRICT = "strict ",
 	GRAPH = "graph ",
 	DIGRAPH = "digraph ",
@@ -90,8 +90,8 @@ public abstract class RDF2Dot {
 			str.append(indent).append(EDGE).append(attredge).append(";\n"); }
 
 		// nodes and egdes
-		str.append(_parseElements(r, DOT.hasNode, x -> parseNode(x), indent));
-		str.append(_parseElements(r, DOT.hasEdge, x -> parseEdge(x), indent));
+		str.append(parseElements(r, DOT.hasNode, x -> parseNode(x), indent));
+		str.append(parseElements(r, DOT.hasEdge, x -> parseEdge(x), indent));
 
 		// subgraphs
 		for (Statement g : r.listProperties(DOT.hasSubGraph).toList()) {
@@ -102,7 +102,7 @@ public abstract class RDF2Dot {
 		return str.toString();
 	}
 
-	private static String _parseElements (Resource r, Property element, Function<Resource, String> parser, String space) {
+	private static String parseElements (Resource r, Property element, Function<Resource, String> parser, String space) {
 		String str = Strings.toString(
 				r.listProperties(element).toList(), 
 				s-> parser.apply(s.getObject().asResource()),
@@ -110,9 +110,9 @@ public abstract class RDF2Dot {
 		if (!str.isEmpty()) {
 			return "\n" 
 					+ space + "// " + element.getLocalName().replaceAll("has", "").toUpperCase() + "S\n" 
-					+ space + str.toString();
+					+ space + str;
 		}
-		return str.toString();
+		return str;
 	}
 
 	private static String parseAttributes(Resource r, String namespace) {
@@ -169,7 +169,7 @@ public abstract class RDF2Dot {
 			graphs.addAll(Models.listInstancesOfClass(model, g));
 		}
 		if (graphs.size() != 1) {
-			throw new RuntimeException("Error getting root graph. Expected exactly 1 instance, but found " 
+			throw new IllegalArgumentException("Error getting root graph. Expected exactly 1 instance, but found " 
 					+ graphs.size() + ": " + Models.shortName(model, graphs));
 		}
 		return graphs.get(0);		
