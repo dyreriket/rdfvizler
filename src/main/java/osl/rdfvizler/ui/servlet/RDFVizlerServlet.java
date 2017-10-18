@@ -23,7 +23,7 @@ public class RDFVizlerServlet extends HttpServlet {
 	private static final long serialVersionUID = 7193847752589093476L;
 
 	// URL params
-	private final static String
+	private static final String
 	pRDF = "rdf",
 	pRules = "rules",
 	pRDFFormat = "in",
@@ -59,7 +59,10 @@ public class RDFVizlerServlet extends HttpServlet {
 	@Override
 	protected void doGet (HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-		String pathRDF = null, pathRules = null, formatRDF, formatDot;
+		String pathRDF = null, 
+				pathRules = null, 
+				formatRDF, 
+				formatDot;
 
 		try {
 			pathRDF   = getValue(request.getParameter(pRDF), pathRDF);
@@ -79,16 +82,16 @@ public class RDFVizlerServlet extends HttpServlet {
 			String out;
 			String mimetype;
 
-			if (formatDot.equals("svg")) {
+			if ("svg".equals(formatDot)) {
 				out = dotProcess.runDot(dot, formatDot);
 				mimetype = "image/svg+xml";
 			} 
 			/* TODO does not work, needs to output as image
-			else if (formatDot.equals("png")) {
+			else if ("png".equals(formatDot)) {
 				out = dotProcess.runDot(dot, formatDot);
 				mimetype = "image/png";
 			}*/
-			else if (formatDot.equals("ttl")) {
+			else if ("ttl".equals(formatDot)) {
 				out = Models.writeModel(model, "TTL");
 				mimetype = "text/turtle";
 			} else {
