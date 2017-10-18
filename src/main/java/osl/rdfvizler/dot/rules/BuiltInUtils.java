@@ -6,7 +6,9 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.apache.jena.graph.Node;
+import org.apache.jena.reasoner.rulesys.BuiltinException;
 import org.apache.jena.reasoner.rulesys.RuleContext;
+import org.apache.jena.reasoner.rulesys.builtins.BaseBuiltin;
 import org.apache.jena.vocabulary.RDF;
 
 import osl.util.Strings;
@@ -32,5 +34,16 @@ public abstract class BuiltInUtils {
 		return context.getGraph().getPrefixMapping().shortForm(URI);
 	}
 
+	public static String lex(Node n, BaseBuiltin that, RuleContext context) {
+		if (n.isBlank()) {
+			return n.getBlankNodeLabel();
+		} else if (n.isURI()) {
+			return n.getURI();
+		} else if (n.isLiteral()) {
+			return n.getLiteralLexicalForm();
+		} else {
+			throw new BuiltinException(that, context, "Illegal node type: " + n);
+		}
+	}
 
 }
