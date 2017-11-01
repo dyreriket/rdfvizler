@@ -12,7 +12,28 @@ import org.apache.jena.shared.JenaException;
 import javax.xml.bind.DatatypeConverter;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.UUID;
 
+/**
+ * createUniqueIfLit(?bind, ?node)
+ * If ?node is a literal, it will bind ?bind to a new literal
+ * that is like ?node, but altered to be unique in the graph. This is done by
+ * creating a literal that has a GUID as value.
+ *
+ * This function is useful when you want to have separate nodes for each literal
+ * even if two literals have the same value. So instead of getting the graph
+ * to the left, you can make the graph to the right.
+ *
+ * Resource1     Resource2        Resource1     Resource2
+ *    |           |                   |             |
+ *    \___________|                   |             |
+ *         |                          |             |
+ *      "someValue"               "someValue"    "someValue"
+ *
+ * This requires some alterations to the default .jrule file.
+ *
+ * If the ?node is a non-literal, ?bind simply binds to ?node.
+ */
 public class CreateUniqueIfLit extends BaseBuiltin {
 	
 	public String getName() {
@@ -23,29 +44,16 @@ public class CreateUniqueIfLit extends BaseBuiltin {
 		return 2;
 	}
 
-	public static int counter =0;
-	private static String unlikelyString = "--------";
 
     @Override
     public boolean bodyCall(Node[] args, int length, RuleContext context) {
-        StringBuilder key = new StringBuilder();
 
+        Node nodeToBind = args[1];
 
-        Node n = args[1];
-        Node nodeToBind = n;
-
-        if (n.isLiteral()) {
-            key.append("L"); key.append(n.getLiteralLexicalForm());
-            if (n.getLiteralLanguage() != null) key.append("@" + n.getLiteralLanguage());
-            if (n.getLiteralDatatypeURI() != null) key.append("^^" + n.getLiteralDatatypeURI());
-            key.append(counter++);
-
-            String newLitValue = n.getLiteralLexicalForm()
-                    + unlikelyString
-                    + counter
-                    + unlikelyString;
-            nodeToBind = NodeFactory.createLiteral(newLitValue);
-
+        if (nodeToBind.isLiteral()) {
+            UUID uuid = UUID.randomUUID();
+            String uniqueLiteral = uuid.toString();
+            nodeToBind =  NodeFactory.createLiteral(uniqueLiteral);
         }
 
         return context.getEnv().bind(args[0], nodeToBind);

@@ -12,6 +12,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * excludeType(?node, ?type)
+ * Returns true if ?node does NOT have ?type as an rdf:type.
+ */
 public class ExcludeType extends BaseBuiltin {
 
 	@Override

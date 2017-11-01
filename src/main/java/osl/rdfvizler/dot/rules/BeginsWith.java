@@ -7,6 +7,10 @@ import org.apache.jena.reasoner.rulesys.BuiltinException;
 import org.apache.jena.reasoner.rulesys.RuleContext;
 import org.apache.jena.reasoner.rulesys.builtins.BaseBuiltin;
 
+
+/**
+ * Returns true if the literal in arg1 begins with the literal in arg2
+ */
 public class BeginsWith extends BaseBuiltin {
 
 	@Override
