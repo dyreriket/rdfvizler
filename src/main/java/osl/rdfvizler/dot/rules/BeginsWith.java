@@ -23,22 +23,8 @@ public class BeginsWith extends BaseBuiltin {
 		if (length != 2)
 			throw new BuiltinException(this, context, "Must have exactly 2 arguments to " + getName());
 
-		return (lex(args[0], context).startsWith(lex(args[1], context)));
-	}
-
-
-	/**
-	 * Return the appropriate lexical form of a node
-	 */
-	protected String lex(Node n, RuleContext context) {
-		if (n.isBlank()) {
-			return n.getBlankNodeLabel();
-		} else if (n.isURI()) {
-			return n.getURI();
-		} else if (n.isLiteral()) {
-			return n.getLiteralLexicalForm();
-		} else {
-			throw new BuiltinException(this, context, "Illegal node type: " + n);
-		}
+		String arg1 = BuiltInUtils.lex(args[0], this, context);
+		String arg2 = BuiltInUtils.lex(args[1], this, context);
+		return (arg1.startsWith(arg2));
 	}
 }

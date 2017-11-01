@@ -29,7 +29,7 @@ public class CreateUniqueIfLit extends BaseBuiltin {
     @Override
     public boolean bodyCall(Node[] args, int length, RuleContext context) {
         StringBuilder key = new StringBuilder();
-        
+
 
         Node n = args[1];
         Node nodeToBind = n;
