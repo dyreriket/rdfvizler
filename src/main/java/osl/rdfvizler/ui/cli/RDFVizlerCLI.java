@@ -1,6 +1,7 @@
 package osl.rdfvizler.ui.cli;
 
 import org.apache.commons.cli.*;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.jena.rdf.model.Model;
 
 import osl.rdfvizler.dot.DotModel;
@@ -25,7 +26,8 @@ public class RDFVizlerCLI {
 	private static final String EXEC = "exec";
 	private static final String OUTPUT = "output";
 	private static final String FORMATDOT = "dotformat";
-	
+	private static final String COPYNAME = "copyname";
+
 	private String rulesPath, inputPath, outputPath, execPath, formatDot, formatRDF;
 
 	public static void main(String[] args) throws IOException {
@@ -43,15 +45,20 @@ public class RDFVizlerCLI {
 		options.addOption("e", EXEC, true,     "Path to dot executable. Default is " + DotProcess.DefaultExec);
 		options.addOption("o", OUTPUT, true,    "Output file. If omitted output to stdout");
 		options.addOption("d", FORMATDOT, true, "Output format for image. Default is " + defaultDotFormat);
+		options.addOption("c", COPYNAME, false, "Copy the name of the input argument for output name. Not with " + FORMATDOT);
 
 		CommandLineParser parser = new DefaultParser();
 		try {
 			CommandLine l = parser.parse(options, args);
 
-			outputPath = want(OUTPUT, l);
-			formatDot = want(FORMATDOT, l, defaultDotFormat);
-			rulesPath = require(RULES, l);
+
 			inputPath = require(INPUT, l);
+			rulesPath = require(RULES, l);
+			formatDot = want(FORMATDOT, l, defaultDotFormat);
+			outputPath = l.hasOption(COPYNAME)
+					? FilenameUtils.removeExtension(inputPath) + "." + formatDot
+					: want(OUTPUT, l);
+
 			execPath = want(EXEC, l);
 			formatRDF = l.hasOption(XML) ? "RDF/XML" : null;
 
