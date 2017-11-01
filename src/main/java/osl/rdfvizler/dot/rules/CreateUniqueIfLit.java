@@ -29,13 +29,12 @@ public class CreateUniqueIfLit extends BaseBuiltin {
     @Override
     public boolean bodyCall(Node[] args, int length, RuleContext context) {
         StringBuilder key = new StringBuilder();
-
+        
 
         Node n = args[1];
         Node nodeToBind = n;
 
         if (n.isLiteral()) {
-            System.out.println(n.getLiteralLexicalForm());
             key.append("L"); key.append(n.getLiteralLexicalForm());
             if (n.getLiteralLanguage() != null) key.append("@" + n.getLiteralLanguage());
             if (n.getLiteralDatatypeURI() != null) key.append("^^" + n.getLiteralDatatypeURI());
@@ -45,7 +44,6 @@ public class CreateUniqueIfLit extends BaseBuiltin {
                     + unlikelyString
                     + counter
                     + unlikelyString;
-            System.out.println(newLitValue);
             nodeToBind = NodeFactory.createLiteral(newLitValue);
 
         }

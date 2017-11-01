@@ -19,7 +19,7 @@ public abstract class DotModel {
 		BuiltinRegistry.theRegistry.register(new Namespace());
 		BuiltinRegistry.theRegistry.register(new TypedValue());
 		BuiltinRegistry.theRegistry.register(new BeginsWith());
-		BuiltinRegistry.theRegistry.register(new InsertLineFeedIn());
+		BuiltinRegistry.theRegistry.register(new Linewrap());
 		BuiltinRegistry.theRegistry.register(new ExcludeType());
 		BuiltinRegistry.theRegistry.register(new CreateUniqueIfLit());
 	}
