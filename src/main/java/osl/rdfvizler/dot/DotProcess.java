@@ -13,7 +13,16 @@ public class DotProcess {
 
 	private String exec = DefaultExec;
 
-	public DotProcess () {}
+	public DotProcess () {
+		String newExec = System.getenv("RDFVIZLER_DOT_EXEC");
+		if (newExec != null && !newExec.isEmpty()) {
+			exec = newExec;
+		}
+		else {
+			exec = DefaultExec;
+		}
+	}
+
 	public DotProcess (String execpath) {
 		this.exec = execpath;
 	}

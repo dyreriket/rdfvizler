@@ -53,7 +53,18 @@ public class RDFVizlerCLI {
 
 
 			inputPath = require(INPUT, l);
-			rulesPath = require(RULES, l);
+
+
+			String rulesPathFromEnv = System.getenv("RDFVIZLER_RULES_PATH");
+
+			if (want(RULES, l) == null && rulesPathFromEnv != null && !rulesPathFromEnv.isEmpty()) {
+				rulesPath = rulesPathFromEnv;
+			}
+			else {
+				rulesPath = require(RULES, l);
+			}
+
+
 			formatDot = want(FORMATDOT, l, defaultDotFormat);
 			outputPath = l.hasOption(COPYNAME)
 					? FilenameUtils.removeExtension(inputPath) + "." + formatDot
