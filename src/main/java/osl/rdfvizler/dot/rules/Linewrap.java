@@ -10,7 +10,7 @@ import org.apache.jena.reasoner.rulesys.builtins.BaseBuiltin;
 /**
  * linewrap(?bind, ?literal, ?integer)
  * Will bind a new literal to ?bind that is like ?literal but with a
- * linefeed at position ?integer. 
+ * linefeed at position ?integer.
  */
 public class Linewrap extends BaseBuiltin {
 

@@ -1,15 +1,12 @@
 package osl.rdfvizler.dot.rules;
 
 import org.apache.jena.graph.Node;
-import org.apache.jena.rdf.model.ResourceFactory;
-import org.apache.jena.reasoner.rulesys.BindingEnvironment;
 import org.apache.jena.reasoner.rulesys.BuiltinException;
 import org.apache.jena.reasoner.rulesys.RuleContext;
 import org.apache.jena.reasoner.rulesys.builtins.BaseBuiltin;
 import org.apache.jena.vocabulary.RDF;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -29,9 +26,9 @@ public class ExcludeType extends BaseBuiltin {
 	}
 
     public boolean bodyCall(Node[] args, int length, RuleContext context) {
-        if (length != 2)
+        if (length != 2) {
             throw new BuiltinException(this, context, "Must have exactly 2 arguments to " + getName());
-
+        }
         return (!nodeHasType(args[0],args[1], context));
     }
 
