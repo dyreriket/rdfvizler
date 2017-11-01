@@ -9,9 +9,7 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.reasoner.rulesys.BuiltinRegistry;
 import org.apache.jena.reasoner.rulesys.Rule;
 
-import osl.rdfvizler.dot.rules.Namespace;
-import osl.rdfvizler.dot.rules.ShortValue;
-import osl.rdfvizler.dot.rules.TypedValue;
+import osl.rdfvizler.dot.rules.*;
 import osl.util.rdf.Models;
 
 public abstract class DotModel {
@@ -20,6 +18,10 @@ public abstract class DotModel {
 		BuiltinRegistry.theRegistry.register(new ShortValue());
 		BuiltinRegistry.theRegistry.register(new Namespace());
 		BuiltinRegistry.theRegistry.register(new TypedValue());
+		BuiltinRegistry.theRegistry.register(new BeginsWith());
+		BuiltinRegistry.theRegistry.register(new Linewrap());
+		BuiltinRegistry.theRegistry.register(new ExcludeType());
+		BuiltinRegistry.theRegistry.register(new CreateUniqueIfLit());
 	}
 
 	// apply rules to input RDF to saturate with DOT vocabulary
