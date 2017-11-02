@@ -76,6 +76,12 @@ public class RDFVizlerServlet extends HttpServlet {
 			DotModel.checkURIInput(pathRules, maxSize);
 
 			Model model = DotModel.getDotModel(pathRDF, formatRDF, pathRules);
+			/*
+			//TODO: Replace the line above with these three lines to use default rules if none are provided
+			Model model = (pathRules == null)
+                    ? DotModel.getDotModel(pathRDF, formatRDF)
+                    : DotModel.getDotModel(pathRDF, formatRDF, pathRules);
+			 */
 			String dot = RDF2Dot.toDot(model);
 
 			DotProcess dotProcess = new DotProcess(DotExec);
