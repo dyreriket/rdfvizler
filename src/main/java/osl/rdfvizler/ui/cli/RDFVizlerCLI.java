@@ -31,6 +31,7 @@ public class RDFVizlerCLI {
     private static final String COPYNAME = "copyname";
 
     private String rulesPath, inputPath, outputPath, execPath, formatDot, formatRDF;
+    private CommandLine l;
 
     public static void main(String[] args) throws IOException {
         RDFVizlerCLI rdfVizlerCLI = new RDFVizlerCLI();
@@ -50,17 +51,24 @@ public class RDFVizlerCLI {
         options.addOption("c", COPYNAME, false, "Copy the name of the input argument for output name. Not with " + FORMATDOT);
 
         CommandLineParser parser = new DefaultParser();
-        try {
-            CommandLine l = parser.parse(options, args);
 
-            rulesPath = getRulesPath(l);
-            inputPath = require(INPUT, l);
-            formatDot = want(FORMATDOT, l, defaultDotFormat);
-            outputPath = getOutputPath(l);
-            execPath = want(EXEC, l);
+
+
+        try {
+            l = parser.parse(options, args);
+
+            if (l.hasOption(OUTPUT) && l.hasOption(COPYNAME)) {
+                throw new RuntimeException(OUTPUT + " and " + COPYNAME + " cannot both be selected at the same time");
+            }
+
+            rulesPath = getRulesPath();
+            inputPath = require(INPUT);
+            formatDot = want(FORMATDOT, defaultDotFormat);
+            outputPath = getOutputPath();
+            execPath = want(EXEC);
             formatRDF = l.hasOption(XML) ? "RDF/XML" : null;
 
-        } catch (ParseException | MissingConfigurationException e) {
+        } catch (RuntimeException | ParseException | MissingConfigurationException e) {
             printHelp(options, e);
             return false;
         }
@@ -75,20 +83,18 @@ public class RDFVizlerCLI {
                 + "[--" + OUTPUT + " <outputFile> | --" + XML + "  | -" + FORMATDOT + " <arg>]", "", options, "");
     }
 
-    private String getOutputPath(CommandLine l) {
-        if (l.hasOption(OUTPUT)) {
-            return want(OUTPUT, l);
-        } else if (l.hasOption(COPYNAME)) {
+    private String getOutputPath() {
+        if (l.hasOption(COPYNAME)) {
             return FilenameUtils.removeExtension(inputPath) + "." + formatDot;
         }
-        return null;
+        return want(OUTPUT);
     }
 
-    private String getRulesPath(CommandLine l) {
+    private String getRulesPath() {
         //List the two alternatives in prioritized order, pick the first non-null value
         //if both are null, return null
         return Arrays.stream(
-                new String[]{ System.getenv(RDFVIZLER_RULES_PATH), want(RULES, l)})
+                new String[]{ want(RULES), System.getenv(RDFVIZLER_RULES_PATH) })
                     .filter(x -> x !=null)
                     .findFirst()
                     .orElse(null);
@@ -130,7 +136,7 @@ public class RDFVizlerCLI {
 		}
 	}
 
-	private static String want(String option, CommandLine l, String defaultValue) {
+	private  String want(String option, String defaultValue) {
 		if (l.hasOption(option)) {
 			return l.getOptionValue(option);
 		} else {
@@ -139,7 +145,7 @@ public class RDFVizlerCLI {
 	}
 
 
-	private static String want(String option, CommandLine l) {
+	private  String want(String option) {
 		if (l.hasOption(option)) {
 			return l.getOptionValue(option);
 		} else {
@@ -147,7 +153,7 @@ public class RDFVizlerCLI {
 		}
 	}
 
-	private static String require(String option, CommandLine l) throws MissingConfigurationException {
+	private  String require(String option) throws MissingConfigurationException {
 		if (l.hasOption(option)) {
 			return l.getOptionValue(option);
 		}
