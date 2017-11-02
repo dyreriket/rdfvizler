@@ -12,11 +12,10 @@ import osl.util.rdf.Models;
 
 import java.io.BufferedWriter;
 
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.stream.Stream;
+
 
 public class RDFVizlerCLI {
 
@@ -54,24 +53,26 @@ public class RDFVizlerCLI {
         try {
             CommandLine l = parser.parse(options, args);
 
-
             rulesPath = getRulesPath(l);
             inputPath = require(INPUT, l);
             formatDot = want(FORMATDOT, l, defaultDotFormat);
             outputPath = getOutputPath(l);
-
             execPath = want(EXEC, l);
             formatRDF = l.hasOption(XML) ? "RDF/XML" : null;
 
         } catch (ParseException | MissingConfigurationException e) {
-            System.out.println(e.getMessage());
-            HelpFormatter formatter = new HelpFormatter();
-            formatter.printHelp(110, "java -jar \\ \n          rdfvizler "
-                    + "--" + INPUT + " <rdfFile> --" + RULES + " <rulesFile> "
-                    + "[--" + OUTPUT + " <outputFile> | --" + XML + "  | -" + FORMATDOT + " <arg>]", "", options, "");
+            printHelp(options, e);
             return false;
         }
         return true;
+    }
+
+    private void printHelp(Options options, Exception e) {
+        System.out.println(e.getMessage());
+        HelpFormatter formatter = new HelpFormatter();
+        formatter.printHelp(110, "java -jar \\ \n          rdfvizler "
+                + "--" + INPUT + " <rdfFile> --" + RULES + " <rulesFile> "
+                + "[--" + OUTPUT + " <outputFile> | --" + XML + "  | -" + FORMATDOT + " <arg>]", "", options, "");
     }
 
     private String getOutputPath(CommandLine l) {
@@ -84,6 +85,8 @@ public class RDFVizlerCLI {
     }
 
     private String getRulesPath(CommandLine l) {
+        //List the two alternatives in prioritized order, pick the first non-null value
+        //if both are null, return null
         return Arrays.stream(
                 new String[]{ System.getenv(RDFVIZLER_RULES_PATH), want(RULES, l)})
                     .filter(x -> x !=null)
@@ -94,17 +97,15 @@ public class RDFVizlerCLI {
 	private void execute() throws IOException {
 		try {
 
-			Model model;
-			System.out.println("rulespath:" + rulesPath);
-			if (rulesPath==null) {
-				model = DotModel.getDotModel(inputPath, formatRDF);
-			}
-			else {
-				model = DotModel.getDotModel(inputPath, formatRDF, rulesPath);
-			}
-			String dot = RDF2Dot.toDot(model);
+            DotProcess dotProcess = (execPath != null)
+                    ? new DotProcess(execPath)
+                    : new DotProcess();
 
-			DotProcess dotProcess = (execPath != null) ? new DotProcess(execPath) : new DotProcess();
+			Model model = (rulesPath == null)
+                    ? DotModel.getDotModel(inputPath, formatRDF)
+                    : DotModel.getDotModel(inputPath, formatRDF, rulesPath);
+
+			String dot = RDF2Dot.toDot(model);
 
 			String out;
 			if (formatDot.equalsIgnoreCase("ttl")) {
@@ -149,14 +150,8 @@ public class RDFVizlerCLI {
 	private static String require(String option, CommandLine l) throws MissingConfigurationException {
 		if (l.hasOption(option)) {
 			return l.getOptionValue(option);
-		} else {
-			missing(option);
 		}
-		return "";
-	}
-
-	private static void missing(String option) throws MissingConfigurationException {
-		throw new MissingConfigurationException("Missing value for option " + option);
+        throw new MissingConfigurationException("Missing value for option " + option);
 	}
 
 	private static class MissingConfigurationException extends Exception {
