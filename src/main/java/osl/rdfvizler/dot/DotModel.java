@@ -1,6 +1,6 @@
 package osl.rdfvizler.dot;
 
-import java.io.IOException;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
@@ -13,6 +13,8 @@ import osl.rdfvizler.dot.rules.*;
 import osl.util.rdf.Models;
 
 public abstract class DotModel {
+
+	private static String defaultRules = "default.jrule";
 
 	static {
 		BuiltinRegistry.theRegistry.register(new ShortValue());
@@ -31,6 +33,22 @@ public abstract class DotModel {
 		Model dotModel = Models.applyRules(model, rules);
 		return dotModel;
 	}
+
+	public static Model getDotModel (String pathRDF, String formatRDF) throws IllegalArgumentException, IOException {
+		Model model = Models.readModel(pathRDF, formatRDF);
+
+		List<Rule> rules = getRulesFromEnv();
+		Model dotModel = Models.applyRules(model, rules);
+		return dotModel;
+	}
+
+	private static List<Rule> getRulesFromEnv() {
+		InputStream in = DotModel.class.getResourceAsStream("/" + defaultRules);
+		BufferedReader br = new BufferedReader(new InputStreamReader(in));
+		Rule.Parser parser = Rule.rulesParserFromReader(br);
+		return Rule.parseRules(parser);
+	}
+
 
 	// check that (1) URL resolves, (2) with code 200, and (3) content not larger than max limit.
 	public static void checkURIInput (String path, int maxSize) throws IOException, IllegalArgumentException {

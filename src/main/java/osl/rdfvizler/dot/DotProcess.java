@@ -4,17 +4,19 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 
 public class DotProcess {
 	
 	public static final String DefaultExec = "/usr/bin/dot";
+	public static final String RDFVIZLER_DOT_EXEC = "RDFVIZLER_DOT_EXEC";
 
 	private String exec = DefaultExec;
 
 	public DotProcess () {
-		String newExec = System.getenv("RDFVIZLER_DOT_EXEC");
+		String newExec = System.getenv(RDFVIZLER_DOT_EXEC);
 		if (newExec != null && !newExec.isEmpty()) {
 			exec = newExec;
 		}
