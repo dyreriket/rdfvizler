@@ -21,6 +21,10 @@ public abstract class Models {
 
 	public static final String DEFAULTFORMAT = "TTL";
 
+    // hiding constructor
+    private Models() {
+        throw new IllegalStateException("Utility class");
+    }
 
 	public static Model readModel (String file) {
 		return readModel(file, FileUtils.guessLang(file, DEFAULTFORMAT));

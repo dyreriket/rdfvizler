@@ -42,8 +42,18 @@ public abstract class DotVocabulary {
 	public static final Property hasTarget          = Vocabulary.getProperty(NS + "hasTarget");
 	public static final Property hasSubGraph        = Vocabulary.getProperty(NS + "hasSubGraph");
 
+    // hiding constructor
+    private DotVocabulary() {
+        throw new IllegalStateException("Utility class");
+    }
+	
 	private static class Vocabulary {
 	 
+	    // hiding constructor
+	    private Vocabulary() {
+	        throw new IllegalStateException("Utility class");
+	    }
+	    
 		public static Resource getResource (String url) {
 			return ResourceFactory.createResource(url);
 		}

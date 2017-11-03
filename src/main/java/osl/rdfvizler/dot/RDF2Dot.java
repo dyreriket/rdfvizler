@@ -36,6 +36,11 @@ public abstract class RDF2Dot {
 		model.setNsPrefix(DotVocabulary.NAMESPACE_ATTRNODE_PREFIX, DotVocabulary.NAMESPACE_ATTRNODE);
 		model.setNsPrefix(DotVocabulary.NAMESPACE_ATTREDGE_PREFIX, DotVocabulary.NAMESPACE_ATTREDGE);
 	}
+	
+	// hiding constructor
+    private RDF2Dot() {
+        throw new IllegalStateException("Utility class");
+    }
 
 	public static String toDot (Model model) {
 		addPrefixes(model);
