@@ -15,7 +15,7 @@ import osl.util.rdf.Models;
 
 public class DotTest {
 	
-	private final boolean stdout = true; // print files also to stdout?
+	private final boolean stdout = false; // print files also to stdout?
 
 	@Rule
 	public TemporaryFolder testFolder = new TemporaryFolder();

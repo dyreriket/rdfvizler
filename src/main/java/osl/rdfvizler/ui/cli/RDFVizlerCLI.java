@@ -14,6 +14,7 @@ import java.io.BufferedWriter;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintStream;
 
 public class RDFVizlerCLI {
 
@@ -27,17 +28,24 @@ public class RDFVizlerCLI {
 	private static final String OUTPUT = "output";
 	private static final String FORMATDOT = "dotformat";
 	private static final String COPYNAME = "copyname";
+    private final PrintStream console;
 
-	private String rulesPath, inputPath, outputPath, execPath, formatDot, formatRDF;
+    private String rulesPath, inputPath, outputPath, execPath, formatDot, formatRDF;
 
-	public static void main(String[] args) throws IOException {
-		RDFVizlerCLI rdfVizlerCLI = new RDFVizlerCLI();
+    public RDFVizlerCLI(PrintStream console) {
+        this.console = console;
+    }
+
+    public static void main(String[] args) throws IOException {
+		RDFVizlerCLI rdfVizlerCLI = new RDFVizlerCLI(System.out);
 		if (rdfVizlerCLI.parse(args)) {
 			rdfVizlerCLI.execute();
 		}
 	}
 
-	private boolean parse(String[] args) {
+
+
+	boolean parse(String[] args) {
 		Options options = new Options();
 		options.addOption("r", RULES, true,     "Path to rules file");
 		options.addOption("i", INPUT, true,     "Path to RDF file");
@@ -63,7 +71,7 @@ public class RDFVizlerCLI {
 			formatRDF = l.hasOption(XML) ? "RDF/XML" : null;
 
 		} catch (ParseException | MissingConfigurationException e) {
-			System.out.println(e.getMessage());
+			console.println(e.getMessage());
 			HelpFormatter formatter = new HelpFormatter();
 			formatter.printHelp(110, "java -jar \\ \n          rdfvizler "
 					+ "--"+INPUT+" <rdfFile> --"+RULES+" <rulesFile> "
@@ -73,7 +81,7 @@ public class RDFVizlerCLI {
 		return true;
 	}
 
-	private void execute() throws IOException {
+	void execute() throws IOException {
 		try {
 
 			Model model = DotModel.getDotModel(inputPath, formatRDF, rulesPath);
@@ -96,7 +104,7 @@ public class RDFVizlerCLI {
 				bw.write(out);
 				bw.close();
 			} else {
-				System.out.println(out);
+				console.println(out);
 			}
 
 		} catch (RuntimeException | IOException e) {
