@@ -1,0 +1,9 @@
+engines:
+  checkstyle:
+    enabled: true
+    config:
+      file: ".google_checks.xml"
+
+ratings:
+  paths:
+  - "**.java"
