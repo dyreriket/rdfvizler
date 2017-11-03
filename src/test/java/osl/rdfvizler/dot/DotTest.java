@@ -1,17 +1,14 @@
 package osl.rdfvizler.dot;
 
-import java.io.File;
-import java.io.IOException;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.jena.rdf.model.Model;
 import org.junit.Rule;
 import org.junit.Test;
-
 import org.junit.rules.TemporaryFolder;
-import osl.rdfvizler.dot.DotProcess;
-import osl.rdfvizler.dot.RDF2Dot;
 import osl.util.rdf.Models;
+
+import java.io.File;
+import java.io.IOException;
 
 public class DotTest {
 	
