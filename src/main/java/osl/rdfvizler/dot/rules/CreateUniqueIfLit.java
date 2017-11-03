@@ -1,11 +1,11 @@
 package osl.rdfvizler.dot.rules;
 
+import java.util.UUID;
+
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.reasoner.rulesys.RuleContext;
 import org.apache.jena.reasoner.rulesys.builtins.BaseBuiltin;
-
-import java.util.UUID;
 
 /**
  * createUniqueIfLit(?bind, ?node)
@@ -37,7 +37,6 @@ public class CreateUniqueIfLit extends BaseBuiltin {
 		return 2;
 	}
 
-
     @Override
     public boolean bodyCall(Node[] args, int length, RuleContext context) {
 
@@ -48,11 +47,6 @@ public class CreateUniqueIfLit extends BaseBuiltin {
             String uniqueLiteral = uuid.toString();
             nodeToBind =  NodeFactory.createLiteral(uniqueLiteral);
         }
-
         return context.getEnv().bind(args[0], nodeToBind);
     }
-
-
-
-
 }

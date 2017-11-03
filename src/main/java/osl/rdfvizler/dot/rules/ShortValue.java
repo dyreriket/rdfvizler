@@ -23,19 +23,19 @@ public class ShortValue extends BaseBuiltin {
 		return env.bind(args[1], value(args[0], context));
 	}
 
-	protected Node value(Node n, RuleContext context) {
-		String s;
-		if (n.isBlank() || n.isURI()) {
-			s = BuiltInUtils.getShortForm(n, context);
-		} else if (n.isLiteral()) {
-			s = n.getLiteralLexicalForm();
-			String dt = n.getLiteralDatatypeURI();
-			if (dt != null && dt.length() > 0) {
-				s += "^^" + BuiltInUtils.getShortForm(dt, context);
+	protected Node value(Node node, RuleContext context) {
+		String string;
+		if (node.isBlank() || node.isURI()) {
+			string = BuiltInUtils.getShortForm(node, context);
+		} else if (node.isLiteral()) {
+			string = node.getLiteralLexicalForm();
+			String datattype = node.getLiteralDatatypeURI();
+			if (datattype != null && datattype.length() > 0) {
+				string += "^^" + BuiltInUtils.getShortForm(datattype, context);
 			}
 		} else {
-			throw new BuiltinException(this, context, "Illegal node type: " + n);
+			throw new BuiltinException(this, context, "Illegal node type: " + node);
 		}
-		return ResourceFactory.createPlainLiteral(s).asNode();
+		return ResourceFactory.createPlainLiteral(string).asNode();
 	}
 }

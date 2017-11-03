@@ -9,29 +9,31 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import org.junit.rules.TemporaryFolder;
-import osl.rdfvizler.dot.DotProcess;
-import osl.rdfvizler.dot.RDF2Dot;
 import osl.util.rdf.Models;
 
 public class DotTest {
 	
 	private final boolean stdout = true; // print files also to stdout?
 
+	private final String file1 = "test1.ttl";
+	
 	@Rule
 	public TemporaryFolder testFolder = new TemporaryFolder();
 
-	private final String file1 = "test1.ttl";
 	
-	@Test public void shouldOutputDot () throws IOException {
+	@Test 
+	public void shouldOutputDot () throws IOException {
 		String dot = toDot(file1);
 		print(file1 + ".dot", dot);
 	}
 	
-	@Test public void shouldOutputDotsvg () throws IOException {
+	@Test 
+	public void shouldOutputDotsvg () throws IOException {
 		print(file1 + ".svg", runDot(toDot(file1), "svg"));
 	}
 	
-	@Test public void should () throws IllegalArgumentException, IOException {
+	@Test 
+	public void should () throws IllegalArgumentException, IOException {
 		
 		Model model = DotModel.getDotModel(
 				"http://folk.uio.no/martige/foaf.rdf", "RDF/XML",

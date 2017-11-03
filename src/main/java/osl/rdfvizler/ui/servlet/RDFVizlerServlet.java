@@ -23,11 +23,10 @@ public class RDFVizlerServlet extends HttpServlet {
 	private static final long serialVersionUID = 7193847752589093476L;
 
 	// URL params
-	private static final String
-	pRDF = "rdf",
-	pRules = "rules",
-	pRDFFormat = "in",
-	pDotFormat = "out";
+	private static final String pRDF = "rdf";
+	private static final String pRules = "rules";
+	private static final String pRDFFormat = "in";
+	private static final String pDotFormat = "out";
 
 	// defaults, also available in web.xml
 	private String defaultMaxFileSize = "300000";
@@ -120,12 +119,14 @@ public class RDFVizlerServlet extends HttpServlet {
 		error += "</head><body>";
 		error += "<h1>RDFVizler - Error " + responseCode + "</h1>";
 		error += "<dl>";
-		//error += "<dt>Service:</dt><dd>" + request.getRequestURL() + "</dd>";
-		//error += "<dt>Parameters:</dt><dd>" + Arrays.toString(request.getParameterMap().entrySet().toArray()) + "</dd>";
 		error += "<dt>RDF:</dt><dd> " + pathRDF + "</dd>";
 		error += "<dt>Rules:</dt><dd> " + pathRules + "</dd>";
-		error += "<dt>Error message:</dt><dd><code>" + StringEscapeUtils.escapeHtml4(e.getMessage()) + "</code></dd>";
-		error += "<dt>Error stack:</dt><dd><pre>" + StringEscapeUtils.escapeHtml4(Arrays.toString(e.getStackTrace())).replaceAll(",", "<br/>") + "</pre></dd>";
+		error += "<dt>Error message:</dt><dd><code>" 
+				+ StringEscapeUtils.escapeHtml4(e.getMessage()) 
+				+ "</code></dd>";
+		error += "<dt>Error stack:</dt><dd><pre>" 
+				+ StringEscapeUtils.escapeHtml4(Arrays.toString(e.getStackTrace())).replaceAll(",", "<br/>") 
+				+ "</pre></dd>";
 		error += "</dl>";
 		error += "</body></html>";
 		return error;

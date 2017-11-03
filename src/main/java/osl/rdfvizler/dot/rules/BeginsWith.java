@@ -25,8 +25,8 @@ public class BeginsWith extends BaseBuiltin {
 		if (length != 2) {
             throw new BuiltinException(this, context, "Must have exactly 2 arguments to " + getName());
         }
-		String arg1 = BuiltInUtils.lex(args[0], this, context);
-		String arg2 = BuiltInUtils.lex(args[1], this, context);
-		return (arg1.startsWith(arg2));
+		String arg1 = BuiltInUtils.lexicalValue(args[0], this, context);
+		String arg2 = BuiltInUtils.lexicalValue(args[1], this, context);
+		return arg1.startsWith(arg2);
 	}
 }

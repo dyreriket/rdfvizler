@@ -1,145 +1,108 @@
 package osl.rdfvizler.ui.cli;
 
-import org.apache.commons.cli.*;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.jena.rdf.model.Model;
 
 import osl.rdfvizler.dot.DotModel;
 import osl.rdfvizler.dot.DotProcess;
-
 import osl.rdfvizler.dot.RDF2Dot;
 import osl.util.rdf.Models;
 
-import java.io.BufferedWriter;
+public class RDFVizlerCLI extends CLI {
 
-import java.io.FileWriter;
-import java.io.IOException;
+    private static final String defaultDotFormat = "svg";
 
-public class RDFVizlerCLI {
+    // CLI options
+    private static final String OPT_RULES = "rules";
+    private static final String OPT_INPUT = "input";
+    private static final String OPT_XML = "xml";
+    private static final String OPT_EXEC = "exec";
+    private static final String OPT_OUTPUT = "output";
+    private static final String OPT_FORMATDOT = "dotformat";
+    private static final String OPT_COPYNAME = "copyname";
 
-	private static final String defaultDotFormat = "svg";
+    private String rulesPath;
+    private String inputPath;
+    private String outputPath;
+    private String execPath;
+    private String formatDot;
+    private String formatRDF;
 
-	// CLI options
-	private static final String RULES = "rules";
-	private static final String INPUT = "input";
-	private static final String XML = "xml";
-	private static final String EXEC = "exec";
-	private static final String OUTPUT = "output";
-	private static final String FORMATDOT = "dotformat";
-	private static final String COPYNAME = "copyname";
+    public static void main(String[] args) throws IOException {
+        RDFVizlerCLI rdfVizlerCLI = new RDFVizlerCLI();
+        if (rdfVizlerCLI.parse(args)) {
+            rdfVizlerCLI.execute();
+        }
+    }
 
-	private String rulesPath, inputPath, outputPath, execPath, formatDot, formatRDF;
+    private boolean parse(String[] args) {
+        Options options = new Options();
+        options.addOption("r", OPT_RULES, true,     "Path to rules file");
+        options.addOption("i", OPT_INPUT, true,     "Path to RDF file");
+        options.addOption("x", OPT_XML, false,      "RDF format is RDF/XML. Default is " + Models.DEFAULTFORMAT);
+        options.addOption("e", OPT_EXEC, true,      "Path to dot executable. Default is " + DotProcess.DEFAULT_EXEC);
+        options.addOption("o", OPT_OUTPUT, true,    "Output file. If omitted output to stdout");
+        options.addOption("d", OPT_FORMATDOT, true, "Output format for image. Default is " + defaultDotFormat);
+        options.addOption("c", OPT_COPYNAME, false, "Copy the name of the input argument for output name. Not with " + OPT_FORMATDOT);
 
-	public static void main(String[] args) throws IOException {
-		RDFVizlerCLI rdfVizlerCLI = new RDFVizlerCLI();
-		if (rdfVizlerCLI.parse(args)) {
-			rdfVizlerCLI.execute();
-		}
-	}
+        CommandLineParser parser = new DefaultParser();
+        try {
+            CommandLine line = parser.parse(options, args);
 
-	private boolean parse(String[] args) {
-		Options options = new Options();
-		options.addOption("r", RULES, true,     "Path to rules file");
-		options.addOption("i", INPUT, true,     "Path to RDF file");
-		options.addOption("x", XML, false,      "RDF format is RDF/XML. Default is " + Models.DefaultFormat);
-		options.addOption("e", EXEC, true,     "Path to dot executable. Default is " + DotProcess.DefaultExec);
-		options.addOption("o", OUTPUT, true,    "Output file. If omitted output to stdout");
-		options.addOption("d", FORMATDOT, true, "Output format for image. Default is " + defaultDotFormat);
-		options.addOption("c", COPYNAME, false, "Copy the name of the input argument for output name. Not with " + FORMATDOT);
+            inputPath = super.require(OPT_INPUT, line);
+            rulesPath = super.require(OPT_RULES, line);
+            formatDot = super.want(OPT_FORMATDOT, line, defaultDotFormat);
+            outputPath = line.hasOption(OPT_COPYNAME)
+                    ? FilenameUtils.removeExtension(inputPath) + "." + formatDot
+                            : super.want(OPT_OUTPUT, line);
 
-		CommandLineParser parser = new DefaultParser();
-		try {
-			CommandLine l = parser.parse(options, args);
+            execPath = super.want(OPT_EXEC, line);
+            formatRDF = line.hasOption(OPT_XML) ? "RDF/XML" : null;
 
+        } catch (ParseException | MissingConfigurationException e) {
+            System.out.println(e.getMessage());
+            HelpFormatter formatter = new HelpFormatter();
+            formatter.printHelp(110, "java -jar \\ \n          rdfvizler "
+                    + "--"+OPT_INPUT+" <rdfFile> --"+OPT_RULES+" <rulesFile> "
+                    + "[--"+OPT_OUTPUT+" <outputFile> | --"+OPT_XML+"  | -"+OPT_FORMATDOT+" <arg>]", "", options, "");
+            return false;
+        }
+        return true;
+    }
 
-			inputPath = require(INPUT, l);
-			rulesPath = require(RULES, l);
-			formatDot = want(FORMATDOT, l, defaultDotFormat);
-			outputPath = l.hasOption(COPYNAME)
-					? FilenameUtils.removeExtension(inputPath) + "." + formatDot
-					: want(OUTPUT, l);
+    private void execute() throws IOException {
+       
+        Model model = DotModel.getDotModel(inputPath, formatRDF, rulesPath);
+        String dot = RDF2Dot.toDot(model);
 
-			execPath = want(EXEC, l);
-			formatRDF = l.hasOption(XML) ? "RDF/XML" : null;
+        DotProcess dotProcess = (execPath != null) ? new DotProcess(execPath) : new DotProcess();
 
-		} catch (ParseException | MissingConfigurationException e) {
-			System.out.println(e.getMessage());
-			HelpFormatter formatter = new HelpFormatter();
-			formatter.printHelp(110, "java -jar \\ \n          rdfvizler "
-					+ "--"+INPUT+" <rdfFile> --"+RULES+" <rulesFile> "
-					+ "[--"+OUTPUT+" <outputFile> | --"+XML+"  | -"+FORMATDOT+" <arg>]", "", options, "");
-			return false;
-		}
-		return true;
-	}
+        String out;
+        if (formatDot.equalsIgnoreCase("ttl")) {
+            out = Models.writeModel(model, "TTL");
+        } else if (formatDot.equalsIgnoreCase("dot")) {
+            out = dot;
+        } else { 
+            out = dotProcess.runDot(dot, formatDot);
+        }
 
-	private void execute() throws IOException {
-		try {
-
-			Model model = DotModel.getDotModel(inputPath, formatRDF, rulesPath);
-			String dot = RDF2Dot.toDot(model);
-
-			DotProcess dotProcess = (execPath != null) ? new DotProcess(execPath) : new DotProcess();
-
-			String out;
-			if (formatDot.equalsIgnoreCase("ttl")) {
-				out = Models.writeModel(model, "TTL");
-			} else if (formatDot.equalsIgnoreCase("dot")) {
-				out = dot;
-			} else { 
-				out = dotProcess.runDot(dot, formatDot);
-			}
-
-			if (outputPath!=null) {
-				FileWriter fw = new FileWriter(outputPath);
-				BufferedWriter bw = new BufferedWriter(fw);
-				bw.write(out);
-				bw.close();
-			} else {
-				System.out.println(out);
-			}
-
-		} catch (RuntimeException | IOException e) {
-			throw e;
-		}
-	}
-
-
-
-	private static String want(String option, CommandLine l, String defaultValue) {
-		if (l.hasOption(option)) {
-			return l.getOptionValue(option);
-		} else {
-			return defaultValue;
-		}
-	}
-
-
-	private static String want(String option, CommandLine l) {
-		if (l.hasOption(option)) {
-			return l.getOptionValue(option);
-		} else {
-			return null;
-		}
-	}
-
-	private static String require(String option, CommandLine l) throws MissingConfigurationException {
-		if (l.hasOption(option)) {
-			return l.getOptionValue(option);
-		} else {
-			missing(option);
-		}
-		return "";
-	}
-
-	private static void missing(String option) throws MissingConfigurationException {
-		throw new MissingConfigurationException("Missing value for option " + option);
-	}
-
-	private static class MissingConfigurationException extends Exception {
-		private static final long serialVersionUID = 1169386320837465674L;
-		MissingConfigurationException(String msg) {
-			super(msg);
-		}
-	}
+        if (outputPath != null) {
+            FileWriter fw = new FileWriter(outputPath);
+            BufferedWriter bw = new BufferedWriter(fw);
+            bw.write(out);
+            bw.close();
+        } else {
+            System.out.println(out);
+        }
+    }
 }

@@ -9,11 +9,12 @@ import org.apache.commons.io.IOUtils;
 
 public class DotProcess {
 	
-	public static final String DefaultExec = "/usr/bin/dot";
+	public static final String DEFAULT_EXEC = "/usr/bin/dot";
 
-	private String exec = DefaultExec;
+	private String exec = DEFAULT_EXEC;
 
 	public DotProcess () {}
+	
 	public DotProcess (String execpath) {
 		this.exec = execpath;
 	}
@@ -22,21 +23,21 @@ public class DotProcess {
 	public String runDot (String dot, String format) throws IOException {	
 		Runtime runtime = Runtime.getRuntime();
 		Process process = runtime.exec(exec +" -Gcharset=UTF-8 -T"+format);
-		BufferedOutputStream outStreamProcess = new BufferedOutputStream(process.getOutputStream());
-		outStreamProcess.write(dot.getBytes(StandardCharsets.UTF_8));
-		outStreamProcess.close();
+		BufferedOutputStream outStream = new BufferedOutputStream(process.getOutputStream());
+		outStream.write(dot.getBytes(StandardCharsets.UTF_8));
+		outStream.close();
 
 		if (process.getErrorStream().available() > 0) {
-			throw new IOException ("Error parsing dot to " + format + ": " + 
-					readStream(process.getErrorStream()));
+			throw new IOException ("Error parsing dot to " + format 
+			        + ": " + readStream(process.getErrorStream()));
 		}
 		return readStream(process.getInputStream());
 	}
 
 	// convenience method to slurp entire stream into a string 
 	private String readStream (InputStream stream) throws IOException {
-		String s = IOUtils.toString(stream, StandardCharsets.UTF_8);
+		String string = IOUtils.toString(stream, StandardCharsets.UTF_8);
 		IOUtils.closeQuietly(stream);
-		return s;
+		return string;
 	}
 }

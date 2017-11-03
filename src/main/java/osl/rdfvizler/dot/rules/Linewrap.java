@@ -29,7 +29,7 @@ public class Linewrap extends BaseBuiltin {
 	}
 
 	protected Node value(Node literal, Node length, RuleContext context) {
-		String val = BuiltInUtils.lex(literal, this, context);
+		String val = BuiltInUtils.lexicalValue(literal, this, context);
 
 		int splitPoint;
 		if (length.isLiteral()) {
@@ -39,13 +39,8 @@ public class Linewrap extends BaseBuiltin {
         else {
 		    throw new BuiltinException(this, context, "Third argument must be a number");
         }
-
 		val = val.substring(0, splitPoint) + "\n" + val.substring(splitPoint);
 
-
 		return ResourceFactory.createPlainLiteral(val).asNode();
-
 	}
-
-
 }

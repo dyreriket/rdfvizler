@@ -23,25 +23,25 @@ public class TypedValue extends BaseBuiltin {
 		return env.bind(args[1], value(args[0], context));
 	}
 
-	protected Node value(Node n, RuleContext context) {
-		String s = "";
-		if (n.isBlank() || n.isURI()) {
-			s = BuiltInUtils.getTypes(n, context);
-			if (n.isURI()) {
-				if (!s.isEmpty()) {
-					s += "\\n";
+	protected Node value(Node node, RuleContext context) {
+		String string = "";
+		if (node.isBlank() || node.isURI()) {
+			string = BuiltInUtils.getTypes(node, context);
+			if (node.isURI()) {
+				if (!string.isEmpty()) {
+					string += "\\n";
 				}
-				s += BuiltInUtils.getShortForm(n, context);
+				string += BuiltInUtils.getShortForm(node, context);
 			}
-		} else if (n.isLiteral()) {
-			String dt = n.getLiteralDatatypeURI();
-			if (dt != null && dt.length() > 0) {
-				s = BuiltInUtils.getShortForm(dt, context) + "\\n";
+		} else if (node.isLiteral()) {
+			String datatype = node.getLiteralDatatypeURI();
+			if (datatype != null && datatype.length() > 0) {
+				string = BuiltInUtils.getShortForm(datatype, context) + "\\n";
 			}
-			s += n.getLiteralLexicalForm();
+			string += node.getLiteralLexicalForm();
 		} else {
-			throw new BuiltinException(this, context, "Illegal node type: " + n);
+			throw new BuiltinException(this, context, "Illegal node type: " + node);
 		}
-		return ResourceFactory.createPlainLiteral(s).asNode();
+		return ResourceFactory.createPlainLiteral(string).asNode();
 	}
 }

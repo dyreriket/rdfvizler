@@ -30,19 +30,19 @@ public abstract class BuiltInUtils {
 		return node.toString(context.getGraph().getPrefixMapping());
 	}
 	
-	public static String getShortForm(String URI, RuleContext context) {
-		return context.getGraph().getPrefixMapping().shortForm(URI);
+	public static String getShortForm(String uri, RuleContext context) {
+		return context.getGraph().getPrefixMapping().shortForm(uri);
 	}
 
-	public static String lex(Node n, BaseBuiltin that, RuleContext context) {
-		if (n.isBlank()) {
-			return n.getBlankNodeLabel();
-		} else if (n.isURI()) {
-			return n.getURI();
-		} else if (n.isLiteral()) {
-			return n.getLiteralLexicalForm();
+	public static String lexicalValue(Node node, BaseBuiltin that, RuleContext context) {
+		if (node.isBlank()) {
+			return node.getBlankNodeLabel();
+		} else if (node.isURI()) {
+			return node.getURI();
+		} else if (node.isLiteral()) {
+			return node.getLiteralLexicalForm();
 		} else {
-			throw new BuiltinException(that, context, "Illegal node type: " + n);
+			throw new BuiltinException(that, context, "Illegal node type: " + node);
 		}
 	}
 

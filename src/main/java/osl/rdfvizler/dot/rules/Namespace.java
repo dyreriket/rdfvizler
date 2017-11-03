@@ -23,11 +23,11 @@ public class Namespace extends BaseBuiltin {
 		return env.bind(args[1], value(args[0], context));
 	}
 
-	protected Node value(Node n, RuleContext context) {
-		if (n.isURI()) {
-			return ResourceFactory.createPlainLiteral(n.getNameSpace()).asNode();
+	protected Node value(Node node, RuleContext context) {
+		if (node.isURI()) {
+			return ResourceFactory.createPlainLiteral(node.getNameSpace()).asNode();
 		} else {
-			throw new BuiltinException(this, context, "Illegal node type: " + n);
+			throw new BuiltinException(this, context, "Illegal node type: " + node);
 		}
 	}
 }
