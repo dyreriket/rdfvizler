@@ -8,26 +8,29 @@ import org.apache.jena.reasoner.rulesys.RuleContext;
 import org.apache.jena.reasoner.rulesys.builtins.BaseBuiltin;
 
 public class Namespace extends BaseBuiltin {
-	
-	public String getName() {
-		return "namespace";
-	}
 
-	public int getArgLength() {
-		return 2;
-	}
+    @Override
+    public String getName() {
+        return "namespace";
+    }
 
-	public boolean bodyCall(Node[] args, int length, RuleContext context) {
-		super.checkArgs(length, context);
-		BindingEnvironment env = context.getEnv();
-		return env.bind(args[1], value(args[0], context));
-	}
+    @Override
+    public int getArgLength() {
+        return 2;
+    }
 
-	protected Node value(Node node, RuleContext context) {
-		if (node.isURI()) {
-			return ResourceFactory.createPlainLiteral(node.getNameSpace()).asNode();
-		} else {
-			throw new BuiltinException(this, context, "Illegal node type: " + node);
-		}
-	}
+    @Override
+    public boolean bodyCall(Node[] args, int length, RuleContext context) {
+        super.checkArgs(length, context);
+        BindingEnvironment env = context.getEnv();
+        return env.bind(args[1], value(args[0], context));
+    }
+
+    protected Node value(Node node, RuleContext context) {
+        if (node.isURI()) {
+            return ResourceFactory.createPlainLiteral(node.getNameSpace()).asNode();
+        } else {
+            throw new BuiltinException(this, context, "Illegal node type: " + node);
+        }
+    }
 }

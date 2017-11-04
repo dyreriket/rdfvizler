@@ -47,13 +47,17 @@ public class RDFVizlerCLI extends CLI {
 
     private boolean parse(String[] args) {
         Options options = new Options();
-        options.addOption("r", OPT_RULES, true,     "Path to rules file");
-        options.addOption("i", OPT_INPUT, true,     "Path to RDF file");
-        options.addOption("x", OPT_XML, false,      "RDF format is RDF/XML. Default is " + Models.DEFAULTFORMAT);
-        options.addOption("e", OPT_EXEC, true,      "Path to dot executable. Default is " + DotProcess.DEFAULT_EXEC);
-        options.addOption("o", OPT_OUTPUT, true,    "Output file. If omitted output to stdout");
-        options.addOption("d", OPT_FORMATDOT, true, "Output format for image. Default is " + defaultDotFormat);
-        options.addOption("c", OPT_COPYNAME, false, "Copy the name of the input argument for output name. Not with " + OPT_FORMATDOT);
+        options.addOption("r", OPT_RULES, true, "Path to rules file");
+        options.addOption("i", OPT_INPUT, true, "Path to RDF file");
+        options.addOption("x", OPT_XML, false,
+                "RDF format is RDF/XML. Default is " + Models.DEFAULTFORMAT);
+        options.addOption("e", OPT_EXEC, true,
+                "Path to dot executable. Default is " + DotProcess.DEFAULT_EXEC);
+        options.addOption("o", OPT_OUTPUT, true, "Output file. If omitted output to stdout");
+        options.addOption("d", OPT_FORMATDOT, true,
+                "Output format for image. Default is " + defaultDotFormat);
+        options.addOption("c", OPT_COPYNAME, false,
+                "Copy the name of the input argument for output name. Not with " + OPT_FORMATDOT);
 
         CommandLineParser parser = new DefaultParser();
         try {
@@ -64,7 +68,7 @@ public class RDFVizlerCLI extends CLI {
             formatDot = super.want(OPT_FORMATDOT, line, defaultDotFormat);
             outputPath = line.hasOption(OPT_COPYNAME)
                     ? FilenameUtils.removeExtension(inputPath) + "." + formatDot
-                            : super.want(OPT_OUTPUT, line);
+                    : super.want(OPT_OUTPUT, line);
 
             execPath = super.want(OPT_EXEC, line);
             formatRDF = line.hasOption(OPT_XML) ? "RDF/XML" : null;
@@ -72,16 +76,18 @@ public class RDFVizlerCLI extends CLI {
         } catch (ParseException | MissingConfigurationException e) {
             System.out.println(e.getMessage());
             HelpFormatter formatter = new HelpFormatter();
-            formatter.printHelp(110, "java -jar \\ \n          rdfvizler "
-                    + "--"+OPT_INPUT+" <rdfFile> --"+OPT_RULES+" <rulesFile> "
-                    + "[--"+OPT_OUTPUT+" <outputFile> | --"+OPT_XML+"  | -"+OPT_FORMATDOT+" <arg>]", "", options, "");
+            formatter.printHelp(110,
+                    "java -jar \\ \n          rdfvizler " + "--" + OPT_INPUT + " <rdfFile> --"
+                            + OPT_RULES + " <rulesFile> " + "[--" + OPT_OUTPUT
+                            + " <outputFile> | --" + OPT_XML + "  | -" + OPT_FORMATDOT + " <arg>]",
+                    "", options, "");
             return false;
         }
         return true;
     }
 
     private void execute() throws IOException {
-       
+
         Model model = DotModel.getDotModel(inputPath, formatRDF, rulesPath);
         String dot = RDF2Dot.toDot(model);
 
@@ -92,7 +98,7 @@ public class RDFVizlerCLI extends CLI {
             out = Models.writeModel(model, "TTL");
         } else if (formatDot.equalsIgnoreCase("dot")) {
             out = dot;
-        } else { 
+        } else {
             out = dotProcess.runDot(dot, formatDot);
         }
 

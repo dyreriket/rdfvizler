@@ -36,6 +36,7 @@ public abstract class CLI {
 
     public static class MissingConfigurationException extends Exception {
         private static final long serialVersionUID = 1169386320837465674L;
+
         MissingConfigurationException(String msg) {
             super(msg);
         }

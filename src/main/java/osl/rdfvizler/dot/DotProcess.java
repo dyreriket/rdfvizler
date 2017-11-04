@@ -8,36 +8,35 @@ import java.nio.charset.StandardCharsets;
 import org.apache.commons.io.IOUtils;
 
 public class DotProcess {
-	
-	public static final String DEFAULT_EXEC = "/usr/bin/dot";
 
-	private String exec = DEFAULT_EXEC;
+    public static final String DEFAULT_EXEC = "/usr/bin/dot";
 
-	public DotProcess () {}
-	
-	public DotProcess (String execpath) {
-		this.exec = execpath;
-	}
+    private String exec = DEFAULT_EXEC;
 
-	// convert dot spec into output format
-	public String runDot (String dot, String format) throws IOException {	
-		Runtime runtime = Runtime.getRuntime();
-		Process process = runtime.exec(exec +" -Gcharset=UTF-8 -T"+format);
-		BufferedOutputStream outStream = new BufferedOutputStream(process.getOutputStream());
-		outStream.write(dot.getBytes(StandardCharsets.UTF_8));
-		outStream.close();
+    public DotProcess() {}
 
-		if (process.getErrorStream().available() > 0) {
-			throw new IOException ("Error parsing dot to " + format 
-			        + ": " + readStream(process.getErrorStream()));
-		}
-		return readStream(process.getInputStream());
-	}
+    public DotProcess(String execpath) {
+        this.exec = execpath;
+    }
 
-	// convenience method to slurp entire stream into a string 
-	private String readStream (InputStream stream) throws IOException {
-		String string = IOUtils.toString(stream, StandardCharsets.UTF_8);
-		IOUtils.closeQuietly(stream);
-		return string;
-	}
+    // convert dot spec into output format
+    public String runDot(String dot, String format) throws IOException {
+        Runtime runtime = Runtime.getRuntime();
+        Process process = runtime.exec(exec + " -Gcharset=UTF-8 -T" + format);
+        BufferedOutputStream outStream = new BufferedOutputStream(process.getOutputStream());
+        outStream.write(dot.getBytes(StandardCharsets.UTF_8));
+        outStream.close();
+
+        if (process.getErrorStream().available() > 0) {
+            throw new IOException("Error parsing dot to " + format + ": " + readStream(process.getErrorStream()));
+        }
+        return readStream(process.getInputStream());
+    }
+
+    // convenience method to slurp entire stream into a string
+    private String readStream(InputStream stream) throws IOException {
+        String string = IOUtils.toString(stream, StandardCharsets.UTF_8);
+        IOUtils.closeQuietly(stream);
+        return string;
+    }
 }
