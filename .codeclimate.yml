@@ -2,7 +2,7 @@ engines:
   checkstyle:
     enabled: true
     config:
-      file: ".google_checks.xml"
+      file: ".checkstyle.xml"
 
 ratings:
   paths:
