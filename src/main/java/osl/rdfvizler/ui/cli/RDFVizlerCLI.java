@@ -45,7 +45,7 @@ public class RDFVizlerCLI {
         options.addOption("r", RULES, true, "Path to rules file");
         options.addOption("i", INPUT, true, "Path to RDF file");
         options.addOption("x", XML, false, "RDF format is RDF/XML. Default is " + Models.DefaultFormat);
-        options.addOption("e", EXEC, true, "Path to dot executable. Default is " + DotProcess.DefaultExec);
+        options.addOption("e", EXEC, true, "Path to dot executable. Default is " + DotProcess.DEFAULT_EXEC);
         options.addOption("o", OUTPUT, true, "Output file. If omitted output to stdout");
         options.addOption("d", FORMATDOT, true, "Output format for image. Default is " + defaultDotFormat);
         options.addOption("c", COPYNAME, false, "Copy the name of the input argument for output name. Not with " + FORMATDOT);

@@ -15,5 +15,5 @@ public class RDFVizlerCLITest {
 				+ "-i" + "http://folk.uio.no/martige/foaf.rdf "
 				+ "-x"		
 				).split(" "));
-	}
+	    }
 }

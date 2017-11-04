@@ -9,18 +9,18 @@ import java.nio.charset.StandardCharsets;
 
 public class DotProcess {
 	
-	public static final String DefaultExec = "/usr/bin/dot";
-	public static final String RDFVIZLER_DOT_EXEC = "RDFVIZLER_DOT_EXEC";
+	public static final String DEFAULT_EXEC = "/usr/bin/dot";
+	public static final String ENV_RDFVIZLER_DOT_EXEC = "RDFVIZLER_DOT_EXEC";
 
-	private String exec = DefaultExec;
+	private String exec = DEFAULT_EXEC;
 
 	public DotProcess () {
-		String newExec = System.getenv(RDFVIZLER_DOT_EXEC);
+		String newExec = System.getenv(ENV_RDFVIZLER_DOT_EXEC);
 		if (newExec != null && !newExec.isEmpty()) {
 			exec = newExec;
 		}
 		else {
-			exec = DefaultExec;
+			exec = DEFAULT_EXEC;
 		}
 	}
 
@@ -32,9 +32,9 @@ public class DotProcess {
 	public String runDot (String dot, String format) throws IOException {	
 		Runtime runtime = Runtime.getRuntime();
 		Process process = runtime.exec(exec +" -Gcharset=UTF-8 -T"+format);
-		BufferedOutputStream outStreamProcess = new BufferedOutputStream(process.getOutputStream());
-		outStreamProcess.write(dot.getBytes(StandardCharsets.UTF_8));
-		outStreamProcess.close();
+		BufferedOutputStream outputStream = new BufferedOutputStream(process.getOutputStream());
+		outputStream.write(dot.getBytes(StandardCharsets.UTF_8));
+		outputStream.close();
 
 		if (process.getErrorStream().available() > 0) {
 			throw new IOException ("Error parsing dot to " + format + ": " + 
