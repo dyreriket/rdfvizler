@@ -8,9 +8,10 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 public class DotProcess {
-	
-	public static final String DEFAULT_EXEC = "/usr/bin/dot";
+
 	public static final String ENV_RDFVIZLER_DOT_EXEC = "RDFVIZLER_DOT_EXEC";
+
+	public static final String DEFAULT_EXEC = "/usr/bin/dot";
 
 	private String exec = DEFAULT_EXEC;
 
@@ -37,8 +38,7 @@ public class DotProcess {
 		outputStream.close();
 
 		if (process.getErrorStream().available() > 0) {
-			throw new IOException ("Error parsing dot to " + format + ": " + 
-					readStream(process.getErrorStream()));
+			throw new IOException ("Error parsing dot to " + format + ": " + readStream(process.getErrorStream()));
 		}
 		return readStream(process.getInputStream());
 	}
