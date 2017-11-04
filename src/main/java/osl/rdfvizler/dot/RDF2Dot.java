@@ -82,15 +82,18 @@ public abstract class RDF2Dot {
         // graph attributes
         String attr = parseAttributes(resource, DotVocabulary.NAMESPACE_ATTR);
         if (attr.length() > 0) {
-            str.append(indent).append(attr).append(";\n"); }
+            str.append(indent).append(attr).append(";\n");
+        }
 
         // default node and edge attributes for graph
         String attrnode = parseAttributeList(resource, DotVocabulary.NAMESPACE_ATTRNODE);
         if (!attrnode.isEmpty()) {
-            str.append(indent).append(NODE).append(attrnode).append(";\n"); }
+            str.append(indent).append(NODE).append(attrnode).append(";\n");
+        }
         String attredge = parseAttributeList(resource, DotVocabulary.NAMESPACE_ATTREDGE);
         if (!attredge.isEmpty()) {
-            str.append(indent).append(EDGE).append(attredge).append(";\n"); }
+            str.append(indent).append(EDGE).append(attredge).append(";\n");
+        }
 
         // nodes and egdes
         str.append(parseElements(resource, DotVocabulary.hasNode, x -> parseNode(x), indent));
