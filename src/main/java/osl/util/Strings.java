@@ -11,8 +11,7 @@ public abstract class Strings {
         throw new IllegalStateException("Utility class");
     }
 
-    public static <E> String toString(Collection<E> objects, Function<E, Object> toString,
-            String glue) {
+    public static <E> String toString(Collection<E> objects, Function<E, Object> toString, String glue) {
         return objects.stream().map(object -> toString.apply(object).toString())
                 .collect(Collectors.joining(glue));
     }

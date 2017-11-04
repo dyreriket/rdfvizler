@@ -24,8 +24,7 @@ public abstract class DotVocabulary {
     public static final String NAMESPACE_ATTRNODE_PREFIX = "gvn";
     public static final String NAMESPACE_ATTREDGE_PREFIX = "gve";
 
-    public static final Resource StrictDiRootGraph = Vocabulary
-            .getResource(NS + "StrictDiRootGraph");
+    public static final Resource StrictDiRootGraph = Vocabulary.getResource(NS + "StrictDiRootGraph");
     public static final Resource StrictRootGraph = Vocabulary.getResource(NS + "StrictRootGraph");
     public static final Resource DiRootGraph = Vocabulary.getResource(NS + "DiRootGraph");
     public static final Resource RootGraph = Vocabulary.getResource(NS + "RootGraph");
@@ -34,8 +33,7 @@ public abstract class DotVocabulary {
     public static final Resource Node = Vocabulary.getResource(NS + "Node");
     public static final Resource Edge = Vocabulary.getResource(NS + "Edge");
 
-    public static final List<Resource> _Graphs = Arrays.asList(StrictDiRootGraph, StrictRootGraph,
-            DiRootGraph, RootGraph);
+    public static final List<Resource> _Graphs = Arrays.asList(StrictDiRootGraph, StrictRootGraph, DiRootGraph, RootGraph);
 
     public static final Property hasID = Vocabulary.getProperty(NS + "hasID");
     public static final Property hasNode = Vocabulary.getProperty(NS + "hasNode");

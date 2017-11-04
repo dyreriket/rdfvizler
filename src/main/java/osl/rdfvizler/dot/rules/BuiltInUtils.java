@@ -15,13 +15,11 @@ import osl.util.Strings;
 
 public abstract class BuiltInUtils {
 
-    public static final Comparator<Node> stringValueComparator = (Node p1, Node p2) -> p1.toString()
-            .compareTo(p2.toString());
+    public static final Comparator<Node> stringValueComparator = (Node p1, Node p2) -> p1.toString().compareTo(p2.toString());
 
     public static String getTypes(Node node, RuleContext context) {
         List<Node> types = new ArrayList<>();
-        context.find(node, RDF.type.asNode(), Node.ANY)
-                .forEachRemaining(t -> types.add(t.getObject()));
+        context.find(node, RDF.type.asNode(), Node.ANY).forEachRemaining(t -> types.add(t.getObject()));
         Collections.sort(types, stringValueComparator);
         return Strings.toString(types, t -> getShortForm(t, context), ", ");
     }
