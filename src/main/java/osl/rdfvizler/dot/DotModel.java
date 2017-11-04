@@ -36,40 +36,42 @@ public abstract class DotModel {
 
 	public static Model getDotModel (String pathRDF, String formatRDF) throws IllegalArgumentException, IOException {
 		Model model = Models.readModel(pathRDF, formatRDF);
-
 		List<Rule> rules = getRulesFromEnv();
 		Model dotModel = Models.applyRules(model, rules);
 		return dotModel;
 	}
 
-	private static List<Rule> getRulesFromEnv() {
-		InputStream in = DotModel.class.getResourceAsStream("/" + defaultRules);
-		BufferedReader br = new BufferedReader(new InputStreamReader(in));
-		Rule.Parser parser = Rule.rulesParserFromReader(br);
-		return Rule.parseRules(parser);
-	}
 
+    // check that (1) URL resolves, (2) with code 200, and (3) content not larger
+    // than max limit.
+    public static void checkURIInput(String path, int maxSize) throws IOException, IllegalArgumentException {
+        HttpURLConnection connection;
+        int httpCode;
+        try {
+            URL url = new URL(path);
+            connection = (HttpURLConnection) url.openConnection();
+            connection.connect();
+            httpCode = connection.getResponseCode();
+        } catch (java.net.MalformedURLException ex) {
+            throw new IllegalArgumentException("Error handling URI: '" + path + "': Malformed URL " + ex.getMessage());
+        }
+        if (httpCode != 200) {
+            throw new IllegalArgumentException("Error retrieving URI: '" + path + "'. URI returned code " + httpCode);
+        }
+        int size = connection.getContentLength();
 
-	// check that (1) URL resolves, (2) with code 200, and (3) content not larger than max limit.
-	public static void checkURIInput (String path, int maxSize) throws IOException, IllegalArgumentException {
-		HttpURLConnection connection;
-		int code;
-		try{
-			URL u = new URL(path);
-			connection = (HttpURLConnection) u.openConnection();
-			connection.connect();
-			code = connection.getResponseCode();
-		} catch (java.net.MalformedURLException ex) {
-			throw new IllegalArgumentException ("Error handling URI: '" + path + "': Malformed URL " + ex.getMessage());
-		}
-		if (code != 200) {
-			throw new IllegalArgumentException ("Error retrieving URI: '" + path + "'. URI returned code " + code);
-		}
-		int size = connection.getContentLength();
+        if (size > maxSize) {
+            throw new IllegalArgumentException("Error loading URI: '" + path + "'. " + "File size (" + size
+                    + ") exceeds the max file size set to: " + maxSize);
+        }
+    }
 
-		if (size > maxSize) {
-			throw new IllegalArgumentException ("Error loading URI: '"+path+"'. File size ("+size+") exceeds the max file size set to: " + maxSize);
-		}
-	}
+    private static List<Rule> getRulesFromEnv() {
+        InputStream in = DotModel.class.getResourceAsStream("/" + defaultRules);
+        BufferedReader br = new BufferedReader(new InputStreamReader(in));
+        Rule.Parser parser = Rule.rulesParserFromReader(br);
+        return Rule.parseRules(parser);
+    }
+
 
 }
