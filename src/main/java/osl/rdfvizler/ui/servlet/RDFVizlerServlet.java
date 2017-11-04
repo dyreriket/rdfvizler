@@ -28,6 +28,8 @@ public class RDFVizlerServlet extends HttpServlet {
     private static final String pRDFFormat = "in";
     private static final String pDotFormat = "out";
 
+    private static final String UTF8 = "UTF-8";
+
     // defaults, also available in web.xml
     private String defaultMaxFileSize = "300000";
     private String defaultDotExec = "/usr/bin/dot";
@@ -37,8 +39,6 @@ public class RDFVizlerServlet extends HttpServlet {
 
     private String maxFileSize;
     private String dotExec;
-
-    private static final String UTF8 = "UTF-8";
 
     private static <T> T getValue(T value, T defaultValue) {
         return value != null ? value : defaultValue;
@@ -56,8 +56,7 @@ public class RDFVizlerServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         String pathRDF = null;
         String pathRules = null;
@@ -99,8 +98,7 @@ public class RDFVizlerServlet extends HttpServlet {
     }
 
     // pass content on to response's writer
-    private void respond(HttpServletResponse response, String content, String mimetype)
-            throws IOException {
+    private void respond(HttpServletResponse response, String content, String mimetype) throws IOException {
         response.setCharacterEncoding(UTF8);
         response.setContentType(mimetype);
         PrintWriter writer = response.getWriter();
@@ -109,8 +107,7 @@ public class RDFVizlerServlet extends HttpServlet {
         writer.close();
     }
 
-    private String getErrorMessage(int responseCode, String pathRDF, String pathRules,
-            Exception e) {
+    private String getErrorMessage(int responseCode, String pathRDF, String pathRules, Exception e) {
         String error = "<html><head><meta http-equiv=\"Content-type\" content=\"text/html;charset=UTF-8\" />";
         error += "<title>RDFVizler - Error " + responseCode + "</title>";
         error += "</head><body>";
@@ -118,11 +115,9 @@ public class RDFVizlerServlet extends HttpServlet {
         error += "<dl>";
         error += "<dt>RDF:</dt><dd> " + pathRDF + "</dd>";
         error += "<dt>Rules:</dt><dd> " + pathRules + "</dd>";
-        error += "<dt>Error message:</dt><dd><code>" + StringEscapeUtils.escapeHtml4(e.getMessage())
-                + "</code></dd>";
-        error += "<dt>Error stack:</dt><dd><pre>" + StringEscapeUtils
-                .escapeHtml4(Arrays.toString(e.getStackTrace())).replaceAll(",", "<br/>")
-                + "</pre></dd>";
+        error += "<dt>Error message:</dt><dd><code>" + StringEscapeUtils.escapeHtml4(e.getMessage()) + "</code></dd>";
+        error += "<dt>Error stack:</dt>"
+            + "<dd><pre>" + StringEscapeUtils.escapeHtml4(Arrays.toString(e.getStackTrace())).replaceAll(",", "<br/>") + "</pre></dd>";
         error += "</dl>";
         error += "</body></html>";
         return error;
