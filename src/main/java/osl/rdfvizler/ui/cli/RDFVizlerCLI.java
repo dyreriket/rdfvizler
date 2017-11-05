@@ -1,11 +1,9 @@
 package osl.rdfvizler.ui.cli;
 
-
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
-
 
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -25,8 +23,6 @@ public class RDFVizlerCLI extends CLI {
 
 
     public static final String RDFVIZLER_RULES_PATH = "RDFVIZLER_RULES_PATH";
-
-
     private static final String defaultDotFormat = "svg";
 
     // CLI options
@@ -134,10 +130,8 @@ public class RDFVizlerCLI extends CLI {
             }
 
             if (outputPath!=null) {
-                FileWriter fw = new FileWriter(outputPath);
-                BufferedWriter bw = new BufferedWriter(fw);
-                bw.write(out);
-                bw.close();
+                BufferedWriter bw = new BufferedWriter(new FileWriter(outputPath));
+                bw.write(out); bw.close();
             } else {
                 System.out.println(out);
             }

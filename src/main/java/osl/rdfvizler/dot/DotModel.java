@@ -1,6 +1,5 @@
 package osl.rdfvizler.dot;
 
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,14 +36,14 @@ public abstract class DotModel {
     }
 
     // apply rules to input RDF to saturate with DOT vocabulary
-    public static Model getDotModel (String pathRDF, String formatRDF, String pathRules) throws IllegalArgumentException, IOException {
+    public static Model getDotModel(String pathRDF, String formatRDF, String pathRules) throws IllegalArgumentException, IOException {
         Model model = Models.readModel(pathRDF, formatRDF);
         List<Rule> rules = Rule.rulesFromURL(pathRules);
         Model dotModel = Models.applyRules(model, rules);
         return dotModel;
     }
 
-    public static Model getDotModel (String pathRDF, String formatRDF) throws IllegalArgumentException, IOException {
+    public static Model getDotModel(String pathRDF, String formatRDF) throws IllegalArgumentException, IOException {
         Model model = Models.readModel(pathRDF, formatRDF);
         List<Rule> rules = getRulesFromEnv();
         Model dotModel = Models.applyRules(model, rules);

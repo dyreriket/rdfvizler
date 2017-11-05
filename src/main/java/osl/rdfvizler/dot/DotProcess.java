@@ -1,11 +1,11 @@
 package osl.rdfvizler.dot;
 
-import org.apache.commons.io.IOUtils;
-
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+
+import org.apache.commons.io.IOUtils;
 
 public class DotProcess {
 
@@ -15,7 +15,7 @@ public class DotProcess {
 
     private String exec = DEFAULT_EXEC;
 
-    public DotProcess () {
+    public DotProcess() {
         String newExec = System.getenv(ENV_RDFVIZLER_DOT_EXEC);
         if (newExec != null && !newExec.isEmpty()) {
             exec = newExec;
@@ -25,12 +25,12 @@ public class DotProcess {
         }
     }
 
-    public DotProcess (String execpath) {
+    public DotProcess(String execpath) {
         this.exec = execpath;
     }
 
     // convert dot spec into output format
-    public String runDot (String dot, String format) throws IOException {
+    public String runDot(String dot, String format) throws IOException {
         Runtime runtime = Runtime.getRuntime();
         Process process = runtime.exec(exec + " -Gcharset=UTF-8 -T" + format);
         BufferedOutputStream outputStream = new BufferedOutputStream(process.getOutputStream());
@@ -38,13 +38,13 @@ public class DotProcess {
         outputStream.close();
 
         if (process.getErrorStream().available() > 0) {
-            throw new IOException ("Error parsing dot to " + format + ": " + readStream(process.getErrorStream()));
+            throw new IOException("Error parsing dot to " + format + ": " + readStream(process.getErrorStream()));
         }
         return readStream(process.getInputStream());
     }
 
     // convenience method to slurp entire stream into a string
-    private String readStream (InputStream stream) throws IOException {
+    private String readStream(InputStream stream) throws IOException {
         String s = IOUtils.toString(stream, StandardCharsets.UTF_8);
         IOUtils.closeQuietly(stream);
         return s;
