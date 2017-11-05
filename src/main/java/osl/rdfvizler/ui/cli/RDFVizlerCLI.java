@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
 
+
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -24,6 +25,7 @@ public class RDFVizlerCLI extends CLI {
 
 
     public static final String RDFVIZLER_RULES_PATH = "RDFVIZLER_RULES_PATH";
+
 
     private static final String defaultDotFormat = "svg";
 
@@ -55,7 +57,7 @@ public class RDFVizlerCLI extends CLI {
         options.addOption("r", OPT_RULES, true, "Path to rules file");
         options.addOption("i", OPT_INPUT, true, "Path to RDF file");
         options.addOption("x", OPT_XML, false,
-                "RDF format is RDF/XML. Default is ttl");
+                "RDF format is RDF/XML. Default is " + Models.DEFAULTFORMAT);
         options.addOption("e", OPT_EXEC, true,
                 "Path to dot executable. Default is " + DotProcess.DEFAULT_EXEC);
         options.addOption("o", OPT_OUTPUT, true, "Output file. If omitted output to stdout");
@@ -65,9 +67,6 @@ public class RDFVizlerCLI extends CLI {
                 "Copy the name of the input argument for output name. Not with " + OPT_FORMATDOT);
 
         CommandLineParser parser = new DefaultParser();
-
-
-
         try {
             line = parser.parse(options, args);
 
@@ -84,6 +83,7 @@ public class RDFVizlerCLI extends CLI {
 
         } catch (RuntimeException | ParseException | MissingConfigurationException e) {
             printHelp(options, e);
+
             return false;
         }
         return true;

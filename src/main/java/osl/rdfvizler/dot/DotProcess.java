@@ -9,7 +9,7 @@ import java.nio.charset.StandardCharsets;
 
 public class DotProcess {
 
-	public static final String ENV_RDFVIZLER_DOT_EXEC = "RDFVIZLER_DOT_EXEC";
+public static final String ENV_RDFVIZLER_DOT_EXEC = "RDFVIZLER_DOT_EXEC";
 
 	public static final String DEFAULT_EXEC = "/usr/bin/dot";
 

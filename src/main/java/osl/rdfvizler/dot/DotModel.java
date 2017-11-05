@@ -9,12 +9,18 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.reasoner.rulesys.BuiltinRegistry;
 import org.apache.jena.reasoner.rulesys.Rule;
 
-import osl.rdfvizler.dot.rules.*;
+import osl.rdfvizler.dot.rules.BeginsWith;
+import osl.rdfvizler.dot.rules.CreateUniqueIfLit;
+import osl.rdfvizler.dot.rules.ExcludeType;
+import osl.rdfvizler.dot.rules.Linewrap;
+import osl.rdfvizler.dot.rules.Namespace;
+import osl.rdfvizler.dot.rules.ShortValue;
+import osl.rdfvizler.dot.rules.TypedValue;
 import osl.util.rdf.Models;
 
 public abstract class DotModel {
 
-	private static String defaultRules = "default.jrule";
+private static String defaultRules = "default.jrule";
 
 	static {
 		BuiltinRegistry.theRegistry.register(new ShortValue());
@@ -40,7 +46,6 @@ public abstract class DotModel {
 		Model dotModel = Models.applyRules(model, rules);
 		return dotModel;
 	}
-
 
     // check that (1) URL resolves, (2) with code 200, and (3) content not larger
     // than max limit.
