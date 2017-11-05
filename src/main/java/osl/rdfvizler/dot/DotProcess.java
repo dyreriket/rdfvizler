@@ -19,8 +19,7 @@ public class DotProcess {
         String newExec = System.getenv(ENV_RDFVIZLER_DOT_EXEC);
         if (newExec != null && !newExec.isEmpty()) {
             exec = newExec;
-        }
-        else {
+        } else {
             exec = DEFAULT_EXEC;
         }
     }

@@ -67,7 +67,7 @@ public class RDFVizlerCLI extends CLI {
             line = parser.parse(options, args);
 
             if (line.hasOption(OPT_OUTPUT) && line.hasOption(OPT_COPYNAME)) {
-                throw new RuntimeException(OPT_OUTPUT + " and " + OPT_COPYNAME + " cannot both be selected at the same time");
+                throw new IllegalOptionCombinationException(OPT_OUTPUT + " and " + OPT_COPYNAME + " cannot both be selected at the same time");
             }
 
             rulesPath = getRulesPath();
@@ -77,7 +77,7 @@ public class RDFVizlerCLI extends CLI {
             execPath = want(OPT_EXEC);
             formatRDF = line.hasOption(OPT_XML) ? "RDF/XML" : null;
 
-        } catch (RuntimeException | ParseException | MissingConfigurationException e) {
+        } catch (IllegalOptionCombinationException | ParseException | MissingConfigurationException e) {
             printHelp(options, e);
 
             return false;
@@ -105,7 +105,7 @@ public class RDFVizlerCLI extends CLI {
         //if both are null, return null
         return Arrays.stream(
                 new String[]{ want(OPT_RULES), System.getenv(RDFVIZLER_RULES_PATH) })
-                .filter(x -> x !=null)
+                .filter(x -> x != null)
                 .findFirst()
                 .orElse(null);
     }
@@ -119,7 +119,6 @@ public class RDFVizlerCLI extends CLI {
                     ? DotModel.getDotModel(inputPath, formatRDF)
                     : DotModel.getDotModel(inputPath, formatRDF, rulesPath);
             String dot = RDF2Dot.toDot(model);
-
             String out;
             if (formatDot.equalsIgnoreCase("ttl")) {
                 out = Models.writeModel(model, "TTL");
@@ -129,9 +128,10 @@ public class RDFVizlerCLI extends CLI {
                 out = dotProcess.runDot(dot, formatDot);
             }
 
-            if (outputPath!=null) {
+            if (outputPath != null) {
                 BufferedWriter bw = new BufferedWriter(new FileWriter(outputPath));
-                bw.write(out); bw.close();
+                bw.write(out);
+                bw.close();
             } else {
                 System.out.println(out);
             }

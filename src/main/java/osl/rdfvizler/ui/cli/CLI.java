@@ -4,7 +4,7 @@ import org.apache.commons.cli.CommandLine;
 
 public abstract class CLI {
 
-    CommandLine line;
+    protected CommandLine line;
 
     public String want(String option, String defaultValue) {
         if (line.hasOption(option)) {
@@ -40,6 +40,14 @@ public abstract class CLI {
         private static final long serialVersionUID = 1169386320837465674L;
 
         MissingConfigurationException(String msg) {
+            super(msg);
+        }
+    }
+
+    public static class IllegalOptionCombinationException extends Exception {
+
+
+        IllegalOptionCombinationException(String msg) {
             super(msg);
         }
     }
