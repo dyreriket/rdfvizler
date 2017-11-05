@@ -4,7 +4,9 @@ import org.apache.commons.cli.CommandLine;
 
 public abstract class CLI {
 
-    public static String want(String option, CommandLine line, String defaultValue) {
+    CommandLine line;
+
+    public String want(String option, String defaultValue) {
         if (line.hasOption(option)) {
             return line.getOptionValue(option);
         } else {
@@ -12,7 +14,7 @@ public abstract class CLI {
         }
     }
 
-    public static String want(String option, CommandLine line) {
+    public  String want(String option) {
         if (line.hasOption(option)) {
             return line.getOptionValue(option);
         } else {
@@ -20,7 +22,7 @@ public abstract class CLI {
         }
     }
 
-    public static String require(String option, CommandLine line)
+    public String require(String option)
             throws MissingConfigurationException {
         if (line.hasOption(option)) {
             return line.getOptionValue(option);
