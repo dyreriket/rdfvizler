@@ -1,6 +1,10 @@
 package osl.rdfvizler.dot;
 
-import java.io.*;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
@@ -20,32 +24,32 @@ import osl.util.rdf.Models;
 
 public abstract class DotModel {
 
-private static String defaultRules = "default.jrule";
+    private static String defaultRules = "default.jrule";
 
-	static {
-		BuiltinRegistry.theRegistry.register(new ShortValue());
-		BuiltinRegistry.theRegistry.register(new Namespace());
-		BuiltinRegistry.theRegistry.register(new TypedValue());
-		BuiltinRegistry.theRegistry.register(new BeginsWith());
-		BuiltinRegistry.theRegistry.register(new Linewrap());
-		BuiltinRegistry.theRegistry.register(new ExcludeType());
-		BuiltinRegistry.theRegistry.register(new CreateUniqueIfLit());
-	}
+    static {
+        BuiltinRegistry.theRegistry.register(new ShortValue());
+        BuiltinRegistry.theRegistry.register(new Namespace());
+        BuiltinRegistry.theRegistry.register(new TypedValue());
+        BuiltinRegistry.theRegistry.register(new BeginsWith());
+        BuiltinRegistry.theRegistry.register(new Linewrap());
+        BuiltinRegistry.theRegistry.register(new ExcludeType());
+        BuiltinRegistry.theRegistry.register(new CreateUniqueIfLit());
+    }
 
-	// apply rules to input RDF to saturate with DOT vocabulary
-	public static Model getDotModel (String pathRDF, String formatRDF, String pathRules) throws IllegalArgumentException, IOException {
-		Model model = Models.readModel(pathRDF, formatRDF);
-		List<Rule> rules = Rule.rulesFromURL(pathRules);
-		Model dotModel = Models.applyRules(model, rules);
-		return dotModel;
-	}
+    // apply rules to input RDF to saturate with DOT vocabulary
+    public static Model getDotModel (String pathRDF, String formatRDF, String pathRules) throws IllegalArgumentException, IOException {
+        Model model = Models.readModel(pathRDF, formatRDF);
+        List<Rule> rules = Rule.rulesFromURL(pathRules);
+        Model dotModel = Models.applyRules(model, rules);
+        return dotModel;
+    }
 
-	public static Model getDotModel (String pathRDF, String formatRDF) throws IllegalArgumentException, IOException {
-		Model model = Models.readModel(pathRDF, formatRDF);
-		List<Rule> rules = getRulesFromEnv();
-		Model dotModel = Models.applyRules(model, rules);
-		return dotModel;
-	}
+    public static Model getDotModel (String pathRDF, String formatRDF) throws IllegalArgumentException, IOException {
+        Model model = Models.readModel(pathRDF, formatRDF);
+        List<Rule> rules = getRulesFromEnv();
+        Model dotModel = Models.applyRules(model, rules);
+        return dotModel;
+    }
 
     // check that (1) URL resolves, (2) with code 200, and (3) content not larger
     // than max limit.

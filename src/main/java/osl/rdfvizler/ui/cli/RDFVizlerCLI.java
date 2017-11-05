@@ -109,46 +109,43 @@ public class RDFVizlerCLI extends CLI {
         //if both are null, return null
         return Arrays.stream(
                 new String[]{ want(OPT_RULES), System.getenv(RDFVIZLER_RULES_PATH) })
-                    .filter(x -> x !=null)
-                    .findFirst()
-                    .orElse(null);
+                .filter(x -> x !=null)
+                .findFirst()
+                .orElse(null);
     }
 
-	private void execute() throws IOException {
-		try {
-
+    private void execute() throws IOException {
+        try {
             DotProcess dotProcess = (execPath != null)
                     ? new DotProcess(execPath)
                     : new DotProcess();
-
-			Model model = (rulesPath == null)
+            Model model = (rulesPath == null)
                     ? DotModel.getDotModel(inputPath, formatRDF)
                     : DotModel.getDotModel(inputPath, formatRDF, rulesPath);
+            String dot = RDF2Dot.toDot(model);
 
-			String dot = RDF2Dot.toDot(model);
+            String out;
+            if (formatDot.equalsIgnoreCase("ttl")) {
+                out = Models.writeModel(model, "TTL");
+            } else if (formatDot.equalsIgnoreCase("dot")) {
+                out = dot;
+            } else {
+                out = dotProcess.runDot(dot, formatDot);
+            }
 
-			String out;
-			if (formatDot.equalsIgnoreCase("ttl")) {
-				out = Models.writeModel(model, "TTL");
-			} else if (formatDot.equalsIgnoreCase("dot")) {
-				out = dot;
-			} else { 
-				out = dotProcess.runDot(dot, formatDot);
-			}
+            if (outputPath!=null) {
+                FileWriter fw = new FileWriter(outputPath);
+                BufferedWriter bw = new BufferedWriter(fw);
+                bw.write(out);
+                bw.close();
+            } else {
+                System.out.println(out);
+            }
 
-			if (outputPath!=null) {
-				FileWriter fw = new FileWriter(outputPath);
-				BufferedWriter bw = new BufferedWriter(fw);
-				bw.write(out);
-				bw.close();
-			} else {
-				System.out.println(out);
-			}
-
-		} catch (RuntimeException | IOException e) {
-			throw e;
-		}
-	}
+        } catch (RuntimeException | IOException e) {
+            throw e;
+        }
+    }
 
 
 }
