@@ -67,7 +67,8 @@ public class RDFVizlerCLI extends CLI {
             line = parser.parse(options, args);
 
             if (line.hasOption(OPT_OUTPUT) && line.hasOption(OPT_COPYNAME)) {
-                throw new IllegalOptionCombinationException(OPT_OUTPUT + " and " + OPT_COPYNAME + " cannot both be selected at the same time");
+                throw new IllegalOptionCombinationException(
+                        OPT_OUTPUT + " and " + OPT_COPYNAME + " cannot both be selected at the same time");
             }
 
             rulesPath = getRulesPath();
@@ -135,7 +136,6 @@ public class RDFVizlerCLI extends CLI {
             } else {
                 System.out.println(out);
             }
-
         } catch (RuntimeException | IOException e) {
             throw e;
         }
