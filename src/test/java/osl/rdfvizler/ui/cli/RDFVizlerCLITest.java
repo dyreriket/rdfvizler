@@ -37,6 +37,7 @@ public class RDFVizlerCLITest {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
 
         RDFVizlerCLI cli = new RDFVizlerCLI(new PrintStream(bytes));
+
         environmentVariables.set(ENV_RDFVIZLER_RULES_PATH, null);
 
         String input = getResourcePath(rdfXmlFile).getAbsolutePath();
@@ -50,32 +51,24 @@ public class RDFVizlerCLITest {
         }
     }
 
-    // @Test
-    public void shouldInferFilename() {
-        File rulesFile = getResourcePath(simpleRulesFile);
+    @Test
+    public void shouldInferFilename() throws IOException {
         File inputFile = getResourcePath(input1);
-
         File root = testFolder.getRoot();
-        try {
-            // moving the input file to the temp folder, so that the output will appear
-            // there also
 
-            FileUtils.copyFileToDirectory(inputFile, root);
-            File rinputFile = root.listFiles()[0]; // only one file there
+        // moving the input file to the temp folder, so that
+        // the output will appear there also
+        FileUtils.copyFileToDirectory(inputFile, root);
+        String rootInputFilePath = root.listFiles()[0].getAbsolutePath(); // only one file there
 
-            String[] args = ("-r " + rulesFile.getAbsolutePath() + " -i "
-                    + rinputFile.getAbsolutePath() + " -oe ").split(" ");
+        String[] args = (" -i " + rootInputFilePath + " -oe").split(" ");
 
-            RDFVizlerCLI rdfVizlerCLI = new RDFVizlerCLI(System.out);
-            if (rdfVizlerCLI.parseOptions(args)) {
-                rdfVizlerCLI.execute();
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
+        RDFVizlerCLI rdfVizlerCLI = new RDFVizlerCLI(System.out);
+        if (rdfVizlerCLI.parseOptions(args)) {
+            rdfVizlerCLI.execute();
         }
-
-        assertTrue(Arrays.stream(root.listFiles()).map(File::getName).anyMatch("input1.svg"::equals));
+        //Ensure that we find the output file in the temp folder
+        assertTrue(Arrays.stream(root.listFiles()).map(File::getName).anyMatch("input1.ttl.svg"::equals));
     }
 
     public File getResourcePath(String fileName) {
