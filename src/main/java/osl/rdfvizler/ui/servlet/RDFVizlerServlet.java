@@ -3,6 +3,7 @@ package osl.rdfvizler.ui.servlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
 
@@ -55,8 +56,7 @@ public class RDFVizlerServlet extends HttpServlet {
 
         String pathRDF = null;
         String pathRules = null;
-        String outputFormat;
-
+       
         try {
             pathRDF = getValue(request.getParameter(pRDF), pathRDF);
             RDFVizler rdfvizler = new RDFVizler(pathRDF);
@@ -69,7 +69,7 @@ public class RDFVizlerServlet extends HttpServlet {
             checkURIInput(pathRules);
             
             rdfvizler.setInputFormat(getValue(request.getParameter(pRDFFormat), defaultFormatRDF));
-            outputFormat = getValue(request.getParameter(pDotFormat), defaultFormatDot);
+            String outputFormat = getValue(request.getParameter(pDotFormat), defaultFormatDot);
 
             String output = rdfvizler.writeOutput(outputFormat);
             String mimetype = getMinetype(outputFormat);
@@ -82,10 +82,16 @@ public class RDFVizlerServlet extends HttpServlet {
 
     private String getMinetype(String format) {
         String mimetype;
-        if ("svg".equals(format)) {
+        if ("svg".equalsIgnoreCase(format)) {
             mimetype = "image/svg+xml";
-        } else if ("ttl".equals(format)) {
+        } else if ("TTL".equalsIgnoreCase(format)) {
             mimetype = "text/turtle";
+        } else if ("RDF/XML".equalsIgnoreCase(format)) {
+            mimetype = "application/rdf+xml";
+        } else if ("N-TRIPLES".equalsIgnoreCase(format)) {
+            mimetype = "application/n-triples";
+        } else if ("N3".equalsIgnoreCase(format)) {
+            mimetype = "text/n3";
         } else {
             mimetype = "text/plain";
         }
@@ -108,37 +114,44 @@ public class RDFVizlerServlet extends HttpServlet {
         HttpURLConnection connection;
         int httpCode;
         try {
-            URL url = new URL(path);
-            connection = (HttpURLConnection) url.openConnection();
-            connection.connect();
+            connection = getHttpConnection(path);
             httpCode = connection.getResponseCode();
         } catch (java.net.MalformedURLException ex) {
             throw new IllegalArgumentException("Error handling URI: '" + path + "': Malformed URL " + ex.getMessage());
         }
+        
         if (httpCode != 200) {
             throw new IllegalArgumentException("Error retrieving URI: '" + path + "'. URI returned code " + httpCode);
         }
-        int size = connection.getContentLength();
 
+        int size = connection.getContentLength();
         if (size > maxFileSize) {
-            throw new IllegalArgumentException("Error loading URI: '" + path + "'. " + "File size (" + size
-                    + ") exceeds the max file size set to: " + maxFileSize);
+            throw new IllegalArgumentException("Error loading URI: '" + path + "'. " 
+                    + "File size (" + size + ") exceeds the max file size set to: " + maxFileSize);
         }
+    }
+    
+    private HttpURLConnection getHttpConnection(String path) throws IOException {
+        HttpURLConnection connection;
+        URL url = new URL(path);
+        connection = (HttpURLConnection) url.openConnection();
+        return connection;
     }
 
     private String getErrorMessage(int responseCode, String pathRDF, String pathRules, Exception e) {
-        String error = "<html><head><meta http-equiv=\"Content-type\" content=\"text/html;charset=UTF-8\" />";
-        error += "<title>RDFVizler - Error " + responseCode + "</title>";
-        error += "</head><body>";
-        error += "<h1>RDFVizler - Error " + responseCode + "</h1>";
-        error += "<dl>";
-        error += "<dt>RDF:</dt><dd> " + pathRDF + "</dd>";
-        error += "<dt>Rules:</dt><dd> " + pathRules + "</dd>";
-        error += "<dt>Error message:</dt><dd><code>" + StringEscapeUtils.escapeHtml4(e.getMessage()) + "</code></dd>";
-        error += "<dt>Error stack:</dt>"
-                + "<dd><pre>" + StringEscapeUtils.escapeHtml4(Arrays.toString(e.getStackTrace())).replaceAll(",", "<br/>") + "</pre></dd>";
-        error += "</dl>";
-        error += "</body></html>";
-        return error;
+        StringBuilder str = new StringBuilder();
+        str.append("<html><head><meta http-equiv=\"Content-type\" content=\"text/html;charset=UTF-8\" />");
+        str.append("<title>RDFVizler - Error " + responseCode + "</title>");
+        str.append("</head><body>");
+        str.append("<h1>RDFVizler - Error " + responseCode + "</h1>");
+        str.append("<dl>");
+        str.append("<dt>RDF:</dt><dd> " + pathRDF + "</dd>");
+        str.append("<dt>Rules:</dt><dd> " + pathRules + "</dd>");
+        str.append("<dt>Error message:</dt><dd><code>" + StringEscapeUtils.escapeHtml4(e.getMessage()) + "</code></dd>");
+        str.append("<dt>Error stack:</dt>"
+                + "<dd><pre>" + StringEscapeUtils.escapeHtml4(Arrays.toString(e.getStackTrace())).replaceAll(",", "<br/>") + "</pre></dd>");
+        str.append("</dl>");
+        str.append("</body></html>");
+        return str.toString();
     }
 }

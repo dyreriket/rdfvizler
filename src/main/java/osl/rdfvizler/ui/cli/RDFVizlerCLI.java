@@ -81,7 +81,6 @@ public class RDFVizlerCLI extends CLI {
             line = parser.parse(options, args);
 
             String inputPath = line.getOptionValue(OPT_IN);
-
             rdfvizler = new RDFVizler(inputPath);
 
             consumeOptionValue(OPT_RULES,     v -> rdfvizler.setRulesPath(v), System.getenv(ENV_RDFVIZLER_RULES_PATH));
