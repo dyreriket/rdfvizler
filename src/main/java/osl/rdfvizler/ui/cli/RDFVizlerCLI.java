@@ -3,6 +3,7 @@ package osl.rdfvizler.ui.cli;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Arrays;
 
 import org.apache.commons.cli.CommandLineParser;
@@ -41,14 +42,21 @@ public class RDFVizlerCLI extends CLI {
     private String formatDot;
     private String formatRDF;
 
+    private static PrintStream console;
+
+    public RDFVizlerCLI(PrintStream out) {
+        console = out;
+    }
+
+
     public static void main(String[] args) throws IOException {
-        RDFVizlerCLI rdfVizlerCLI = new RDFVizlerCLI();
+        RDFVizlerCLI rdfVizlerCLI = new RDFVizlerCLI(System.out);
         if (rdfVizlerCLI.parse(args)) {
             rdfVizlerCLI.execute();
         }
     }
 
-    private boolean parse(String[] args) {
+    public boolean parse(String[] args) {
         Options options = new Options();
         options.addOption("r", OPT_RULES, true, "Path to rules file");
         options.addOption("i", OPT_INPUT, true, "Path to RDF file");
@@ -87,7 +95,7 @@ public class RDFVizlerCLI extends CLI {
     }
 
     private void printHelp(Options options, Exception e) {
-        System.out.println(e.getMessage());
+        console.println(e.getMessage());
         HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp(110, "java -jar \\ \n          rdfvizler "
                 + "--" + OPT_INPUT + " <rdfFile> --" + OPT_RULES + " <rulesFile> "
@@ -106,12 +114,12 @@ public class RDFVizlerCLI extends CLI {
         //if both are null, return null
         return Arrays.stream(
                 new String[]{ want(OPT_RULES), System.getenv(RDFVIZLER_RULES_PATH) })
-                .filter(x -> x != null)
+                .filter(x -> (x != null) && !x.isEmpty())
                 .findFirst()
                 .orElse(null);
     }
 
-    private void execute() throws IOException {
+    public void execute() throws IOException {
         try {
             DotProcess dotProcess = (execPath != null)
                     ? new DotProcess(execPath)
@@ -134,7 +142,7 @@ public class RDFVizlerCLI extends CLI {
                 bw.write(out);
                 bw.close();
             } else {
-                System.out.println(out);
+                console.println(out);
             }
         } catch (RuntimeException | IOException e) {
             throw e;

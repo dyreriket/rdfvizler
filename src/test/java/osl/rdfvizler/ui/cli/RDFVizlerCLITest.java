@@ -1,7 +1,10 @@
 package osl.rdfvizler.ui.cli;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
+import java.lang.reflect.Field;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -9,16 +12,21 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 
 import static org.hamcrest.CoreMatchers.hasItems;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.jena.n3.turtle.TurtleParseException;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.contrib.java.lang.system.EnvironmentVariables;
 import org.junit.rules.TemporaryFolder;
 
 import static org.junit.Assert.*;
+import static osl.rdfvizler.ui.cli.RDFVizlerCLI.RDFVIZLER_RULES_PATH;
 
 public class RDFVizlerCLITest {
 
@@ -26,27 +34,43 @@ public class RDFVizlerCLITest {
 	private final String file1 =  "test1.ttl";
     private final String input1 = "input1.ttl";
     private final String simpleRulesFile = "simple.jrule";
+    private final String rdfXmlFile = "input1.xml";
 
 	@Rule
 	public TemporaryFolder testFolder = new TemporaryFolder();
 
+    @Rule
+    public final EnvironmentVariables environmentVariables
+            = new EnvironmentVariables();
 
-	@Test public void shouldReadURIXMLformat() throws IOException {
-		RDFVizlerCLI.main((
-				"-r " + "https://mgskjaeveland.github.io/rdfvizler/rules/rdf.jrule "
-				+ "-i" + "http://folk.uio.no/martige/foaf.rdf "
-				+ "-x"		
-				).split(" "));
+
+	@Test public void shouldReadURIXMLformat() throws Exception {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+
+        RDFVizlerCLI cli = new RDFVizlerCLI(new PrintStream(bytes));
+        environmentVariables.set(RDFVIZLER_RULES_PATH, null);
+
+	    String input = getResourcePath(rdfXmlFile).getAbsolutePath();
+	    String args =
+                "-i " + input
+				+ " -x";
+
+        cli.parse(args.split(" "));
+        try {
+            cli.execute();
+        }
+        catch (TurtleParseException e) {
+            fail("-x toggle should accept RDF/XML format on input file, but doesn't");
+        }
 	}
 
-	@Test public void shouldInferFilename() {
 
+	@Test public void shouldInferFilename() {
 	    File rulesFile = getResourcePath(simpleRulesFile);
         File inputFile = getResourcePath(input1);
 
         File root = testFolder.getRoot();
         try {
-
             //moving the input file to the temp folder, so that the output will appear
             //there also
 
@@ -57,11 +81,8 @@ public class RDFVizlerCLITest {
                       "-r "
                     + rulesFile.getAbsolutePath()
                     + " -i " + rInputFile.getAbsolutePath()
-                    + " -c "
-                    + " -e /usr/local/bin/dot") //TODO:remove this line when env vars are in
+                    + " -c ")
                     .split(" ");
-
-
 
             RDFVizlerCLI rdfVizlerCLI = new RDFVizlerCLI(System.out);
             if (rdfVizlerCLI.parse(args)) {
