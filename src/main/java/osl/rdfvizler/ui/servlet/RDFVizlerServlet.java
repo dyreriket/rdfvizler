@@ -1,23 +1,18 @@
 package osl.rdfvizler.ui.servlet;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Arrays;
-
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringEscapeUtils;
+
 import osl.rdfvizler.dot.DotProcess;
 import osl.rdfvizler.ui.RDFVizler;
 
-public class RDFVizlerServlet extends HttpServlet {
+public class RDFVizlerServlet extends Servlet {
 
     private static final long serialVersionUID = 7193847752589093476L;
 
@@ -26,9 +21,7 @@ public class RDFVizlerServlet extends HttpServlet {
     private static final String pRules = "rules";
     private static final String pRDFFormat = "in";
     private static final String pDotFormat = "out";
-
-    private static final String UTF8 = "UTF-8";
-
+    
     // defaults, also available in web.xml
     private String defaultDotExec;
     private String defaultPathRules;
@@ -42,6 +35,7 @@ public class RDFVizlerServlet extends HttpServlet {
     }
 
     // possibly overwrite defaults with values from web.xml
+    @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
         defaultDotExec = getValue(config.getInitParameter("DotExec"), DotProcess.DEFAULT_EXEC);
@@ -65,77 +59,19 @@ public class RDFVizlerServlet extends HttpServlet {
             pathRules = getValue(request.getParameter(pRules), defaultPathRules);
             rdfvizler.setRulesPath(pathRules);
 
-            checkURIInput(pathRDF);
-            checkURIInput(pathRules);
+            super.checkURIInput(pathRDF, OKCodes, maxFileSize);
+            super.checkURIInput(pathRules, OKCodes, maxFileSize);
             
             rdfvizler.setInputFormat(getValue(request.getParameter(pRDFFormat), defaultFormatRDF));
             String outputFormat = getValue(request.getParameter(pDotFormat), defaultFormatDot);
 
             String output = rdfvizler.writeOutput(outputFormat);
-            String mimetype = getMinetype(outputFormat);
+            String mimetype = super.setMimetype(outputFormat);
 
-            respond(response, output, mimetype);
+            super.respond(response, output, mimetype);
         } catch (RuntimeException | IOException e) {
-            respond(response, getErrorMessage(500, pathRDF, pathRules, e), "text/html");
+            super.respond(response, getErrorMessage(500, pathRDF, pathRules, e), "text/html");
         }
-    }
-
-    private String getMinetype(String format) {
-        String mimetype;
-        if ("svg".equalsIgnoreCase(format)) {
-            mimetype = "image/svg+xml";
-        } else if ("TTL".equalsIgnoreCase(format)) {
-            mimetype = "text/turtle";
-        } else if ("RDF/XML".equalsIgnoreCase(format)) {
-            mimetype = "application/rdf+xml";
-        } else if ("N-TRIPLES".equalsIgnoreCase(format)) {
-            mimetype = "application/n-triples";
-        } else if ("N3".equalsIgnoreCase(format)) {
-            mimetype = "text/n3";
-        } else {
-            mimetype = "text/plain";
-        }
-        return mimetype;
-    }
-
-    // pass content on to response's writer
-    private void respond(HttpServletResponse response, String content, String mimetype) throws IOException {
-        response.setCharacterEncoding(UTF8);
-        response.setContentType(mimetype);
-        PrintWriter writer = response.getWriter();
-        writer.write(content);
-        writer.flush();
-        writer.close();
-    }
-
-    // check that (1) URL resolves, (2) with code 200, and (3) content not larger
-    // than max limit.
-    private void checkURIInput(String path) throws IOException, IllegalArgumentException {
-        HttpURLConnection connection;
-        int httpCode;
-        try {
-            connection = getHttpConnection(path);
-            httpCode = connection.getResponseCode();
-        } catch (java.net.MalformedURLException ex) {
-            throw new IllegalArgumentException("Error handling URI: '" + path + "': Malformed URL " + ex.getMessage());
-        }
-        
-        if (httpCode != 200) {
-            throw new IllegalArgumentException("Error retrieving URI: '" + path + "'. URI returned code " + httpCode);
-        }
-
-        int size = connection.getContentLength();
-        if (size > maxFileSize) {
-            throw new IllegalArgumentException("Error loading URI: '" + path + "'. " 
-                    + "File size (" + size + ") exceeds the max file size set to: " + maxFileSize);
-        }
-    }
-    
-    private HttpURLConnection getHttpConnection(String path) throws IOException {
-        HttpURLConnection connection;
-        URL url = new URL(path);
-        connection = (HttpURLConnection) url.openConnection();
-        return connection;
     }
 
     private String getErrorMessage(int responseCode, String pathRDF, String pathRules, Exception e) {

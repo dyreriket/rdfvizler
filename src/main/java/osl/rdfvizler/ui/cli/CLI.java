@@ -30,8 +30,8 @@ public abstract class CLI {
         }
     }
     
-    protected static Option buildOption(String shortName, String longname, boolean required, int noArgs, String description) {
-        Builder ob = Option.builder(shortName).longOpt(longname).required(required).desc(description);
+    protected static Option buildOption(String shortname, String longname, boolean required, int noArgs, String... description) {
+        Builder ob = Option.builder(shortname).longOpt(longname).required(required).desc(Arrays.toString(description, ""));
         if (noArgs < 0) {
             ob.hasArgs();
         } else {
