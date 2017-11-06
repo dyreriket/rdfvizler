@@ -43,6 +43,7 @@ public class DotTest {
 
         rdfvizler.setInputFormat("RDF/XML");
         rdfvizler.setRulesPath("docs/rules/rdf.jrule");
+        rdfvizler.setDotExecutable(pathDotExec);
 
         print("foaf.ttl" + ".dot", rdfvizler.writeOutput("TTL"));
         print("foaf.rdf" + ".dot", rdfvizler.writeOutput("dot"));
