@@ -3,6 +3,7 @@ package osl.rdfvizler.ui.cli;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintStream;
 
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -10,14 +11,13 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.commons.io.FilenameUtils;
 import osl.rdfvizler.dot.DotProcess;
 import osl.rdfvizler.ui.RDFVizler;
 import osl.util.Arrays;
 
 public class RDFVizlerCLI extends CLI {
 
-    private static final String ENV_RDFVIZLER_RULES_PATH = "RDFVIZLER_RULES_PATH";
+    protected static final String ENV_RDFVIZLER_RULES_PATH = "RDFVIZLER_RULES_PATH";
     private static final String ENV_RDFVIZLER_DOT_EXEC = "RDFVIZLER_DOT_EXEC";
 
     // CLI options
@@ -34,9 +34,16 @@ public class RDFVizlerCLI extends CLI {
     private String outputPath;
     private String outputFormat;
 
+    private static PrintStream console;
+
+    public RDFVizlerCLI(PrintStream out) {
+        console = out;
+    }
+
+
     public static void main(String[] args) throws IOException {
-        RDFVizlerCLI rdfVizlerCLI = new RDFVizlerCLI();
-        if (rdfVizlerCLI.parseOptions(rdfVizlerCLI.buildOptions(), args)) {
+        RDFVizlerCLI rdfVizlerCLI = new RDFVizlerCLI(System.out);
+        if (rdfVizlerCLI.parseOptions(args)) {
             rdfVizlerCLI.execute();
         }
     }
@@ -68,7 +75,8 @@ public class RDFVizlerCLI extends CLI {
         return options;
     }
 
-    private boolean parseOptions(Options options, String[] args) {
+    protected boolean parseOptions(String[] args) {
+        Options options = buildOptions();
         CommandLineParser parser = new DefaultParser();
         try {
             line = parser.parse(options, args);
@@ -96,17 +104,17 @@ public class RDFVizlerCLI extends CLI {
     }
 
     private void printHelp(Options options, Exception e) {
-        System.out.println(e.getMessage());
+        console.println(e.getMessage());
         HelpFormatter formatter = new HelpFormatter();
 
         StringBuilder str = new StringBuilder();
-        str.append("java -jar\n\trdfvizler")
-            .append("\n\t\t --" + OPT_IN + " <rdfFile>")
-            .append("\n\t\t [--" + OPT_RULES + " <rulesFile>]")
-            .append("\n\t\t [--" + OPT_INFORMAT + " <" + Arrays.toString(RDFVizler.INPUT_FORMATS, "|") + ">]")
-            .append("\n\t\t [--" + OPT_OUT + " <outputFile>")
+        str.append("java -jar rdfvizler")
+            .append(" --" + OPT_IN + " <rdfFile>")
+            .append(" [--" + OPT_RULES + " <rulesFile>]")
+            .append(" [--" + OPT_INFORMAT + " <" + Arrays.toString(RDFVizler.INPUT_FORMATS, "|") + ">]")
+            .append(" [--" + OPT_OUT + " <outputFile>")
             .append(" --" + OPT_OUTEXT + "]")
-            .append("\n\t\t [--" + OPT_OUTFORMAT 
+            .append(" [--" + OPT_OUTFORMAT 
                 + " <" 
                 + Arrays.toString(RDFVizler.DOT_OUTPUT_FORMATS, "|")
                 + "|" + Arrays.toString(RDFVizler.TEXT_OUTPUT_FORMATS, "|") 
@@ -117,7 +125,7 @@ public class RDFVizlerCLI extends CLI {
         formatter.printHelp(110, str.toString(), "", options, "");
     }
 
-    private void execute() throws IOException {
+    public void execute() throws IOException {
         try {
             String output = rdfvizler.writeOutput(outputFormat);
             writeOutput(output);
@@ -132,7 +140,7 @@ public class RDFVizlerCLI extends CLI {
             bw.write(output);
             bw.close();
         } else {
-            System.out.println(output);
+            console.println(output);
         }
     }
 }
