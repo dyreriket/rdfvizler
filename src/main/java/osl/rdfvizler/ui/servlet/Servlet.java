@@ -16,12 +16,12 @@ import org.apache.commons.lang3.ArrayUtils;
 import osl.util.Arrays;
 
 public abstract class Servlet extends HttpServlet {
-
-    private static final String UTF8 = "UTF-8";
     
     protected static int[] OKCodes = { 200 };
 
     private static final long serialVersionUID = -7780985876220754149L;
+    
+    private static final String UTF8 = "UTF-8";
     private static final Map<String, String> MIMETYPE;
 
     static {
@@ -33,7 +33,7 @@ public abstract class Servlet extends HttpServlet {
         m.put("N-TRIPLES", "application/rdf+xml");
         MIMETYPE = Collections.unmodifiableMap(m);
     }
-
+    
     public static String setMimetype(String format) {
         return MIMETYPE.getOrDefault(format, "text/plain");
     }
