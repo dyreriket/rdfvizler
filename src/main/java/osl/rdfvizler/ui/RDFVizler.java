@@ -1,13 +1,8 @@
 package osl.rdfvizler.ui;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
 import java.util.List;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.reasoner.rulesys.Rule;
 
@@ -101,13 +96,4 @@ public class RDFVizler {
         }
         return output;
     }
-    
-    /* TODO: remove this, don't think it is necessary.
-    private static List<Rule> getRulesFromEnv() {
-        InputStream in = RDFVizler.class.getResourceAsStream("/" + DEFAULT_RULES);
-        BufferedReader br = new BufferedReader(new InputStreamReader(in));
-        Rule.Parser parser = Rule.rulesParserFromReader(br);
-        return Rule.parseRules(parser);
-    }
-    */
 }

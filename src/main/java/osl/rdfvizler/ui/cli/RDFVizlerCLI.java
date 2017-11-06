@@ -28,18 +28,17 @@ public class RDFVizlerCLI extends CLI {
     private static final String OPT_OUT = "out";
     private static final String OPT_OUTFORMAT = "outFormat";
     private static final String OPT_OUTEXT = "outExtension";
+    
+    private PrintStream console;
 
     private RDFVizler rdfvizler;
 
     private String outputPath;
     private String outputFormat;
-
-    private static PrintStream console;
-
+    
     public RDFVizlerCLI(PrintStream out) {
         console = out;
     }
-
 
     public static void main(String[] args) throws IOException {
         RDFVizlerCLI rdfVizlerCLI = new RDFVizlerCLI(System.out);
