@@ -13,7 +13,7 @@ public class RDFVizlerCLITest {
 		RDFVizlerCLI.main((
 				"-r " + "https://mgskjaeveland.github.io/rdfvizler/rules/rdf.jrule "
 				+ "-i" + "http://folk.uio.no/martige/foaf.rdf "
-				+ "-x"		
+				+ "-if RDF/XML"		
 				).split(" "));
 	    }
 }

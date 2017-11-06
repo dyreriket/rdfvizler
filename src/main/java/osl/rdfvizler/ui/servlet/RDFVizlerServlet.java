@@ -2,6 +2,8 @@ package osl.rdfvizler.ui.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Arrays;
 
 import javax.servlet.ServletConfig;
@@ -11,12 +13,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringEscapeUtils;
-import org.apache.jena.rdf.model.Model;
-
-import osl.rdfvizler.dot.DotModel;
 import osl.rdfvizler.dot.DotProcess;
-import osl.rdfvizler.dot.RDF2Dot;
-import osl.util.rdf.Models;
+import osl.rdfvizler.ui.RDFVizler;
 
 public class RDFVizlerServlet extends HttpServlet {
 
@@ -31,14 +29,12 @@ public class RDFVizlerServlet extends HttpServlet {
     private static final String UTF8 = "UTF-8";
 
     // defaults, also available in web.xml
-    private String defaultMaxFileSize = "300000";
-    private String defaultDotExec = "/usr/bin/dot";
-    private String defaultPathRules = "https://mgskjaeveland.github.io/rdfvizler/rules/rdf.jrule";
-    private String defaultFormatRDF = "TTL";
-    private String defaultFormatDot = "svg";
+    private String defaultDotExec;
+    private String defaultPathRules;
+    private String defaultFormatRDF;
+    private String defaultFormatDot;
 
-    private String maxFileSize;
-    private String dotExec;
+    private int maxFileSize;
 
     private static <T> T getValue(T value, T defaultValue) {
         return value != null ? value : defaultValue;
@@ -47,12 +43,11 @@ public class RDFVizlerServlet extends HttpServlet {
     // possibly overwrite defaults with values from web.xml
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        dotExec = getValue(config.getInitParameter("DotExec"), defaultDotExec);
-        maxFileSize = getValue(config.getInitParameter("MaxInput"), defaultMaxFileSize);
-
-        defaultPathRules = getValue(config.getInitParameter("DefaultRules"), defaultPathRules);
-        defaultFormatRDF = getValue(config.getInitParameter("DefaultFormatRDF"), defaultFormatRDF);
-        defaultFormatDot = getValue(config.getInitParameter("DefaultFormatDot"), defaultFormatDot);
+        defaultDotExec = getValue(config.getInitParameter("DotExec"), DotProcess.DEFAULT_EXEC);
+        maxFileSize = Integer.parseInt(getValue(config.getInitParameter("MaxInput"), "30000"));
+        defaultPathRules = getValue(config.getInitParameter("DefaultRules"), RDFVizler.DEFAULT_RULES);
+        defaultFormatRDF = getValue(config.getInitParameter("DefaultFormatRDF"), RDFVizler.DEFAULT_INPUT_FORMAT);
+        defaultFormatDot = getValue(config.getInitParameter("DefaultFormatDot"), RDFVizler.DEFAULT_OUTPUT_FORMAT);
     }
 
     @Override
@@ -60,41 +55,41 @@ public class RDFVizlerServlet extends HttpServlet {
 
         String pathRDF = null;
         String pathRules = null;
-        String formatRDF;
-        String formatDot;
+        String outputFormat;
 
         try {
             pathRDF = getValue(request.getParameter(pRDF), pathRDF);
+            RDFVizler rdfvizler = new RDFVizler(pathRDF);
+            rdfvizler.setDotExecutable(defaultDotExec);
+
             pathRules = getValue(request.getParameter(pRules), defaultPathRules);
-            formatRDF = getValue(request.getParameter(pRDFFormat), defaultFormatRDF);
-            formatDot = getValue(request.getParameter(pDotFormat), defaultFormatDot);
+            rdfvizler.setRulesPath(pathRules);
 
-            int maxSize = Integer.parseInt(maxFileSize);
+            checkURIInput(pathRDF);
+            checkURIInput(pathRules);
+            
+            rdfvizler.setInputFormat(getValue(request.getParameter(pRDFFormat), defaultFormatRDF));
+            outputFormat = getValue(request.getParameter(pDotFormat), defaultFormatDot);
 
-            DotModel.checkURIInput(pathRDF, maxSize);
-            DotModel.checkURIInput(pathRules, maxSize);
+            String output = rdfvizler.writeOutput(outputFormat);
+            String mimetype = getMinetype(outputFormat);
 
-            Model model = DotModel.getDotModel(pathRDF, formatRDF, pathRules);
-            String dot = RDF2Dot.toDot(model);
-
-            DotProcess dotProcess = new DotProcess(dotExec);
-            String out;
-            String mimetype;
-
-            if ("svg".equals(formatDot)) {
-                out = dotProcess.runDot(dot, formatDot);
-                mimetype = "image/svg+xml";
-            } else if ("ttl".equals(formatDot)) {
-                out = Models.writeModel(model, "TTL");
-                mimetype = "text/turtle";
-            } else {
-                out = dot;
-                mimetype = "text/plain";
-            }
-            respond(response, out, mimetype);
+            respond(response, output, mimetype);
         } catch (RuntimeException | IOException e) {
             respond(response, getErrorMessage(500, pathRDF, pathRules, e), "text/html");
         }
+    }
+
+    private String getMinetype(String format) {
+        String mimetype;
+        if ("svg".equals(format)) {
+            mimetype = "image/svg+xml";
+        } else if ("ttl".equals(format)) {
+            mimetype = "text/turtle";
+        } else {
+            mimetype = "text/plain";
+        }
+        return mimetype;
     }
 
     // pass content on to response's writer
@@ -107,6 +102,30 @@ public class RDFVizlerServlet extends HttpServlet {
         writer.close();
     }
 
+    // check that (1) URL resolves, (2) with code 200, and (3) content not larger
+    // than max limit.
+    private void checkURIInput(String path) throws IOException, IllegalArgumentException {
+        HttpURLConnection connection;
+        int httpCode;
+        try {
+            URL url = new URL(path);
+            connection = (HttpURLConnection) url.openConnection();
+            connection.connect();
+            httpCode = connection.getResponseCode();
+        } catch (java.net.MalformedURLException ex) {
+            throw new IllegalArgumentException("Error handling URI: '" + path + "': Malformed URL " + ex.getMessage());
+        }
+        if (httpCode != 200) {
+            throw new IllegalArgumentException("Error retrieving URI: '" + path + "'. URI returned code " + httpCode);
+        }
+        int size = connection.getContentLength();
+
+        if (size > maxFileSize) {
+            throw new IllegalArgumentException("Error loading URI: '" + path + "'. " + "File size (" + size
+                    + ") exceeds the max file size set to: " + maxFileSize);
+        }
+    }
+
     private String getErrorMessage(int responseCode, String pathRDF, String pathRules, Exception e) {
         String error = "<html><head><meta http-equiv=\"Content-type\" content=\"text/html;charset=UTF-8\" />";
         error += "<title>RDFVizler - Error " + responseCode + "</title>";
@@ -117,7 +136,7 @@ public class RDFVizlerServlet extends HttpServlet {
         error += "<dt>Rules:</dt><dd> " + pathRules + "</dd>";
         error += "<dt>Error message:</dt><dd><code>" + StringEscapeUtils.escapeHtml4(e.getMessage()) + "</code></dd>";
         error += "<dt>Error stack:</dt>"
-            + "<dd><pre>" + StringEscapeUtils.escapeHtml4(Arrays.toString(e.getStackTrace())).replaceAll(",", "<br/>") + "</pre></dd>";
+                + "<dd><pre>" + StringEscapeUtils.escapeHtml4(Arrays.toString(e.getStackTrace())).replaceAll(",", "<br/>") + "</pre></dd>";
         error += "</dl>";
         error += "</body></html>";
         return error;

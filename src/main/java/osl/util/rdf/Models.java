@@ -15,19 +15,21 @@ import org.apache.jena.util.FileManager;
 import org.apache.jena.util.FileUtils;
 import org.apache.jena.vocabulary.RDF;
 
+import osl.util.Arrays;
 import osl.util.Strings;
 
 public abstract class Models {
 
-    public static final String DEFAULTFORMAT = "TTL";
-
+    public static final String[] RDF_FORMATS = { "TTL", "RDF/XML", "N3", "N-TRIPLES" };
+    public static final String DEFAULT_RDF_FORMAT = "TTL";
+    
     // hiding constructor
     private Models() {
         throw new IllegalStateException("Utility class");
     }
 
     public static Model readModel(String file) {
-        return readModel(file, FileUtils.guessLang(file, DEFAULTFORMAT));
+        return readModel(file, FileUtils.guessLang(file, DEFAULT_RDF_FORMAT));
     }
 
     public static Model readModel(String file, String serialisation) {
@@ -68,6 +70,10 @@ public abstract class Models {
 
     public static String shortName(Model model, Collection<Resource> resources) {
         return "[" + Strings.toString(resources, r -> shortName(model, r), ", ") + "]";
+    }
+
+    public static boolean isRDFFormat(String inputFormat) {
+        return Arrays.inArray(RDF_FORMATS, inputFormat);
     }
 
 }

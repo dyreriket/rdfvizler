@@ -15,4 +15,10 @@ public abstract class Strings {
         return objects.stream().map(object -> toString.apply(object).toString())
                 .collect(Collectors.joining(glue));
     }
+    
+    public static <E> String toString(Collection<E> objects, String glue) {
+        return objects.stream().map(object -> object.toString())
+                .collect(Collectors.joining(glue));
+    }
+  
 }

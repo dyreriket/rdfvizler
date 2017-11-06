@@ -7,29 +7,22 @@ import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.io.IOUtils;
 
-public class DotProcess {
-
-    public static final String ENV_RDFVIZLER_DOT_EXEC = "RDFVIZLER_DOT_EXEC";
-
+public abstract class DotProcess {
+    
     public static final String DEFAULT_EXEC = "/usr/bin/dot";
-
-    private String exec = DEFAULT_EXEC;
-
-    public DotProcess() {
-        String newExec = System.getenv(ENV_RDFVIZLER_DOT_EXEC);
-        if (newExec != null && !newExec.isEmpty()) {
-            exec = newExec;
-        } else {
-            exec = DEFAULT_EXEC;
-        }
+    public static final String[] DOT_FORMATS = { "svg", "png", "pdf" };
+    public static final String DEFAULT_FORMAT = "svg";
+ 
+    public static String runDot(String dot) throws IOException {
+        return runDot(DEFAULT_EXEC, dot, DEFAULT_FORMAT);
     }
-
-    public DotProcess(String execpath) {
-        this.exec = execpath;
+    
+    public static String runDot(String dot, String format) throws IOException {
+        return runDot(DEFAULT_EXEC, dot, format);
     }
 
     // convert dot spec into output format
-    public String runDot(String dot, String format) throws IOException {
+    public static String runDot(String exec, String dot, String format) throws IOException {
         Runtime runtime = Runtime.getRuntime();
         Process process = runtime.exec(exec + " -Gcharset=UTF-8 -T" + format);
         BufferedOutputStream outputStream = new BufferedOutputStream(process.getOutputStream());
@@ -43,9 +36,14 @@ public class DotProcess {
     }
 
     // convenience method to slurp entire stream into a string
-    private String readStream(InputStream stream) throws IOException {
+    private static String readStream(InputStream stream) throws IOException {
         String s = IOUtils.toString(stream, StandardCharsets.UTF_8);
         IOUtils.closeQuietly(stream);
         return s;
+    }
+    
+    // hiding constructor
+    private DotProcess() {
+        throw new IllegalStateException("Utility class");
     }
 }

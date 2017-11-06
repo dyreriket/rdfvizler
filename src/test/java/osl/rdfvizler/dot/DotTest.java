@@ -5,6 +5,8 @@ import org.apache.jena.rdf.model.Model;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+
+import osl.rdfvizler.ui.RDFVizler;
 import osl.util.rdf.Models;
 
 import java.io.File;
@@ -33,29 +35,26 @@ public class DotTest {
 	
 	@Test 
 	public void should () throws IllegalArgumentException, IOException {
-		
-		Model model = DotModel.getDotModel(
-				"http://folk.uio.no/martige/foaf.rdf", "RDF/XML",
-				"docs/rules/rdf.jrule");
-				//"https://mgskjaeveland.github.io/rdfvizler/rules/rdf.jrule");
-		String dotmodel = Models.writeModel(model, "TTL");
-		print( "foaf.ttl" + ".dot", dotmodel);
-		String dot = RDF2Dot.toDot(model);
-		print( "foaf.rdf" + ".dot", dot);
-		String out = runDot(dot, "svg");
-		print( "foaf.rdf" + ".svg", out);
+	    
+	    RDFVizler rdfvizler = new RDFVizler("http://folk.uio.no/martige/foaf.rdf");
+
+	    rdfvizler.setInputFormat("RDF/XML");
+	    rdfvizler.setRulesPath("docs/rules/rdf.jrule");
+
+		print( "foaf.ttl" + ".dot", rdfvizler.writeOutput("TTL"));
+		print( "foaf.rdf" + ".dot", rdfvizler.writeOutput("dot"));
+		print( "foaf.rdf" + ".svg", rdfvizler.writeOutput("svg"));
 	}
 	
 	////////////////////////////////////////
 	
 	private String runDot (String content, String format) throws IOException {
-		DotProcess exe = new DotProcess();
-		return exe.runDot(content, format);
+		return DotProcess.runDot(content, format);
 	}
 	
 	private String toDot (String file) {
 		Model model = Models.readModel(file);
-		String dot = RDF2Dot.toDot(model);
+		String dot = RDF2DotParser.toDot(model);
 		return dot;
 	}
 	

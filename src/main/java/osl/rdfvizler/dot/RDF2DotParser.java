@@ -14,7 +14,7 @@ import osl.util.Strings;
 import osl.util.rdf.Models;
 import osl.util.rdf.vocab.DotVocabulary;
 
-public abstract class RDF2Dot {
+public abstract class RDF2DotParser {
 
     private static final String STRICT = "strict ";
     private static final String GRAPH = "graph ";
@@ -35,11 +35,6 @@ public abstract class RDF2Dot {
         model.setNsPrefix(DotVocabulary.NAMESPACE_ATTR_PREFIX, DotVocabulary.NAMESPACE_ATTR);
         model.setNsPrefix(DotVocabulary.NAMESPACE_ATTRNODE_PREFIX, DotVocabulary.NAMESPACE_ATTRNODE);
         model.setNsPrefix(DotVocabulary.NAMESPACE_ATTREDGE_PREFIX, DotVocabulary.NAMESPACE_ATTREDGE);
-    }
-
-    // hiding constructor
-    private RDF2Dot() {
-        throw new IllegalStateException("Utility class");
     }
 
     public static String toDot(Model model) {
@@ -177,5 +172,10 @@ public abstract class RDF2Dot {
                     + graphs.size() + ": " + Models.shortName(model, graphs));
         }
         return graphs.get(0);
+    }
+    
+    // hiding constructor
+    private RDF2DotParser() {
+        throw new IllegalStateException("Utility class");
     }
 }
