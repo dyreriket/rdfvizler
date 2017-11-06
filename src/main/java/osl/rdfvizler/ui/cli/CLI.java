@@ -10,10 +10,10 @@ import osl.util.Arrays;
 
 public abstract class CLI {
 
-    protected CommandLine line;
-    
     private static final String[] EMPTY_ARRAY = {};
     private static final char OPTION_VALUE_SEPARATOR = ',';
+    
+    protected CommandLine line;
     
     protected void consumeOptionValue(String option, Consumer<String> setFunction) {
         consumeOptionValue(option, setFunction, EMPTY_ARRAY); // call without backups

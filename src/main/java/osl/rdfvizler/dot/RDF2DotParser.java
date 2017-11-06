@@ -28,6 +28,11 @@ public abstract class RDF2DotParser {
     private static final String EDGE_OP_DIGRAPH = " -> ";
     private static final String EDGE_OP_GRAPH   = " -- ";
     private static String EDGE_OP;
+    
+    // hiding constructor
+    private RDF2DotParser() {
+        throw new IllegalStateException("Utility class");
+    }
 
     private static void addPrefixes(Model model) {
         model.withDefaultMappings(PrefixMapping.Standard);
@@ -172,10 +177,5 @@ public abstract class RDF2DotParser {
                     + graphs.size() + ": " + Models.shortName(model, graphs));
         }
         return graphs.get(0);
-    }
-    
-    // hiding constructor
-    private RDF2DotParser() {
-        throw new IllegalStateException("Utility class");
     }
 }

@@ -13,6 +13,11 @@ public abstract class DotProcess {
     public static final String[] DOT_FORMATS = { "svg", "png", "pdf" };
     public static final String DEFAULT_FORMAT = "svg";
  
+    // hiding constructor
+    private DotProcess() {
+        throw new IllegalStateException("Utility class");
+    }
+    
     public static String runDot(String dot) throws IOException {
         return runDot(DEFAULT_EXEC, dot, DEFAULT_FORMAT);
     }
@@ -42,8 +47,5 @@ public abstract class DotProcess {
         return s;
     }
     
-    // hiding constructor
-    private DotProcess() {
-        throw new IllegalStateException("Utility class");
-    }
+    
 }

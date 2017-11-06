@@ -102,10 +102,12 @@ public class RDFVizler {
         return output;
     }
     
+    /* TODO: remove this, don't think it is necessary.
     private static List<Rule> getRulesFromEnv() {
         InputStream in = RDFVizler.class.getResourceAsStream("/" + DEFAULT_RULES);
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
         Rule.Parser parser = Rule.rulesParserFromReader(br);
         return Rule.parseRules(parser);
     }
+    */
 }
