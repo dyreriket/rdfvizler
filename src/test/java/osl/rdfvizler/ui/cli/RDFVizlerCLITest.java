@@ -1,5 +1,6 @@
 package osl.rdfvizler.ui.cli;
 
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static osl.rdfvizler.ui.cli.RDFVizlerCLI.ENV_RDFVIZLER_RULES_PATH;
 
@@ -8,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.URL;
+import java.util.Arrays;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.jena.n3.turtle.TurtleParseException;
@@ -31,7 +33,7 @@ public class RDFVizlerCLITest {
     public final EnvironmentVariables environmentVariables = new EnvironmentVariables();
 
     @Test
-    public void shouldReadURIXMLformat() throws Exception {
+    public void shouldReadURI_XMLformat() throws Exception {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
 
         RDFVizlerCLI cli = new RDFVizlerCLI(new PrintStream(bytes));
@@ -59,10 +61,10 @@ public class RDFVizlerCLITest {
             // there also
 
             FileUtils.copyFileToDirectory(inputFile, root);
-            File rInputFile = root.listFiles()[0]; // only one file there
+            File rinputFile = root.listFiles()[0]; // only one file there
 
             String[] args = ("-r " + rulesFile.getAbsolutePath() + " -i "
-                    + rInputFile.getAbsolutePath() + " -oe ").split(" ");
+                    + rinputFile.getAbsolutePath() + " -oe ").split(" ");
 
             RDFVizlerCLI rdfVizlerCLI = new RDFVizlerCLI(System.out);
             if (rdfVizlerCLI.parseOptions(args)) {
@@ -73,7 +75,7 @@ public class RDFVizlerCLITest {
             e.printStackTrace();
         }
 
-        //assertTrue(Arrays.stream(root.listFiles()).map(File::getName).anyMatch("input1.svg"::equals));
+        assertTrue(Arrays.stream(root.listFiles()).map(File::getName).anyMatch("input1.svg"::equals));
     }
 
     public File getResourcePath(String fileName) {

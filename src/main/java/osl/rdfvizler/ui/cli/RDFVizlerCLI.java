@@ -18,7 +18,7 @@ import osl.util.Arrays;
 public class RDFVizlerCLI extends CLI {
 
     protected static final String ENV_RDFVIZLER_RULES_PATH = "RDFVIZLER_RULES_PATH";
-    private static final String ENV_RDFVIZLER_DOT_EXEC = "RDFVIZLER_DOT_EXEC";
+    public static final String ENV_RDFVIZLER_DOT_EXEC = "RDFVIZLER_DOT_EXEC";
 
     // CLI options
     private static final String OPT_RULES = "rules";
@@ -85,14 +85,11 @@ public class RDFVizlerCLI extends CLI {
             rdfvizler = new RDFVizler(inputPath);
 
             consumeOptionValue(OPT_RULES,     v -> rdfvizler.setRulesPath(v), System.getenv(ENV_RDFVIZLER_RULES_PATH));
-
             consumeOptionValue(OPT_INFORMAT,  v -> rdfvizler.setInputFormat(v));
             consumeOptionValue(OPT_OUTFORMAT, v -> this.outputFormat = v, RDFVizler.DEFAULT_OUTPUT_FORMAT);
-
             // set output path
             consumeOptionValue(OPT_OUT,       v -> this.outputPath = v);
             consumeOptionValue(OPT_OUTEXT,    v -> this.outputPath = inputPath + "." + this.outputFormat);
-
             consumeOptionValue(OPT_DOTEXEC,   v -> rdfvizler.setDotExecutable(v), System.getenv(ENV_RDFVIZLER_DOT_EXEC));
 
         } catch (ParseException e) {
@@ -107,7 +104,7 @@ public class RDFVizlerCLI extends CLI {
         HelpFormatter formatter = new HelpFormatter();
 
         StringBuilder str = new StringBuilder();
-        str.append("java -jar rdfvizler")
+        str//.append("java -jar rdfvizler")
             .append(" --" + OPT_IN + " <rdfFile>")
             .append(" [--" + OPT_RULES + " <rulesFile>]")
             .append(" [--" + OPT_INFORMAT + " <" + Arrays.toString(RDFVizler.INPUT_FORMATS, "|") + ">]")
@@ -121,7 +118,7 @@ public class RDFVizlerCLI extends CLI {
                 + ">]")
         ;
 
-        formatter.printHelp(110, str.toString(), "", options, "");
+        formatter.printHelp(110, str.toString(), "java -jar rdfvizler", options, "");
     }
 
     public void execute() throws IOException {
