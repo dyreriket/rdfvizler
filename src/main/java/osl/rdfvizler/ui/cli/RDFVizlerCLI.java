@@ -17,9 +17,9 @@ import osl.util.Arrays;
 
 public class RDFVizlerCLI extends CLI {
 
-    protected static final String ENV_RDFVIZLER_RULES_PATH = "RDFVIZLER_RULES_PATH";
     public static final String ENV_RDFVIZLER_DOT_EXEC = "RDFVIZLER_DOT_EXEC";
-
+    protected static final String ENV_RDFVIZLER_RULES_PATH = "RDFVIZLER_RULES_PATH";
+    
     // CLI options
     private static final String OPT_RULES = "rules";
     private static final String OPT_IN = "in";

@@ -27,13 +27,13 @@ public class RDFVizlerCLITest {
     private final String rdfXmlFile = "input1.xml";
 
     @Rule
-    public TemporaryFolder testFolder = new TemporaryFolder();
-
-    @Rule
     public final EnvironmentVariables environmentVariables = new EnvironmentVariables();
 
+    @Rule
+    public TemporaryFolder testFolder = new TemporaryFolder();
+    
     @Test
-    public void shouldReadURI_XMLformat() throws Exception {
+    public void shouldReadUriXmlformat() throws Exception {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
 
         RDFVizlerCLI cli = new RDFVizlerCLI(new PrintStream(bytes));
