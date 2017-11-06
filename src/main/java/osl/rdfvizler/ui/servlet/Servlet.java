@@ -16,6 +16,8 @@ import org.apache.commons.lang3.ArrayUtils;
 import osl.util.Arrays;
 
 public abstract class Servlet extends HttpServlet {
+    
+    protected static int[] OKCodes = { 200 };
 
     private static final long serialVersionUID = -7780985876220754149L;
     
@@ -32,8 +34,6 @@ public abstract class Servlet extends HttpServlet {
         MIMETYPE = Collections.unmodifiableMap(m);
     }
     
-    protected static int[] OKCodes = { 200 };
-
     public static String setMimetype(String format) {
         return MIMETYPE.getOrDefault(format, "text/plain");
     }
