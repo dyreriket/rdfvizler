@@ -25,8 +25,8 @@ public class RDFVizlerServlet extends Servlet {
     // defaults, also available in web.xml
     private String defaultDotExec;
     private String defaultPathRules;
-    private String defaultFormatRDF;
-    private String defaultFormatDot;
+    private String defaultInputFormat;
+    private String defaultOutputFormat;
 
     private int maxFileSize;
 
@@ -41,8 +41,8 @@ public class RDFVizlerServlet extends Servlet {
         defaultDotExec = getValue(config.getInitParameter("DotExec"), DotProcess.DEFAULT_EXEC);
         maxFileSize = Integer.parseInt(getValue(config.getInitParameter("MaxInput"), "30000"));
         defaultPathRules = getValue(config.getInitParameter("DefaultRules"), RDFVizler.DEFAULT_RULES);
-        defaultFormatRDF = getValue(config.getInitParameter("DefaultFormatRDF"), RDFVizler.DEFAULT_INPUT_FORMAT);
-        defaultFormatDot = getValue(config.getInitParameter("DefaultFormatDot"), RDFVizler.DEFAULT_OUTPUT_FORMAT);
+        defaultInputFormat = getValue(config.getInitParameter("DefaultFormatRDF"), RDFVizler.DEFAULT_INPUT_FORMAT);
+        defaultOutputFormat = getValue(config.getInitParameter("DefaultFormatDot"), RDFVizler.DEFAULT_OUTPUT_FORMAT);
     }
 
     @Override
@@ -62,8 +62,8 @@ public class RDFVizlerServlet extends Servlet {
             super.checkURIInput(pathRDF, OKCodes, maxFileSize);
             super.checkURIInput(pathRules, OKCodes, maxFileSize);
             
-            rdfvizler.setInputFormat(getValue(request.getParameter(pRDFFormat), defaultFormatRDF));
-            String outputFormat = getValue(request.getParameter(pDotFormat), defaultFormatDot);
+            rdfvizler.setInputFormat(getValue(request.getParameter(pRDFFormat), defaultInputFormat));
+            String outputFormat = getValue(request.getParameter(pDotFormat), defaultOutputFormat);
 
             String output = rdfvizler.writeOutput(outputFormat);
             String mimetype = super.setMimetype(outputFormat);

@@ -26,5 +26,9 @@ public abstract class Arrays {
         return java.util.Arrays.stream(objects).map(object -> object.toString())
                 .collect(Collectors.joining(glue));
     }
-
+    
+    @SuppressWarnings("unchecked")
+    public static <E> String toString(E... objects) {
+        return toString(objects, "");
+    }
 }

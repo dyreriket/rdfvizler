@@ -23,9 +23,9 @@ public class RDFVizlerCLITest {
     // private final String resources = "src/test/resources/";
     // private final String file1 = "test1.ttl";
     private final String input1 = "input1.ttl";
-    private final String simpleRulesFile = "simple.jrule";
     private final String rdfXmlFile = "input1.xml";
-
+    // private final String simpleRulesFile = "simple.jrule";
+    
     @Rule
     public final EnvironmentVariables environmentVariables = new EnvironmentVariables();
 

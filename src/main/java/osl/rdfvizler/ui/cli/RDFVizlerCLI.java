@@ -106,22 +106,21 @@ public class RDFVizlerCLI extends CLI {
     private void printHelp(Options options, Exception e) {
         console.println(e.getMessage());
         
-        StringBuilder str = new StringBuilder();
-        str//.append("java -jar rdfvizler")
-            .append(" --" + OPT_IN + " <rdfFile>")
-            .append(" [--" + OPT_RULES + " <rulesFile>]")
-            .append(" [--" + OPT_INFORMAT + " <" + Arrays.toString(RDFVizler.INPUT_FORMATS, "|") + ">]")
-            .append(" [--" + OPT_OUT + " <outputFile>")
-            .append(" --" + OPT_OUTEXT + "]")
-            .append(" [--" + OPT_OUTFORMAT 
-                + " <" 
-                + Arrays.toString(RDFVizler.DOT_OUTPUT_FORMATS, "|")
-                + "|" + Arrays.toString(RDFVizler.TEXT_OUTPUT_FORMATS, "|") 
-                + "|" + Arrays.toString(RDFVizler.RDF_OUTPUT_FORMATS, "|")
-                + ">]")
+        String str = Arrays.toString(
+            " --", OPT_IN, " <rdfFile>", 
+            " [--", OPT_RULES, " <rulesFile>]",
+            " [--", OPT_INFORMAT, " <", Arrays.toString(RDFVizler.INPUT_FORMATS, "|"), ">]",
+            " [--", OPT_OUT, " <outputFile>",
+            " --", OPT_OUTEXT, "]",
+            " [--", OPT_OUTFORMAT, 
+                " <",
+                Arrays.toString(RDFVizler.DOT_OUTPUT_FORMATS, "|"),
+                "|" + Arrays.toString(RDFVizler.TEXT_OUTPUT_FORMATS, "|"), 
+                "|" + Arrays.toString(RDFVizler.RDF_OUTPUT_FORMATS, "|"),
+                ">]");
         ;
 
-        new HelpFormatter().printHelp(120, str.toString(), "java -jar rdfvizler", options, "");
+        new HelpFormatter().printHelp(120, str, "java -jar rdfvizler", options, "");
     }
 
     public void execute() throws IOException {
