@@ -2,7 +2,6 @@ package osl.rdfvizler.dot.rules;
 
 import org.apache.jena.graph.Node;
 import org.apache.jena.rdf.model.ResourceFactory;
-import org.apache.jena.reasoner.rulesys.BindingEnvironment;
 import org.apache.jena.reasoner.rulesys.BuiltinException;
 import org.apache.jena.reasoner.rulesys.RuleContext;
 import org.apache.jena.reasoner.rulesys.builtins.BaseBuiltin;
@@ -26,8 +25,7 @@ public class Linewrap extends BaseBuiltin {
     @Override
     public boolean bodyCall(Node[] args, int length, RuleContext context) {
         super.checkArgs(length, context);
-        BindingEnvironment env = context.getEnv();
-        return env.bind(args[0], value(args[1], args[2], context));
+        return BuiltInUtils.bindArgNode(args[0], value(args[1], args[2], context), context);
     }
 
     protected Node value(Node literal, Node length, RuleContext context) {

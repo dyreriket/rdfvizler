@@ -25,17 +25,19 @@ import org.apache.jena.reasoner.rulesys.builtins.BaseBuiltin;
  */
 public class CreateUniqueIfLit extends BaseBuiltin {
 
+    @Override
     public String getName() {
         return "createUniqueIfLit";
     }
 
+    @Override
     public int getArgLength() {
         return 2;
     }
 
     @Override
     public boolean bodyCall(Node[] args, int length, RuleContext context) {
-
+        super.checkArgs(length, context);
         Node nodeToBind = args[1];
 
         if (nodeToBind.isLiteral()) {
@@ -43,6 +45,6 @@ public class CreateUniqueIfLit extends BaseBuiltin {
             String uniqueLiteral = uuid.toString();
             nodeToBind = NodeFactory.createLiteral(uniqueLiteral);
         }
-        return context.getEnv().bind(args[0], nodeToBind);
+        return BuiltInUtils.bindArgNode(args[0], nodeToBind, context);
     }
 }

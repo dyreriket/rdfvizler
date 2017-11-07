@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.apache.jena.graph.Node;
+import org.apache.jena.reasoner.rulesys.BindingEnvironment;
 import org.apache.jena.reasoner.rulesys.BuiltinException;
 import org.apache.jena.reasoner.rulesys.RuleContext;
 import org.apache.jena.reasoner.rulesys.builtins.BaseBuiltin;
@@ -17,11 +18,21 @@ public abstract class BuiltInUtils {
 
     public static final Comparator<Node> stringValueComparator = (Node p1, Node p2) -> p1.toString().compareTo(p2.toString());
 
-    public static String getTypes(Node node, RuleContext context) {
-        List<Node> types = new ArrayList<>();
-        context.find(node, RDF.type.asNode(), Node.ANY).forEachRemaining(t -> types.add(t.getObject()));
+    public static boolean bindArgNode(Node arg, Node value, RuleContext context) {
+        BindingEnvironment env = context.getEnv();
+        return env.bind(arg, value);
+    }
+    
+    public static String printSortedTypes(Node node, RuleContext context) {
+        List<Node> types = getTypes(node, context);
         Collections.sort(types, stringValueComparator);
         return Strings.toString(types, t -> getShortForm(t, context), ", ");
+    }
+    
+    public static List<Node> getTypes(Node node, RuleContext context) {
+        List<Node> types = new ArrayList<>();
+        context.find(node, RDF.type.asNode(), Node.ANY).forEachRemaining(t -> types.add(t.getObject()));
+        return types;
     }
 
     public static String getShortForm(Node node, RuleContext context) {

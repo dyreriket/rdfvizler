@@ -1,7 +1,6 @@
 package osl.rdfvizler.dot.rules;
 
 import org.apache.jena.graph.Node;
-import org.apache.jena.reasoner.rulesys.BuiltinException;
 import org.apache.jena.reasoner.rulesys.RuleContext;
 import org.apache.jena.reasoner.rulesys.builtins.BaseBuiltin;
 
@@ -20,10 +19,9 @@ public class BeginsWith extends BaseBuiltin {
         return 2;
     }
 
+    @Override
     public boolean bodyCall(Node[] args, int length, RuleContext context) {
-        if (length != 2) {
-            throw new BuiltinException(this, context, "Must have exactly 2 arguments to " + getName());
-        }
+        super.checkArgs(length, context);
         String arg1 = BuiltInUtils.lexicalValue(args[0], this, context);
         String arg2 = BuiltInUtils.lexicalValue(args[1], this, context);
         return arg1.startsWith(arg2);
