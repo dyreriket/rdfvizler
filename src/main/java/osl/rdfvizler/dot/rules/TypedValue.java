@@ -5,7 +5,7 @@ import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.reasoner.rulesys.BuiltinException;
 import org.apache.jena.reasoner.rulesys.RuleContext;
 
-public class TypedValue extends BiNodeRuleFunction {
+public class TypedValue extends NodeFunction {
 
     @Override
     public String getName() {
@@ -15,17 +15,17 @@ public class TypedValue extends BiNodeRuleFunction {
     protected Node value(Node node, RuleContext context) {
         String string = "";
         if (node.isBlank() || node.isURI()) {
-            string = BuiltInUtils.printSortedTypes(node, context);
+            string = RuleUtils.printSortedTypes(node, context);
             if (node.isURI()) {
                 if (!string.isEmpty()) {
                     string += "\\n";
                 }
-                string += BuiltInUtils.getShortForm(node, context);
+                string += RuleUtils.getShortForm(node, context);
             }
         } else if (node.isLiteral()) {
             String datatype = node.getLiteralDatatypeURI();
             if (datatype != null && datatype.length() > 0) {
-                string = BuiltInUtils.getShortForm(datatype, context) + "\\n";
+                string = RuleUtils.getShortForm(datatype, context) + "\\n";
             }
             string += node.getLiteralLexicalForm();
         } else {

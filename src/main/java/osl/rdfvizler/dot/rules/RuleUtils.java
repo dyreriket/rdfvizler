@@ -14,7 +14,7 @@ import org.apache.jena.vocabulary.RDF;
 
 import osl.util.Strings;
 
-public abstract class BuiltInUtils {
+public abstract class RuleUtils {
 
     public static final Comparator<Node> stringValueComparator = (Node p1, Node p2) -> p1.toString().compareTo(p2.toString());
 

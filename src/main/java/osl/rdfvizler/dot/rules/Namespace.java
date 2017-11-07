@@ -5,7 +5,7 @@ import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.reasoner.rulesys.BuiltinException;
 import org.apache.jena.reasoner.rulesys.RuleContext;
 
-public class Namespace extends BiNodeRuleFunction {
+public class Namespace extends NodeFunction {
 
     @Override
     public String getName() {

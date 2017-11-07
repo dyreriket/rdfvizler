@@ -25,11 +25,11 @@ public class Linewrap extends BaseBuiltin {
     @Override
     public boolean bodyCall(Node[] args, int length, RuleContext context) {
         super.checkArgs(length, context);
-        return BuiltInUtils.bindArgNode(args[0], value(args[1], args[2], context), context);
+        return RuleUtils.bindArgNode(args[0], value(args[1], args[2], context), context);
     }
 
     protected Node value(Node literal, Node length, RuleContext context) {
-        String val = BuiltInUtils.lexicalValue(literal, this, context);
+        String val = RuleUtils.lexicalValue(literal, this, context);
 
         int splitPoint;
         if (length.isLiteral()) {

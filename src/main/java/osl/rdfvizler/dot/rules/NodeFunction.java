@@ -4,11 +4,7 @@ import org.apache.jena.graph.Node;
 import org.apache.jena.reasoner.rulesys.RuleContext;
 import org.apache.jena.reasoner.rulesys.builtins.BaseBuiltin;
 
-public abstract class BiNodeRuleFunction extends BaseBuiltin {
-
-    public BiNodeRuleFunction() {
-        super();
-    }
+public abstract class NodeFunction extends BaseBuiltin {
 
     @Override
     public int getArgLength() {
@@ -18,7 +14,7 @@ public abstract class BiNodeRuleFunction extends BaseBuiltin {
     @Override
     public boolean bodyCall(Node[] args, int length, RuleContext context) {
         this.checkArgs(length, context);
-        return BuiltInUtils.bindArgNode(args[1], value(args[0], context), context);
+        return RuleUtils.bindArgNode(args[1], value(args[0], context), context);
     }
 
     protected abstract Node value(Node node, RuleContext context);

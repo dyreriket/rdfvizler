@@ -45,6 +45,6 @@ public class CreateUniqueIfLit extends BaseBuiltin {
             String uniqueLiteral = uuid.toString();
             nodeToBind = NodeFactory.createLiteral(uniqueLiteral);
         }
-        return BuiltInUtils.bindArgNode(args[0], nodeToBind, context);
+        return RuleUtils.bindArgNode(args[0], nodeToBind, context);
     }
 }

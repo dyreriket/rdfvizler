@@ -30,7 +30,7 @@ public class ExcludeType extends BaseBuiltin {
 
     private boolean nodeHasType(Node thing, Node type, RuleContext context) {
         if (thing.isBlank() || thing.isURI()) {
-            List<Node> listOfTypes = BuiltInUtils.getTypes(thing, context);
+            List<Node> listOfTypes = RuleUtils.getTypes(thing, context);
             return listOfTypes.stream().anyMatch(n -> n.getURI().equals(type.getURI()));
         } else {
             return false;
