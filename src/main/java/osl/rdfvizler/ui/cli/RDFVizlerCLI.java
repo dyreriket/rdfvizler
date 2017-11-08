@@ -118,7 +118,6 @@ public class RDFVizlerCLI extends CLI {
                 "|" + Arrays.toString(RDFVizler.TEXT_OUTPUT_FORMATS, "|"), 
                 "|" + Arrays.toString(RDFVizler.RDF_OUTPUT_FORMATS, "|"),
                 ">]");
-        ;
 
         new HelpFormatter().printHelp(120, str, "java -jar rdfvizler", options, "");
     }
