@@ -87,11 +87,11 @@ public class RDFVizler {
 
     public String writeOutput(String format) throws IOException {
         String output = null;
-        if (Arrays.inArray(RDFVizler.RDF_OUTPUT_FORMATS, format)) {
+        if (Arrays.inArray(RDF_OUTPUT_FORMATS, format)) {
             output = writeDotModel(format);
-        } else if (Arrays.inArray(RDFVizler.DOT_OUTPUT_FORMATS, format)) {
+        } else if (Arrays.inArray(DOT_OUTPUT_FORMATS, format)) {
             output = writeDotImageOutput(format);
-        } else if (Arrays.inArray(RDFVizler.TEXT_OUTPUT_FORMATS, format)) {
+        } else if (Arrays.inArray(TEXT_OUTPUT_FORMATS, format)) {
             output = writeDotTextOutput();
         }
         return output;
