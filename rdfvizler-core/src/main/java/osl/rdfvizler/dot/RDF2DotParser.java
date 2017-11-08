@@ -24,13 +24,18 @@ public class RDF2DotParser {
     private static final String EDGE = "edge ";
 
     private static final String TAB = "   ";
+    private static final String EMPTY = "";
+    private static final String BR = "\n";
+    private static final String SC = ";";
+    private static final String QT = "\"";
+    
 
     private static final String EDGE_OP_DIGRAPH = " -> ";
     private static final String EDGE_OP_GRAPH   = " -- ";
-    private static String EDGE_OP;
     
     private Model model;
-    
+    private String edgeOperator;
+     
     public RDF2DotParser(Model model) {
         this.model = model;
     }
@@ -58,126 +63,98 @@ public class RDF2DotParser {
         String graphtype;
         if (isDiRootGraph(rootGraph)) {
             graphtype = DIGRAPH;
-            EDGE_OP = EDGE_OP_DIGRAPH;
+            edgeOperator = EDGE_OP_DIGRAPH;
         } else {
             graphtype = GRAPH;
-            EDGE_OP = EDGE_OP_GRAPH;
+            edgeOperator = EDGE_OP_GRAPH;
         }
         str.append(parseGraph(graphtype, rootGraph, ""));
         return str.toString();
     }
 
-    private String parseGraph(String graphtype, Resource resource, String space) {
-        String indent = space + TAB;
-        StringBuilder str = new StringBuilder();
-        str.append(space)
-            .append(graphtype)
-            .append(getID(resource))
-            .append(" {\n") // start graph
-            .append(parseGraphContents(resource, indent))
-            .append(space).append("}\n"); // end graph
-        return str.toString();
+    private String parseGraph(String graphtype, Resource resource, String tabs) {
+        return tabs 
+                + graphtype + getID(resource) + " {" + BR // start graph
+                + parseGraphContents(resource, tabs + TAB)
+                + tabs + "}" + BR; // end graph
     }
     
-    private String parseGraphContents(Resource graph, String indent) {
-        StringBuilder str = new StringBuilder();
-        str
-            .append(parseGraphAttributes(graph, indent))
-            .append(parseGraphNodes(graph, indent))
-            .append(parseGraphEdges(graph, indent))
-            .append(parseGraphSubgraphs(graph, indent));
-        return str.toString();
+    private String parseGraphContents(Resource graph, String tabs) {
+        return parseGraphAttributes(graph, tabs)
+             + parseElements(graph, DotVocabulary.hasNode, x -> parseNode(x), tabs)
+             + parseElements(graph, DotVocabulary.hasEdge, x -> parseEdge(x), tabs)
+             + parseElements(graph, DotVocabulary.hasSubGraph, x -> parseGraph(SUBGRAPH, x, tabs), tabs);
     }
     
-    private String parseGraphAttributes(Resource graph, String indent) {
-        StringBuilder str = new StringBuilder();
-        String attr = parseAttributes(graph, DotVocabulary.NAMESPACE_ATTR);
-        if (!attr.isEmpty()) {
-            str.append(indent).append(attr).append(";\n");
+    private String parseGraphAttributes(Resource graph, String tabs) {
+        return parseGraphAttributes(EMPTY, parseAttributes(graph, DotVocabulary.NAMESPACE_ATTR), tabs)
+               + parseGraphAttributes(NODE, parseAttributeList(graph, DotVocabulary.NAMESPACE_ATTRNODE), tabs)
+               + parseGraphAttributes(EDGE, parseAttributeList(graph, DotVocabulary.NAMESPACE_ATTREDGE), tabs);
+    }
+    
+    private String parseGraphAttributes(String element, String attributes, String tabs) {
+        String out = EMPTY;
+        if (!attributes.isEmpty()) {
+            out = tabs + element + attributes + SC + BR;
         }
-
-        // default node and edge attributes for graph
-        String attrnode = parseAttributeList(graph, DotVocabulary.NAMESPACE_ATTRNODE);
-        if (!attrnode.isEmpty()) {
-            str.append(indent).append(NODE).append(attrnode);
-        }
-        String attredge = parseAttributeList(graph, DotVocabulary.NAMESPACE_ATTREDGE);
-        if (!attredge.isEmpty()) {
-            str.append(indent).append(EDGE).append(attredge);
-        }
-        return str.toString();
+        return out;
     }
     
-    private String parseGraphNodes(Resource graph, String indent) {
-        return parseElements(graph, DotVocabulary.hasNode, x -> parseNode(x), indent);
-    }
-    
-    private String parseGraphEdges(Resource graph, String indent) {
-        return parseElements(graph, DotVocabulary.hasEdge, x -> parseEdge(x), indent);
-    }
-
-    private String parseGraphSubgraphs(Resource graph, String indent) {
-        StringBuilder str = new StringBuilder();
-        for (Statement subgraph : graph.listProperties(DotVocabulary.hasSubGraph).toList()) {
-            str.append("\n").append(parseGraph(SUBGRAPH, subgraph.getObject().asResource(), indent));
-        }
-        return str.toString();
-    }
-    
-    private String parseElements(Resource resource, Property element, Function<Resource, String> parser, String space) {
-        String str = Strings.toString(
-            resource.listProperties(element).toList(), 
+    private String parseElements(Resource resource, Property element, Function<Resource, String> parser, String tabs) {
+        String out = EMPTY;
+        String str = Strings.toString(resource.listProperties(element).toList(), 
             s -> parser.apply(s.getObject().asResource()),
-            space);
+            tabs);
         if (!str.isEmpty()) {
-            return "\n" 
-                    + space + "// " + element.getLocalName().replaceAll("has", "").toUpperCase() + "S\n" 
-                    + space + str;
+            out = BR 
+                    + tabs + "// " + getElementType(element) + BR // comment "headline"
+                    + tabs + str;
         }
-        return str;
+        return out;
+    }
+    
+    private String getElementType(Property element) {
+        return element.getLocalName().replaceAll("has", EMPTY).toUpperCase() + "S";
     }
 
     private String parseAttributes(Resource resource, String namespace) {
         List<Statement> stmts = resource.listProperties().toList();
         stmts.removeIf(s -> !s.getPredicate().getNameSpace().equals(namespace));
-        return Strings.toString(stmts, 
-            s -> s.getPredicate().getLocalName() + " = \"" + s.getObject().toString() + "\"", "; ");
+        return Strings.toString(stmts, s -> s.getPredicate().getLocalName() + " = " + QT + s.getObject().toString() + QT, SC + " ");
     }
 
     private String parseAttributeList(Resource resource, String namespace) {
         String attrs = parseAttributes(resource, namespace);
         if (attrs.isEmpty()) {
-            return ";\n";
+            return "";
         } else {
-            return " [ " + attrs + " ];\n";
+            return " [ " + attrs + " ]";
         }
     }
 
     private String parseNode(Resource resource) {
-        StringBuilder str = new StringBuilder();
-        str.append(getID(resource)) // ID
-            .append(parseAttributeList(resource,DotVocabulary.NAMESPACE_ATTR));
-        return str.toString();
+        return getID(resource) // ID
+            + parseAttributeList(resource,DotVocabulary.NAMESPACE_ATTR)
+            + SC + BR;
     }
 
     private String parseEdge(Resource resource) {
-        StringBuilder str = new StringBuilder();
-        str.append(getID(resource.getRequiredProperty(DotVocabulary.hasSource).getObject().asResource())) // source node
-            .append(EDGE_OP)
-            .append(getID(resource.getRequiredProperty(DotVocabulary.hasTarget).getObject().asResource())) // target node
-            .append(parseAttributeList(resource, DotVocabulary.NAMESPACE_ATTR));
-        return str.toString();
+        return getID(resource.getRequiredProperty(DotVocabulary.hasSource).getObject().asResource()) // source node
+            + edgeOperator
+            + getID(resource.getRequiredProperty(DotVocabulary.hasTarget).getObject().asResource()) // target node
+            + parseAttributeList(resource, DotVocabulary.NAMESPACE_ATTR)
+            + SC + BR;
     }
     
     private String getID(Resource resource) {
-        String id;
         Statement statement = resource.getProperty(DotVocabulary.hasID);
+        String id;
         if (statement == null) {
             id = resource.toString();
         } else {
             id = statement.getObject().toString();
         }
-        return "\"" + id + "\"";
+        return QT + id + QT;
     }
 
     private Resource getRootGraph() {

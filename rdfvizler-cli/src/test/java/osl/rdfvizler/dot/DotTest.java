@@ -16,7 +16,7 @@ import osl.util.rdf.Models;
 
 public class DotTest {
 
-    private final boolean stdout = false; // print files also to stdout?
+    private final boolean stdout = true; // print files also to stdout?
     
     private final String file1 = "test1.ttl";
 
