@@ -33,11 +33,11 @@ public class RDFVizlerServlet extends Servlet {
         return value != null ? value : defaultValue;
     }
     
-    private static String getInitValue (ServletConfig config, String paramName, String defaultValue) {
+    private static String getInitValue(ServletConfig config, String paramName, String defaultValue) {
         return getValue(config.getInitParameter(paramName), defaultValue);
     }
     
-    private static String getURLParamValue (HttpServletRequest request, String paramName, String defaultValue) {
+    private static String getURLParamValue(HttpServletRequest request, String paramName, String defaultValue) {
         return getValue(request.getParameter(paramName), defaultValue);
     }
 
