@@ -34,6 +34,6 @@ public class CreateUniqueIfLit extends NodeFunction {
             String uniqueLiteral = uuid.toString();
             node = NodeFactory.createLiteral(uniqueLiteral);
         }
-       return node;
+        return node;
     }
 }
