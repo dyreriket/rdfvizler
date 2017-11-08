@@ -75,7 +75,8 @@ public class RDFVizler {
 
     public String writeDotTextOutput() throws IOException {
         Model dotModel = getDotModel();
-        String dot = RDF2DotParser.toDot(dotModel);
+        RDF2DotParser parser = new RDF2DotParser(dotModel);
+        String dot = parser.toDot();
         return dot;
     }
 

@@ -58,7 +58,8 @@ public class DotTest {
 
     private String toDot(String file) {
         Model model = Models.readModel(file);
-        String dot = RDF2DotParser.toDot(model);
+        RDF2DotParser parser = new RDF2DotParser(model);
+        String dot = parser.toDot();
         return dot;
     }
 

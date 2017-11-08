@@ -14,7 +14,7 @@ import osl.util.Strings;
 import osl.util.rdf.Models;
 import osl.util.rdf.vocab.DotVocabulary;
 
-public abstract class RDF2DotParser {
+public class RDF2DotParser {
 
     private static final String STRICT = "strict ";
     private static final String GRAPH = "graph ";
@@ -29,12 +29,13 @@ public abstract class RDF2DotParser {
     private static final String EDGE_OP_GRAPH   = " -- ";
     private static String EDGE_OP;
     
-    // hiding constructor
-    private RDF2DotParser() {
-        throw new IllegalStateException("Utility class");
+    private Model model;
+    
+    public RDF2DotParser(Model model) {
+        this.model = model;
     }
 
-    private static void addPrefixes(Model model) {
+    private void addPrefixes() {
         model.withDefaultMappings(PrefixMapping.Standard);
         model.setNsPrefix(DotVocabulary.NAMESPACE_PREFIX, DotVocabulary.NAMESPACE);
         model.setNsPrefix(DotVocabulary.NAMESPACE_ATTR_PREFIX, DotVocabulary.NAMESPACE_ATTR);
@@ -42,25 +43,20 @@ public abstract class RDF2DotParser {
         model.setNsPrefix(DotVocabulary.NAMESPACE_ATTREDGE_PREFIX, DotVocabulary.NAMESPACE_ATTREDGE);
     }
 
-    public static String toDot(Model model) {
-        addPrefixes(model);
-        Resource rootGraph = getRootGraph(model);
-        return parseRootGraph(model, rootGraph);
+    public String toDot() {
+        addPrefixes();
+        Resource rootGraph = getRootGraph();
+        return parseRootGraph(rootGraph);
     }
-
-    private static String parseRootGraph(Model model, Resource rootGraph) {
+    
+    private String parseRootGraph(Resource rootGraph) {
         StringBuilder str = new StringBuilder();
-
-        // strict or not
-        if (Models.isOfType(model, rootGraph, DotVocabulary.StrictDiRootGraph) 
-                || Models.isOfType(model, rootGraph, DotVocabulary.StrictRootGraph)) {
+        
+        if (isStrictRootGraph(rootGraph)) {
             str.append(STRICT);
         }
-
-        // digraph or not
         String graphtype;
-        if (Models.isOfType(model, rootGraph, DotVocabulary.StrictDiRootGraph) 
-                || Models.isOfType(model, rootGraph, DotVocabulary.DiRootGraph)) {
+        if (isDiRootGraph(rootGraph)) {
             graphtype = DIGRAPH;
             EDGE_OP = EDGE_OP_DIGRAPH;
         } else {
@@ -71,44 +67,64 @@ public abstract class RDF2DotParser {
         return str.toString();
     }
 
-    private static String parseGraph(String graphtype, Resource resource, String space) {
+    private String parseGraph(String graphtype, Resource resource, String space) {
         String indent = space + TAB;
         StringBuilder str = new StringBuilder();
         str.append(space)
             .append(graphtype)
             .append(getID(resource))
-            .append(" {\n"); // start graph
-
-        // graph attributes
-        String attr = parseAttributes(resource, DotVocabulary.NAMESPACE_ATTR);
-        if (attr.length() > 0) {
+            .append(" {\n") // start graph
+            .append(parseGraphContents(resource, indent))
+            .append(space).append("}\n"); // end graph
+        return str.toString();
+    }
+    
+    private String parseGraphContents(Resource graph, String indent) {
+        StringBuilder str = new StringBuilder();
+        str
+            .append(parseGraphAttributes(graph, indent))
+            .append(parseGraphNodes(graph, indent))
+            .append(parseGraphEdges(graph, indent))
+            .append(parseGraphSubgraphs(graph, indent));
+        return str.toString();
+    }
+    
+    private String parseGraphAttributes(Resource graph, String indent) {
+        StringBuilder str = new StringBuilder();
+        String attr = parseAttributes(graph, DotVocabulary.NAMESPACE_ATTR);
+        if (!attr.isEmpty()) {
             str.append(indent).append(attr).append(";\n");
         }
 
         // default node and edge attributes for graph
-        String attrnode = parseAttributeList(resource, DotVocabulary.NAMESPACE_ATTRNODE);
+        String attrnode = parseAttributeList(graph, DotVocabulary.NAMESPACE_ATTRNODE);
         if (!attrnode.isEmpty()) {
-            str.append(indent).append(NODE).append(attrnode).append(";\n");
+            str.append(indent).append(NODE).append(attrnode);
         }
-        String attredge = parseAttributeList(resource, DotVocabulary.NAMESPACE_ATTREDGE);
+        String attredge = parseAttributeList(graph, DotVocabulary.NAMESPACE_ATTREDGE);
         if (!attredge.isEmpty()) {
-            str.append(indent).append(EDGE).append(attredge).append(";\n");
+            str.append(indent).append(EDGE).append(attredge);
         }
-
-        // nodes and egdes
-        str.append(parseElements(resource, DotVocabulary.hasNode, x -> parseNode(x), indent));
-        str.append(parseElements(resource, DotVocabulary.hasEdge, x -> parseEdge(x), indent));
-
-        // subgraphs
-        for (Statement subgraph : resource.listProperties(DotVocabulary.hasSubGraph).toList()) {
-            str.append("\n").append(parseGraph(SUBGRAPH, subgraph.getObject().asResource(), indent));
-        }
-
-        str.append(space).append("}\n"); // end graph
         return str.toString();
     }
+    
+    private String parseGraphNodes(Resource graph, String indent) {
+        return parseElements(graph, DotVocabulary.hasNode, x -> parseNode(x), indent);
+    }
+    
+    private String parseGraphEdges(Resource graph, String indent) {
+        return parseElements(graph, DotVocabulary.hasEdge, x -> parseEdge(x), indent);
+    }
 
-    private static String parseElements(Resource resource, Property element, Function<Resource, String> parser, String space) {
+    private String parseGraphSubgraphs(Resource graph, String indent) {
+        StringBuilder str = new StringBuilder();
+        for (Statement subgraph : graph.listProperties(DotVocabulary.hasSubGraph).toList()) {
+            str.append("\n").append(parseGraph(SUBGRAPH, subgraph.getObject().asResource(), indent));
+        }
+        return str.toString();
+    }
+    
+    private String parseElements(Resource resource, Property element, Function<Resource, String> parser, String space) {
         String str = Strings.toString(
             resource.listProperties(element).toList(), 
             s -> parser.apply(s.getObject().asResource()),
@@ -121,42 +137,39 @@ public abstract class RDF2DotParser {
         return str;
     }
 
-    private static String parseAttributes(Resource resource, String namespace) {
+    private String parseAttributes(Resource resource, String namespace) {
         List<Statement> stmts = resource.listProperties().toList();
         stmts.removeIf(s -> !s.getPredicate().getNameSpace().equals(namespace));
         return Strings.toString(stmts, 
-            s -> s.getPredicate().getLocalName() + " = \"" + s.getObject().toString() + "\"",
-            "; ");
+            s -> s.getPredicate().getLocalName() + " = \"" + s.getObject().toString() + "\"", "; ");
     }
 
-    private static String parseAttributeList(Resource resource, String namespace) {
+    private String parseAttributeList(Resource resource, String namespace) {
         String attrs = parseAttributes(resource, namespace);
         if (attrs.isEmpty()) {
-            return "";
+            return ";\n";
         } else {
-            return " [ " + attrs + " ]";        
+            return " [ " + attrs + " ];\n";
         }
     }
 
-    private static String parseNode(Resource resource) {
+    private String parseNode(Resource resource) {
         StringBuilder str = new StringBuilder();
         str.append(getID(resource)) // ID
-            .append(parseAttributeList(resource,DotVocabulary.NAMESPACE_ATTR))
-            .append(";\n");
+            .append(parseAttributeList(resource,DotVocabulary.NAMESPACE_ATTR));
         return str.toString();
     }
 
-    private static String parseEdge(Resource resource) {
+    private String parseEdge(Resource resource) {
         StringBuilder str = new StringBuilder();
         str.append(getID(resource.getRequiredProperty(DotVocabulary.hasSource).getObject().asResource())) // source node
             .append(EDGE_OP)
             .append(getID(resource.getRequiredProperty(DotVocabulary.hasTarget).getObject().asResource())) // target node
-            .append(parseAttributeList(resource, DotVocabulary.NAMESPACE_ATTR))
-            .append(";\n");
+            .append(parseAttributeList(resource, DotVocabulary.NAMESPACE_ATTR));
         return str.toString();
     }
-
-    private static String getID(Resource resource) {
+    
+    private String getID(Resource resource) {
         String id;
         Statement statement = resource.getProperty(DotVocabulary.hasID);
         if (statement == null) {
@@ -167,7 +180,7 @@ public abstract class RDF2DotParser {
         return "\"" + id + "\"";
     }
 
-    private static Resource getRootGraph(Model model) {
+    private Resource getRootGraph() {
         List<Resource> graphs = new ArrayList<>();
         for (Resource g : DotVocabulary._Graphs) {
             graphs.addAll(Models.listInstancesOfClass(model, g));
@@ -177,5 +190,15 @@ public abstract class RDF2DotParser {
                     + graphs.size() + ": " + Models.shortName(model, graphs));
         }
         return graphs.get(0);
+    }
+    
+    private boolean isStrictRootGraph(Resource rootGraph) {
+        return (Models.isOfType(model, rootGraph, DotVocabulary.StrictDiRootGraph) 
+            || Models.isOfType(model, rootGraph, DotVocabulary.StrictRootGraph));
+    }
+    
+    private boolean isDiRootGraph(Resource rootGraph) {
+        return (Models.isOfType(model, rootGraph, DotVocabulary.StrictDiRootGraph) 
+            || Models.isOfType(model, rootGraph, DotVocabulary.StrictRootGraph));
     }
 }
