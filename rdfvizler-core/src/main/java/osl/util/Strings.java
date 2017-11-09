@@ -5,6 +5,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public abstract class Strings {
+    
+    public static final String EMPTY = "";
 
     // hiding constructor
     private Strings() {
@@ -19,6 +21,14 @@ public abstract class Strings {
     public static <E> String toString(Collection<E> objects, String glue) {
         return objects.stream().map(object -> object.toString())
                 .collect(Collectors.joining(glue));
+    }
+    
+    public static String processNonEmpty(String input, Function<String, String> processor) {
+        if (input.isEmpty()) {
+            return EMPTY;
+        } else {
+            return processor.apply(input);
+        }
     }
   
 }

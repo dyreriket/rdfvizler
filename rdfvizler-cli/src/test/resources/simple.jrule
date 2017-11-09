@@ -13,7 +13,8 @@
 
 [init:
 ->
-   (:graph rdf:type gv:DiRootGraph)
+   (:graph rdf:type gv:RootGraph)
+   (:graph rdf:type gv:DiGraph)
    (:graph gva:rankdir "TD")
    (:graph gva:nodesep "0.3")
    (:graph gva:ranksep "0.3")

@@ -5,7 +5,7 @@
 
 @prefix :  <http://example.com#> .
 
-:root a gv:StrictDiRootGraph ;
+:root a gv:RootGraph , gv:DiGraph , gv:StrictGraph ;
   gva:rankdir "LR";
   gva:nodesep "0.3";
   :something "else";
