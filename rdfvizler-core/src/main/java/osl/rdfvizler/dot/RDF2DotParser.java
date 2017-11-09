@@ -8,7 +8,6 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
-import org.apache.jena.shared.PrefixMapping;
 
 import osl.util.Strings;
 import osl.util.rdf.Models;
@@ -39,30 +38,24 @@ public class RDF2DotParser {
         this.model = model;
     }
 
-    private void addPrefixes() {
-        model.withDefaultMappings(PrefixMapping.Standard);
-        model.setNsPrefix(DotVocabulary.NAMESPACE_PREFIX, DotVocabulary.NAMESPACE);
-        model.setNsPrefix(DotVocabulary.NAMESPACE_ATTR_PREFIX, DotVocabulary.NAMESPACE_ATTR);
-        model.setNsPrefix(DotVocabulary.NAMESPACE_ATTRNODE_PREFIX, DotVocabulary.NAMESPACE_ATTRNODE);
-        model.setNsPrefix(DotVocabulary.NAMESPACE_ATTREDGE_PREFIX, DotVocabulary.NAMESPACE_ATTREDGE);
-    }
-
     public String toDot() {
-        addPrefixes();
-        Resource rootGraph = getRootGraph();
-        return parseRootGraph(rootGraph);
+        // get root graph
+        List<Resource> rootgraphs = Models.listInstancesOfClass(model, DotVocabulary.RootGraph);
+        if (rootgraphs.size() != 1) {
+            throw new IllegalArgumentException("Error getting root graph. Expected exactly 1 instance, but found " 
+                    + rootgraphs.size() + ": " + Models.shortName(model, rootgraphs));
+        }
+        return parseRootGraph(rootgraphs.get(0));
     }
     
     private String parseRootGraph(Resource rootGraph) {
         StringBuilder str = new StringBuilder();
         
-        if (Models.isOfAnyType(model, rootGraph, 
-                DotVocabulary.StrictDiRootGraph, DotVocabulary.StrictRootGraph)) {
+        if (Models.isOfType(model, rootGraph, DotVocabulary.StrictGraph)) {
             str.append(STRICT);
         }
         String graphtype;
-        if (Models.isOfAnyType(model, rootGraph, 
-                DotVocabulary.StrictDiRootGraph, DotVocabulary.DiRootGraph)) {
+        if (Models.isOfType(model, rootGraph, DotVocabulary.DiGraph)) {
             graphtype = DIGRAPH;
             edgeOperator = EDGE_OP_DIGRAPH;
         } else {
@@ -73,41 +66,34 @@ public class RDF2DotParser {
         return str.toString();
     }
 
-    private String parseGraph(String graphtype, Resource resource, String tabs) {
+    private String parseGraph(String graphtype, Resource graph, String tabs) {
         return tabs 
-                + graphtype + getID(resource) + " {" + BR // start graph
-                + parseGraphContents(resource, tabs + TAB)
+                + graphtype + getID(graph) + " {" + BR // start graph
+                + parseGraphAttributes(EMPTY, parseAttributes(graph, DotVocabulary.NAMESPACE_ATTR), tabs) 
+                + parseGraphAttributes(NODE, parseAttributeList(graph, DotVocabulary.NAMESPACE_ATTRNODE), tabs)
+                + parseGraphAttributes(EDGE, parseAttributeList(graph, DotVocabulary.NAMESPACE_ATTREDGE), tabs)
+                + parseGraphElements(graph, tabs + TAB)
                 + tabs + "}" + BR; // end graph
     }
     
-    private String parseGraphContents(Resource graph, String tabs) {
-        return parseGraphAttributes(EMPTY, parseAttributes(graph, DotVocabulary.NAMESPACE_ATTR), tabs) 
-                + parseGraphAttributes(NODE, parseAttributeList(graph, DotVocabulary.NAMESPACE_ATTRNODE), tabs)
-                + parseGraphAttributes(EDGE, parseAttributeList(graph, DotVocabulary.NAMESPACE_ATTREDGE), tabs)
-                + parseElements(graph, DotVocabulary.hasNode, x -> parseNode(x), tabs)
+    private String parseGraphAttributes(String element, String attributes, String tabs) {
+        return Strings.processNonEmpty(
+                attributes, 
+                s -> tabs + element + s + SC + BR);
+    }
+    
+    private String parseGraphElements(Resource graph, String tabs) {
+        return parseElements(graph, DotVocabulary.hasNode, x -> parseNode(x), tabs)
                 + parseElements(graph, DotVocabulary.hasEdge, x -> parseEdge(x), tabs)
                 + parseElements(graph, DotVocabulary.hasSubGraph, x -> parseGraph(SUBGRAPH, x, tabs), tabs);
     }
-
-    private String parseGraphAttributes(String element, String attributes, String tabs) {
-        String out = EMPTY;
-        if (!attributes.isEmpty()) {
-            out = tabs + element + attributes + SC + BR;
-        }
-        return out;
-    }
     
     private String parseElements(Resource resource, Property element, Function<Resource, String> parser, String tabs) {
-        String out = EMPTY;
-        String str = Strings.toString(resource.listProperties(element).toList(), 
-            s -> parser.apply(s.getObject().asResource()),
-            tabs);
-        if (!str.isEmpty()) {
-            out = BR 
-                    + tabs + "// " + getElementType(element) + BR // comment "headline"
-                    + tabs + str;
-        }
-        return out;
+        return Strings.processNonEmpty(
+                Strings.toString(resource.listProperties(element).toList(),
+                        s -> parser.apply(s.getObject().asResource()), tabs),
+                s -> BR + tabs + "// " + getElementType(element) + BR // comment "headline"
+                        + tabs + s);
     }
     
     private String getElementType(Property element) {
@@ -123,14 +109,11 @@ public class RDF2DotParser {
     }
 
     private String parseAttributeList(Resource resource, String namespace) {
-        String attrs = parseAttributes(resource, namespace);
-        if (attrs.isEmpty()) {
-            return "";
-        } else {
-            return " [ " + attrs + " ]";
-        }
+        return Strings.processNonEmpty(
+                parseAttributes(resource, namespace), 
+                s -> " [ " + s + " ]");
     }
-
+    
     private String parseNode(Resource resource) {
         return getID(resource) // ID
             + parseAttributeList(resource,DotVocabulary.NAMESPACE_ATTR)
@@ -154,18 +137,6 @@ public class RDF2DotParser {
             id = statement.getObject().toString();
         }
         return QT + id + QT;
-    }
-
-    private Resource getRootGraph() {
-        List<Resource> graphs = new ArrayList<>();
-        for (Resource g : DotVocabulary._Graphs) {
-            graphs.addAll(Models.listInstancesOfClass(model, g));
-        }
-        if (graphs.size() != 1) {
-            throw new IllegalArgumentException("Error getting root graph. Expected exactly 1 instance, but found " 
-                    + graphs.size() + ": " + Models.shortName(model, graphs));
-        }
-        return graphs.get(0);
     }
 
 }

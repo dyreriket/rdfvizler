@@ -10,6 +10,7 @@ import osl.rdfvizler.dot.DotProcess;
 import osl.rdfvizler.dot.RDF2DotParser;
 import osl.util.Arrays;
 import osl.util.rdf.Models;
+import osl.util.rdf.vocab.DotVocabulary;
 
 public class RDFVizler {
 
@@ -56,6 +57,7 @@ public class RDFVizler {
 
     public Model getDotModel() {
         Model model = getInputModel();
+        addPrefixes(model);
         List<Rule> rules = getRules();
         Model dotModel = Models.applyRules(model, rules);
         return dotModel;
@@ -96,5 +98,13 @@ public class RDFVizler {
             output = writeDotTextOutput();
         }
         return output;
+    }
+    
+    private void addPrefixes(Model model) {
+        // model.withDefaultMappings(PrefixMapping.Standard);
+        model.setNsPrefix(DotVocabulary.NAMESPACE_PREFIX, DotVocabulary.NAMESPACE);
+        model.setNsPrefix(DotVocabulary.NAMESPACE_ATTR_PREFIX, DotVocabulary.NAMESPACE_ATTR);
+        model.setNsPrefix(DotVocabulary.NAMESPACE_ATTRNODE_PREFIX, DotVocabulary.NAMESPACE_ATTRNODE);
+        model.setNsPrefix(DotVocabulary.NAMESPACE_ATTREDGE_PREFIX, DotVocabulary.NAMESPACE_ATTREDGE);
     }
 }
