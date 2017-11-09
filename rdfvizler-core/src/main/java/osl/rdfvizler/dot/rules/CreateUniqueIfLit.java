@@ -5,10 +5,9 @@ import java.util.UUID;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.reasoner.rulesys.RuleContext;
-import org.apache.jena.reasoner.rulesys.builtins.BaseBuiltin;
 
 /**
- * createUniqueIfLit(?bind, ?node) If ?node is a literal, it will bind ?bind to
+ * createUniqueIfLit(?node, ?bind) If ?node is a literal, it will bind ?bind to
  * a new literal that is like ?node, but altered to be unique in the graph. This
  * is done by creating a literal that has a GUID as value.
  *
@@ -19,11 +18,9 @@ import org.apache.jena.reasoner.rulesys.builtins.BaseBuiltin;
  * Resource1 Resource2 Resource1 Resource2 | | | | \___________| | | | | |
  * "someValue" "someValue" "someValue"
  *
- * This requires some alterations to the default .jrule file.
- *
  * If the ?node is a non-literal, ?bind simply binds to ?node.
  */
-public class CreateUniqueIfLit extends BaseBuiltin {
+public class CreateUniqueIfLit extends NodeFunction {
 
     @Override
     public String getName() {
@@ -31,20 +28,13 @@ public class CreateUniqueIfLit extends BaseBuiltin {
     }
 
     @Override
-    public int getArgLength() {
-        return 2;
-    }
-
-    @Override
-    public boolean bodyCall(Node[] args, int length, RuleContext context) {
-        super.checkArgs(length, context);
-        Node nodeToBind = args[1];
-
-        if (nodeToBind.isLiteral()) {
+    protected Node value(Node node, RuleContext context) {
+        if (node.isLiteral()) {
             UUID uuid = UUID.randomUUID();
             String uniqueLiteral = uuid.toString();
-            nodeToBind = NodeFactory.createLiteral(uniqueLiteral);
+            return NodeFactory.createLiteral(uniqueLiteral);
+        } else {
+            return node;
         }
-        return RuleUtils.bindArgNode(args[0], nodeToBind, context);
     }
 }

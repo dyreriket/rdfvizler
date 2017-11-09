@@ -47,7 +47,7 @@ public class RDFVizlerCLITest {
         try {
             cli.execute();
         } catch (TurtleParseException e) {
-            fail("-x toggle should accept RDF/XML format on input file, but doesn't");
+            fail("-if toggle should accept RDF/XML format on input file, but doesn't");
         }
     }
 

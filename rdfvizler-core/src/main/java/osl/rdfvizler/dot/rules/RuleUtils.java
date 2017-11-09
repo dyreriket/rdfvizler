@@ -5,8 +5,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.jena.graph.Node;
-import org.apache.jena.reasoner.rulesys.BindingEnvironment;
+import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.reasoner.rulesys.BuiltinException;
 import org.apache.jena.reasoner.rulesys.RuleContext;
 import org.apache.jena.reasoner.rulesys.builtins.BaseBuiltin;
@@ -19,16 +20,15 @@ public abstract class RuleUtils {
     public static final Comparator<Node> stringValueComparator = (Node p1, Node p2) -> p1.toString().compareTo(p2.toString());
 
     public static boolean bindArgNode(Node arg, Node value, RuleContext context) {
-        BindingEnvironment env = context.getEnv();
-        return env.bind(arg, value);
+        return context.getEnv().bind(arg, value);
     }
-    
+
     public static String printSortedTypes(Node node, RuleContext context) {
         List<Node> types = getTypes(node, context);
         Collections.sort(types, stringValueComparator);
         return Strings.toString(types, t -> getShortForm(t, context), ", ");
     }
-    
+
     public static List<Node> getTypes(Node node, RuleContext context) {
         List<Node> types = new ArrayList<>();
         context.find(node, RDF.type.asNode(), Node.ANY).forEachRemaining(t -> types.add(t.getObject()));
@@ -36,11 +36,24 @@ public abstract class RuleUtils {
     }
 
     public static String getShortForm(Node node, RuleContext context) {
-        return node.toString(context.getGraph().getPrefixMapping());
+        if (node.isLiteral()) {
+            return getLiteralShortForm(node, context);
+        } else {
+            return node.toString(context.getGraph().getPrefixMapping());
+        }
     }
 
     public static String getShortForm(String uri, RuleContext context) {
         return context.getGraph().getPrefixMapping().shortForm(uri);
+    }
+
+    private static String getLiteralShortForm(Node literal, RuleContext context) {
+        String string = literal.getLiteralLexicalForm();
+        String datattype = literal.getLiteralDatatypeURI();
+        if (!StringUtils.isEmpty(datattype)) {
+            string += "^^" + RuleUtils.getShortForm(datattype, context);
+        }
+        return string;
     }
 
     public static String lexicalValue(Node node, BaseBuiltin that, RuleContext context) {
@@ -53,6 +66,10 @@ public abstract class RuleUtils {
         } else {
             throw new BuiltinException(that, context, "Illegal node type: " + node);
         }
+    }
+
+    public static Node stringAsNode(String string) {
+        return ResourceFactory.createPlainLiteral(string).asNode();
     }
 
 }
