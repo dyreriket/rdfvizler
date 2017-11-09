@@ -1,7 +1,7 @@
 package osl.rdfvizler.dot.rules;
 
+import org.apache.commons.lang3.text.WordUtils;
 import org.apache.jena.graph.Node;
-import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.reasoner.rulesys.BuiltinException;
 import org.apache.jena.reasoner.rulesys.RuleContext;
 import org.apache.jena.reasoner.rulesys.builtins.BaseBuiltin;
@@ -29,17 +29,13 @@ public class Linewrap extends BaseBuiltin {
     }
 
     protected Node value(Node literal, Node length, RuleContext context) {
-        String val = RuleUtils.lexicalValue(literal, this, context);
-
-        int splitPoint;
-        if (length.isLiteral()) {
-            String splitStr = length.getLiteralLexicalForm();
-            splitPoint = Integer.parseInt(splitStr);
-        } else {
+        if (!length.isLiteral()) {
             throw new BuiltinException(this, context, "Third argument must be a number");
         }
-        val = val.substring(0, splitPoint) + "\n" + val.substring(splitPoint);
-
-        return ResourceFactory.createPlainLiteral(val).asNode();
+        String splitStr = length.getLiteralLexicalForm();
+        int splitPoint = Integer.parseInt(splitStr);
+        String val = RuleUtils.lexicalValue(literal, this, context);
+        String valWrapped = WordUtils.wrap(val, splitPoint);
+        return RuleUtils.stringAsNode(valWrapped);
     }
 }
