@@ -42,7 +42,7 @@ public class DotTest {
         RDFVizler rdfvizler = new RDFVizler("http://folk.uio.no/martige/foaf.rdf");
 
         rdfvizler.setInputFormat("RDF/XML");
-        rdfvizler.setRulesPath("docs/rules/rdf.jrule");
+        rdfvizler.setRulesPath("../docs/rules/rdf.jrule");
         rdfvizler.setDotExecutable(pathDotExec);
 
         print("foaf.ttl" + ".dot", rdfvizler.writeOutput("TTL"));
