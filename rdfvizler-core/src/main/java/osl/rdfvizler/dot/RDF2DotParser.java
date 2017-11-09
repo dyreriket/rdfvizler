@@ -29,7 +29,6 @@ public class RDF2DotParser {
     private static final String SC = ";";
     private static final String QT = "\"";
     
-
     private static final String EDGE_OP_DIGRAPH = " -> ";
     private static final String EDGE_OP_GRAPH   = " -- ";
     
@@ -57,11 +56,13 @@ public class RDF2DotParser {
     private String parseRootGraph(Resource rootGraph) {
         StringBuilder str = new StringBuilder();
         
-        if (isStrictRootGraph(rootGraph)) {
+        if (Models.isOfAnyType(model, rootGraph, 
+                DotVocabulary.StrictDiRootGraph, DotVocabulary.StrictRootGraph)) {
             str.append(STRICT);
         }
         String graphtype;
-        if (isDiRootGraph(rootGraph)) {
+        if (Models.isOfAnyType(model, rootGraph, 
+                DotVocabulary.StrictDiRootGraph, DotVocabulary.DiRootGraph)) {
             graphtype = DIGRAPH;
             edgeOperator = EDGE_OP_DIGRAPH;
         } else {
@@ -80,18 +81,14 @@ public class RDF2DotParser {
     }
     
     private String parseGraphContents(Resource graph, String tabs) {
-        return parseGraphAttributes(graph, tabs)
-             + parseElements(graph, DotVocabulary.hasNode, x -> parseNode(x), tabs)
-             + parseElements(graph, DotVocabulary.hasEdge, x -> parseEdge(x), tabs)
-             + parseElements(graph, DotVocabulary.hasSubGraph, x -> parseGraph(SUBGRAPH, x, tabs), tabs);
+        return parseGraphAttributes(EMPTY, parseAttributes(graph, DotVocabulary.NAMESPACE_ATTR), tabs) 
+                + parseGraphAttributes(NODE, parseAttributeList(graph, DotVocabulary.NAMESPACE_ATTRNODE), tabs)
+                + parseGraphAttributes(EDGE, parseAttributeList(graph, DotVocabulary.NAMESPACE_ATTREDGE), tabs)
+                + parseElements(graph, DotVocabulary.hasNode, x -> parseNode(x), tabs)
+                + parseElements(graph, DotVocabulary.hasEdge, x -> parseEdge(x), tabs)
+                + parseElements(graph, DotVocabulary.hasSubGraph, x -> parseGraph(SUBGRAPH, x, tabs), tabs);
     }
-    
-    private String parseGraphAttributes(Resource graph, String tabs) {
-        return parseGraphAttributes(EMPTY, parseAttributes(graph, DotVocabulary.NAMESPACE_ATTR), tabs)
-               + parseGraphAttributes(NODE, parseAttributeList(graph, DotVocabulary.NAMESPACE_ATTRNODE), tabs)
-               + parseGraphAttributes(EDGE, parseAttributeList(graph, DotVocabulary.NAMESPACE_ATTREDGE), tabs);
-    }
-    
+
     private String parseGraphAttributes(String element, String attributes, String tabs) {
         String out = EMPTY;
         if (!attributes.isEmpty()) {
@@ -120,7 +117,9 @@ public class RDF2DotParser {
     private String parseAttributes(Resource resource, String namespace) {
         List<Statement> stmts = resource.listProperties().toList();
         stmts.removeIf(s -> !s.getPredicate().getNameSpace().equals(namespace));
-        return Strings.toString(stmts, s -> s.getPredicate().getLocalName() + " = " + QT + s.getObject().toString() + QT, SC + " ");
+        return Strings.toString(stmts, 
+            s -> s.getPredicate().getLocalName() + " = " + QT + s.getObject().toString() + QT,
+            SC + " ");
     }
 
     private String parseAttributeList(Resource resource, String namespace) {
@@ -168,14 +167,5 @@ public class RDF2DotParser {
         }
         return graphs.get(0);
     }
-    
-    private boolean isStrictRootGraph(Resource rootGraph) {
-        return (Models.isOfType(model, rootGraph, DotVocabulary.StrictDiRootGraph) 
-            || Models.isOfType(model, rootGraph, DotVocabulary.StrictRootGraph));
-    }
-    
-    private boolean isDiRootGraph(Resource rootGraph) {
-        return (Models.isOfType(model, rootGraph, DotVocabulary.StrictDiRootGraph) 
-            || Models.isOfType(model, rootGraph, DotVocabulary.StrictRootGraph));
-    }
+
 }

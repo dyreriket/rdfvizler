@@ -59,6 +59,15 @@ public abstract class Models {
     public static boolean isOfType(Model model, Resource instance, Resource klass) {
         return model.contains(instance, RDF.type, klass);
     }
+    
+    public static boolean isOfAnyType(Model model, Resource instance, Resource... klasses) {
+        for (Resource klass : klasses) {
+            if (model.contains(instance, RDF.type, klass)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     public static List<Resource> listInstancesOfClass(Model model, Resource cls) {
         return model.listResourcesWithProperty(RDF.type, cls).toList();
