@@ -28,21 +28,28 @@ public class RDFVizlerServlet extends Servlet {
     private String defaultInputFormat;
     private String defaultOutputFormat;
 
-    private int maxFileSize;
-
+    
     private static <T> T getValue(T value, T defaultValue) {
         return value != null ? value : defaultValue;
+    }
+    
+    private static String getInitValue(ServletConfig config, String paramName, String defaultValue) {
+        return getValue(config.getInitParameter(paramName), defaultValue);
+    }
+    
+    private static String getURLParamValue(HttpServletRequest request, String paramName, String defaultValue) {
+        return getValue(request.getParameter(paramName), defaultValue);
     }
 
     // possibly overwrite defaults with values from web.xml
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        defaultDotExec = getValue(config.getInitParameter("DotExec"), DotProcess.DEFAULT_EXEC);
-        maxFileSize = Integer.parseInt(getValue(config.getInitParameter("MaxInput"), "30000"));
-        defaultPathRules = getValue(config.getInitParameter("DefaultRules"), RDFVizler.DEFAULT_RULES);
-        defaultInputFormat = getValue(config.getInitParameter("DefaultFormatRDF"), RDFVizler.DEFAULT_INPUT_FORMAT);
-        defaultOutputFormat = getValue(config.getInitParameter("DefaultFormatDot"), RDFVizler.DEFAULT_OUTPUT_FORMAT);
+        defaultDotExec = getInitValue(config, "DotExec", DotProcess.DEFAULT_EXEC);
+        maxFileSize = Integer.parseInt(getInitValue(config, "MaxInput", "30000"));
+        defaultPathRules = getInitValue(config, "DefaultRules", RDFVizler.DEFAULT_RULES);
+        defaultInputFormat = getInitValue(config, "DefaultFormatRDF", RDFVizler.DEFAULT_INPUT_FORMAT);
+        defaultOutputFormat = getInitValue(config, "DefaultFormatDot", RDFVizler.DEFAULT_OUTPUT_FORMAT);
     }
 
     @Override
@@ -52,18 +59,18 @@ public class RDFVizlerServlet extends Servlet {
         String pathRules = null;
        
         try {
-            pathRDF = getValue(request.getParameter(pRDF), pathRDF);
+            pathRDF = getURLParamValue(request, pRDF, pathRDF);
             RDFVizler rdfvizler = new RDFVizler(pathRDF);
             rdfvizler.setDotExecutable(defaultDotExec);
 
-            pathRules = getValue(request.getParameter(pRules), defaultPathRules);
+            pathRules = getURLParamValue(request, pRules, defaultPathRules);
             rdfvizler.setRulesPath(pathRules);
 
             super.checkURIInput(pathRDF, OKCodes, maxFileSize);
             super.checkURIInput(pathRules, OKCodes, maxFileSize);
             
-            rdfvizler.setInputFormat(getValue(request.getParameter(pRDFFormat), defaultInputFormat));
-            String outputFormat = getValue(request.getParameter(pDotFormat), defaultOutputFormat);
+            rdfvizler.setInputFormat(getURLParamValue(request, pRDFFormat, defaultInputFormat));
+            String outputFormat = getURLParamValue(request, pDotFormat, defaultOutputFormat);
 
             String output = rdfvizler.writeOutput(outputFormat);
             String mimetype = super.setMimetype(outputFormat);

@@ -18,6 +18,7 @@ import osl.util.Arrays;
 public abstract class Servlet extends HttpServlet {
     
     protected static int[] OKCodes = { 200 };
+    protected int maxFileSize;
 
     private static final long serialVersionUID = -7780985876220754149L;
     
