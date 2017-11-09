@@ -1,8 +1,5 @@
 package osl.util.rdf.vocab;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;

@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 public abstract class Strings {
     
-    public final static String EMPTY = "";
+    public static final String EMPTY = "";
 
     // hiding constructor
     private Strings() {
@@ -23,7 +23,7 @@ public abstract class Strings {
                 .collect(Collectors.joining(glue));
     }
     
-    public static String processNonEmpty (String input, Function<String, String> processor) {
+    public static String processNonEmpty(String input, Function<String, String> processor) {
         if (input.isEmpty()) {
             return EMPTY;
         } else {

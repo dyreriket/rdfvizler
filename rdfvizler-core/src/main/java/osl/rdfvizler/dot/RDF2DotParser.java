@@ -78,8 +78,8 @@ public class RDF2DotParser {
     
     private String parseGraphAttributes(String element, String attributes, String tabs) {
         return Strings.processNonEmpty(
-                attributes, 
-                s -> tabs + element + s + SC + BR);
+            attributes, 
+            s -> tabs + element + s + SC + BR);
     }
     
     private String parseGraphElements(Resource graph, String tabs) {
@@ -90,10 +90,10 @@ public class RDF2DotParser {
     
     private String parseElements(Resource resource, Property element, Function<Resource, String> parser, String tabs) {
         return Strings.processNonEmpty(
-                Strings.toString(resource.listProperties(element).toList(),
-                        s -> parser.apply(s.getObject().asResource()), tabs),
-                s -> BR + tabs + "// " + getElementType(element) + BR // comment "headline"
-                        + tabs + s);
+            Strings.toString(resource.listProperties(element).toList(),
+                s -> parser.apply(s.getObject().asResource()), tabs),
+            s -> BR + tabs + "// " + getElementType(element) + BR // comment "headline"
+                + tabs + s);
     }
     
     private String getElementType(Property element) {
@@ -110,8 +110,8 @@ public class RDF2DotParser {
 
     private String parseAttributeList(Resource resource, String namespace) {
         return Strings.processNonEmpty(
-                parseAttributes(resource, namespace), 
-                s -> " [ " + s + " ]");
+            parseAttributes(resource, namespace), 
+            s -> " [ " + s + " ]");
     }
     
     private String parseNode(Resource resource) {
