@@ -6,13 +6,16 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import org.apache.commons.io.IOUtils;
+
+import osl.util.Arrays;
 
 public abstract class DotProcess {
     
     public static final String DEFAULT_EXEC = "/usr/bin/dot";
-    public static final String[] DOT_FORMATS = { "svg", "png", "pdf" };
+    public static final List<String> DOT_FORMATS = Arrays.toUnmodifiableList("svg", "png", "pdf");
     public static final String DEFAULT_FORMAT = "svg";
     
     private static final Charset CHARSET = StandardCharsets.UTF_8;

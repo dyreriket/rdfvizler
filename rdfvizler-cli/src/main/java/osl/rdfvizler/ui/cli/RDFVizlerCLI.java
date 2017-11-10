@@ -1,18 +1,20 @@
 package osl.rdfvizler.ui.cli;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.commons.lang3.StringUtils;
+
 import osl.rdfvizler.dot.DotProcess;
 import osl.rdfvizler.ui.RDFVizler;
-import osl.util.Arrays;
 
 public class RDFVizlerCLI extends CLI {
 
@@ -53,7 +55,7 @@ public class RDFVizlerCLI extends CLI {
         
         options.addOption(buildOption("if", OPT_INFORMAT, false,  1, 
                 "Input RDF format. Permissible values: ", 
-                Arrays.toString(RDFVizler.INPUT_FORMATS, "|"), 
+                StringUtils.join(RDFVizler.INPUT_FORMATS, "|"), 
                 ". Defaults to: ", RDFVizler.DEFAULT_INPUT_FORMAT));
 
         options.addOption(buildOption("r", OPT_RULES, false, 1, 
@@ -70,9 +72,9 @@ public class RDFVizlerCLI extends CLI {
 
         options.addOption(buildOption("of", OPT_OUTFORMAT, false, 1, 
                 "Output format. Permissible values ",
-                " for dot image output: ", Arrays.toString(RDFVizler.DOT_OUTPUT_FORMATS, "|"), 
-                "; for dot text output: ", Arrays.toString(RDFVizler.TEXT_OUTPUT_FORMATS, "|"),
-                "; for RDF output: ", Arrays.toString(RDFVizler.RDF_OUTPUT_FORMATS, "|"),
+                " for dot image output: ", StringUtils.join(RDFVizler.DOT_OUTPUT_FORMATS, "|"), 
+                "; for dot text output: ", StringUtils.join(RDFVizler.TEXT_OUTPUT_FORMATS, "|"),
+                "; for RDF output: ", StringUtils.join(RDFVizler.RDF_OUTPUT_FORMATS, "|"),
                 " Defaults to: ", RDFVizler.DEFAULT_OUTPUT_FORMAT));
 
         options.addOption(buildOption("x", OPT_DOTEXEC, false, 1, 
@@ -106,17 +108,17 @@ public class RDFVizlerCLI extends CLI {
     private void printHelp(Options options, Exception e) {
         console.println(e.getMessage());
         
-        String str = Arrays.toString(
+        String str = StringUtils.join(
             " --", OPT_IN, " <rdfFile>", 
             " [--", OPT_RULES, " <rulesFile>]",
-            " [--", OPT_INFORMAT, " <", Arrays.toString(RDFVizler.INPUT_FORMATS, "|"), ">]",
+            " [--", OPT_INFORMAT, " <", StringUtils.join(RDFVizler.INPUT_FORMATS, "|"), ">]",
             " [--", OPT_OUT, " <outputFile>",
             " --", OPT_OUTEXT, "]",
             " [--", OPT_OUTFORMAT, 
                 " <",
-                Arrays.toString(RDFVizler.DOT_OUTPUT_FORMATS, "|"),
-                "|" + Arrays.toString(RDFVizler.TEXT_OUTPUT_FORMATS, "|"), 
-                "|" + Arrays.toString(RDFVizler.RDF_OUTPUT_FORMATS, "|"),
+                StringUtils.join(RDFVizler.DOT_OUTPUT_FORMATS, "|"),
+                "|" + StringUtils.join(RDFVizler.TEXT_OUTPUT_FORMATS, "|"), 
+                "|" + StringUtils.join(RDFVizler.RDF_OUTPUT_FORMATS, "|"),
                 ">]");
 
         new HelpFormatter().printHelp(120, str, "java -jar rdfvizler", options, "");
@@ -133,9 +135,9 @@ public class RDFVizlerCLI extends CLI {
 
     private void writeOutput(String output) throws IOException {
         if (outputPath != null) {
-            BufferedWriter bw = new BufferedWriter(new FileWriter(outputPath));
-            bw.write(output);
-            bw.close();
+            OutputStreamWriter out = new OutputStreamWriter(new FileOutputStream(outputPath), StandardCharsets.UTF_8);
+            out.write(output);
+            out.close();
         } else {
             console.println(output);
         }

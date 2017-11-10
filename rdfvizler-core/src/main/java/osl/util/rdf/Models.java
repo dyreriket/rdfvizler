@@ -20,7 +20,7 @@ import osl.util.Strings;
 
 public abstract class Models {
 
-    public static final String[] RDF_FORMATS = { "TTL", "RDF/XML", "N3", "N-TRIPLES" };
+    public static final List<String> RDF_FORMATS = Arrays.toUnmodifiableList("TTL", "RDF/XML", "N3", "N-TRIPLES");
     public static final String DEFAULT_RDF_FORMAT = "TTL";
     
     // hiding constructor
@@ -73,7 +73,7 @@ public abstract class Models {
     }
 
     public static boolean isRDFFormat(String inputFormat) {
-        return Arrays.inArray(RDF_FORMATS, inputFormat);
+        return RDF_FORMATS.contains(inputFormat);
     }
 
 }

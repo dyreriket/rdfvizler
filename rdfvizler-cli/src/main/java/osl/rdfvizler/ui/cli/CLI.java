@@ -5,6 +5,7 @@ import java.util.function.Consumer;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Option.Builder;
+import org.apache.commons.lang3.StringUtils;
 
 import osl.util.Arrays;
 
@@ -31,7 +32,7 @@ public abstract class CLI {
     }
     
     protected static Option buildOption(String shortname, String longname, boolean required, int noArgs, String... description) {
-        Builder ob = Option.builder(shortname).longOpt(longname).required(required).desc(Arrays.toString(description, ""));
+        Builder ob = Option.builder(shortname).longOpt(longname).required(required).desc(StringUtils.join(description, ""));
         if (noArgs < 0) {
             ob.hasArgs();
         } else {

@@ -1,7 +1,8 @@
 package osl.util;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 public abstract class Arrays {
 
@@ -17,18 +18,9 @@ public abstract class Arrays {
     private static <T> T filteredFirstOrNull(T[] values, Predicate<T> filter) {
         return java.util.Arrays.stream(values).filter(filter).findFirst().orElse(null);
     }
-    
-    public static <T> boolean inArray(T[] array, T value) {
-        return java.util.Arrays.asList(array).contains(value);
-    }
-    
-    public static <E> String toString(E[] objects, String glue) {
-        return java.util.Arrays.stream(objects).map(object -> object.toString())
-                .collect(Collectors.joining(glue));
-    }
-    
+       
     @SuppressWarnings("unchecked")
-    public static <E> String toString(E... objects) {
-        return toString(objects, "");
+    public static <E> List<E> toUnmodifiableList(E... objects) {
+        return Collections.unmodifiableList(java.util.Arrays.asList(objects));
     }
 }

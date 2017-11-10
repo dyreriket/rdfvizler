@@ -1,6 +1,7 @@
 package osl.rdfvizler.ui;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.jena.rdf.model.Model;
@@ -16,11 +17,11 @@ public class RDFVizler {
 
     public static final String DEFAULT_RULES = "default.jrule";
 
-    public static final String[] INPUT_FORMATS = Models.RDF_FORMATS;
+    public static final Collection<String> INPUT_FORMATS = Models.RDF_FORMATS;
 
-    public static final String[] RDF_OUTPUT_FORMATS = Models.RDF_FORMATS;
-    public static final String[] DOT_OUTPUT_FORMATS = DotProcess.DOT_FORMATS;
-    public static final String[] TEXT_OUTPUT_FORMATS = { "dot", "txt" };
+    public static final List<String> RDF_OUTPUT_FORMATS = Models.RDF_FORMATS;
+    public static final List<String> DOT_OUTPUT_FORMATS = DotProcess.DOT_FORMATS;
+    public static final List<String> TEXT_OUTPUT_FORMATS = Arrays.toUnmodifiableList("dot", "txt");
     
     public static final String DEFAULT_INPUT_FORMAT = Models.DEFAULT_RDF_FORMAT;
     public static final String DEFAULT_OUTPUT_FORMAT = DotProcess.DEFAULT_FORMAT;
@@ -90,11 +91,11 @@ public class RDFVizler {
 
     public String writeOutput(String format) throws IOException {
         String output = null;
-        if (Arrays.inArray(RDF_OUTPUT_FORMATS, format)) {
+        if (RDF_OUTPUT_FORMATS.contains(format)) {
             output = writeDotModel(format);
-        } else if (Arrays.inArray(DOT_OUTPUT_FORMATS, format)) {
+        } else if (DOT_OUTPUT_FORMATS.contains(format)) {
             output = writeDotImageOutput(format);
-        } else if (Arrays.inArray(TEXT_OUTPUT_FORMATS, format)) {
+        } else if (TEXT_OUTPUT_FORMATS.contains(format)) {
             output = writeDotTextOutput();
         }
         return output;
