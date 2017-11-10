@@ -8,30 +8,37 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.io.IOUtils;
+import osl.util.Arrays;
 
 public abstract class DotProcess {
-    
+
+    public static final String ENV_RDFVIZLER_DOT_EXEC = "RDFVIZLER_DOT_EXEC";
     public static final String DEFAULT_EXEC = "/usr/bin/dot";
     public static final String[] DOT_FORMATS = { "svg", "png", "pdf" };
     public static final String DEFAULT_FORMAT = "svg";
     
     private static final Charset CHARSET = StandardCharsets.UTF_8;
- 
+
+    private static final String defaultExec = Arrays.getFirstNonEmpty(
+            System.getenv(ENV_RDFVIZLER_DOT_EXEC),
+            DEFAULT_EXEC);
+
     // hiding constructor
     private DotProcess() {
         throw new IllegalStateException("Utility class");
     }
     
     public static String runDot(String dot) throws IOException {
-        return runDot(DEFAULT_EXEC, dot, DEFAULT_FORMAT);
+        return runDot(defaultExec, dot, DEFAULT_FORMAT);
     }
     
     public static String runDot(String dot, String format) throws IOException {
-        return runDot(DEFAULT_EXEC, dot, format);
+        return runDot(defaultExec, dot, format);
     }
 
     // convert dot spec into output format
     public static String runDot(String exec, String dot, String format) throws IOException {
+        exec = (exec != null) ? exec : defaultExec;
         Process process = getDotProcess(exec, format);
         writeOutputStream(dot, process.getOutputStream());
         if (process.getErrorStream().available() > 0) {

@@ -20,8 +20,6 @@ public class DotTest {
     
     private final String file1 = "test1.ttl";
 
-    private String pathDotExec = Arrays.getFirstNonEmpty(System.getenv(RDFVizler.ENV_RDFVIZLER_DOT_EXEC), DotProcess.DEFAULT_EXEC);
-
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder();
 
@@ -43,7 +41,7 @@ public class DotTest {
 
         rdfvizler.setInputFormat("RDF/XML");
         rdfvizler.setRulesPath("../docs/rules/rdf.jrule");
-        rdfvizler.setDotExecutable(pathDotExec);
+
 
         print("foaf.ttl" + ".dot", rdfvizler.writeOutput("TTL"));
         print("foaf.rdf" + ".dot", rdfvizler.writeOutput("dot"));
@@ -53,7 +51,7 @@ public class DotTest {
     ////////////////////////////////////////
 
     private String runDot(String content, String format) throws IOException {
-        return DotProcess.runDot(pathDotExec, content, format);
+        return DotProcess.runDot(null, content, format);
     }
 
     private String toDot(String file) {

@@ -14,7 +14,7 @@ import osl.util.rdf.vocab.DotVocabulary;
 
 public class RDFVizler {
 
-    public static final String ENV_RDFVIZLER_DOT_EXEC = "RDFVIZLER_DOT_EXEC";
+
 
     public static final String DEFAULT_RULES = "default.jrule";
 
@@ -29,7 +29,7 @@ public class RDFVizler {
 
     private String pathRDF;
     private String pathRules = DEFAULT_RULES;
-    private String pathDotExec = DotProcess.DEFAULT_EXEC;
+    private String pathDotExec;
     private String inputFormat = DEFAULT_INPUT_FORMAT;
 
     public RDFVizler(String pathRDF) {

@@ -94,7 +94,7 @@ public class RDFVizlerCLI extends CLI {
             consumeOptionValue(OPT_OUTFORMAT, v -> this.outputFormat = v, RDFVizler.DEFAULT_OUTPUT_FORMAT);
             consumeOptionValue(OPT_OUT,       v -> this.outputPath = v);
             consumeOptionValue(OPT_OUTEXT,    v -> this.outputPath = inputPath + "." + this.outputFormat);
-            consumeOptionValue(OPT_DOTEXEC,   v -> rdfvizler.setDotExecutable(v), System.getenv(RDFVizler.ENV_RDFVIZLER_DOT_EXEC));
+            consumeOptionValue(OPT_DOTEXEC,   v -> rdfvizler.setDotExecutable(v));
 
         } catch (ParseException e) {
             printHelp(options, e);
