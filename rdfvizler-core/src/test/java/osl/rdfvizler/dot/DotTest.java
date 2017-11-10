@@ -51,7 +51,7 @@ public class DotTest {
     ////////////////////////////////////////
 
     private String runDot(String content, String format) throws IOException {
-        return DotProcess.runDot(null, content, format);
+        return DotProcess.runDot(content, format);
     }
 
     private String toDot(String file) {
