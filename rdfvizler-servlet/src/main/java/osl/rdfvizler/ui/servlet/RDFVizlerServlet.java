@@ -59,7 +59,7 @@ public class RDFVizlerServlet extends Servlet {
         String pathRules = null;
        
         try {
-            pathRDF = getURLParamValue(request, pRDF, pathRDF);
+            pathRDF = request.getParameter(pRDF);
             RDFVizler rdfvizler = new RDFVizler(pathRDF);
             rdfvizler.setDotExecutable(defaultDotExec);
 
