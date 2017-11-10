@@ -1,10 +1,10 @@
 package osl.util.rdf;
 
+import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
@@ -41,11 +41,15 @@ public abstract class Models {
     }
 
     public static String writeModel(Model model, String format) {
-        StringWriter str = new StringWriter();
-        model.write(str, format);
-        String modelString = str.toString();
-        str.flush();
-        IOUtils.closeQuietly(str);
+        String modelString = "";
+        try (StringWriter str = new StringWriter()) {
+            model.write(str, format);
+            modelString = str.toString();
+            str.flush();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         return modelString;
     }
 
