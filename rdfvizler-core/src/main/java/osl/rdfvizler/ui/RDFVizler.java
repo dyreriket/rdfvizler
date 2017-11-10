@@ -86,7 +86,12 @@ public class RDFVizler {
 
     public String writeDotImageOutput(String format) throws IOException {
         String dot = writeDotTextOutput();
-        String output = DotProcess.runDot(pathDotExec, dot, format);
+        String output;
+        if (pathDotExec == null) {
+            output = DotProcess.runDot(dot, format);
+        } else {
+            output = DotProcess.runDot(pathDotExec, dot, format);
+        }
         return output;
     }
 

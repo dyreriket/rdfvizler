@@ -38,7 +38,6 @@ public abstract class DotProcess {
 
     // convert dot spec into output format
     public static String runDot(String exec, String dot, String format) throws IOException {
-        exec = (exec != null) ? exec : defaultExec;
         Process process = getDotProcess(exec, format);
         writeOutputStream(dot, process.getOutputStream());
         if (process.getErrorStream().available() > 0) {
