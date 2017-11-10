@@ -14,6 +14,8 @@ import osl.util.rdf.vocab.DotVocabulary;
 
 public class RDFVizler {
 
+    public static final String ENV_RDFVIZLER_DOT_EXEC = "RDFVIZLER_DOT_EXEC";
+
     public static final String DEFAULT_RULES = "default.jrule";
 
     public static final String[] INPUT_FORMATS = Models.RDF_FORMATS;

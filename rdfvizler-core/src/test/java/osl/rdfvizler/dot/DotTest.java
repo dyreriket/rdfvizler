@@ -10,7 +10,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import osl.rdfvizler.ui.RDFVizler;
-import osl.rdfvizler.ui.cli.RDFVizlerCLI;
+
 import osl.util.Arrays;
 import osl.util.rdf.Models;
 
@@ -20,7 +20,7 @@ public class DotTest {
     
     private final String file1 = "test1.ttl";
 
-    private String pathDotExec = Arrays.getFirstNonEmpty(System.getenv(RDFVizlerCLI.ENV_RDFVIZLER_DOT_EXEC), DotProcess.DEFAULT_EXEC);
+    private String pathDotExec = Arrays.getFirstNonEmpty(System.getenv(RDFVizler.ENV_RDFVIZLER_DOT_EXEC), DotProcess.DEFAULT_EXEC);
 
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder();
