@@ -18,7 +18,7 @@ import osl.rdfvizler.ui.RDFVizler;
 
 public class RDFVizlerCLI {
 
-    public static final String ENV_RDFVIZLER_DOT_EXEC = "RDFVIZLER_DOT_EXEC";
+
     protected static final String ENV_RDFVIZLER_RULES_PATH = "RDFVIZLER_RULES_PATH";
     
     // CLI options
@@ -94,8 +94,7 @@ public class RDFVizlerCLI {
             cl.consumeOption(OPT_OUTFORMAT, v -> this.outputFormat = v, RDFVizler.DEFAULT_OUTPUT_FORMAT);
             cl.consumeOption(OPT_OUT,       v -> this.outputPath = v);
             cl.consumeOption(OPT_OUTEXT,    v -> this.outputPath = cl.getOptionValue(OPT_IN) + "." + this.outputFormat);
-            cl.consumeOption(OPT_DOTEXEC,   v -> rdfvizler.setDotExecutable(v), System.getenv(ENV_RDFVIZLER_DOT_EXEC));
-
+            cl.consumeOption(OPT_DOTEXEC,   v -> rdfvizler.setDotExecutable(v));
         } catch (ParseException e) {
             printHelp(options, e);
             return false;

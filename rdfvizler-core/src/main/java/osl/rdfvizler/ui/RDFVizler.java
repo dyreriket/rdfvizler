@@ -15,6 +15,8 @@ import osl.util.rdf.vocab.DotVocabulary;
 
 public class RDFVizler {
 
+
+
     public static final String DEFAULT_RULES = "default.jrule";
 
     public static final Collection<String> INPUT_FORMATS = Models.RDF_FORMATS;
@@ -28,7 +30,7 @@ public class RDFVizler {
 
     private String pathRDF;
     private String pathRules = DEFAULT_RULES;
-    private String pathDotExec = DotProcess.DEFAULT_EXEC;
+    private String pathDotExec;
     private String inputFormat = DEFAULT_INPUT_FORMAT;
 
     public RDFVizler(String pathRDF) {
@@ -85,7 +87,12 @@ public class RDFVizler {
 
     public String writeDotImageOutput(String format) throws IOException {
         String dot = writeDotTextOutput();
-        String output = DotProcess.runDot(pathDotExec, dot, format);
+        String output;
+        if (pathDotExec == null) {
+            output = DotProcess.runDot(dot, format);
+        } else {
+            output = DotProcess.runDot(pathDotExec, dot, format);
+        }
         return output;
     }
 
