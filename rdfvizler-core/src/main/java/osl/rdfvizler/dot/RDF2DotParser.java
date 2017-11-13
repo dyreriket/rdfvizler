@@ -1,7 +1,7 @@
 package osl.rdfvizler.dot;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Function;
 
 import org.apache.jena.rdf.model.Model;
@@ -97,7 +97,7 @@ public class RDF2DotParser {
     }
     
     private String getElementType(Property element) {
-        return element.getLocalName().replaceAll("has", EMPTY).toUpperCase() + "S";
+        return element.getLocalName().replaceAll("has", EMPTY).toUpperCase(Locale.ENGLISH) + "S";
     }
 
     private String parseAttributes(Resource resource, String namespace) {

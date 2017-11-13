@@ -25,7 +25,7 @@ public class ExcludeType extends BaseBuiltin {
     @Override
     public boolean bodyCall(Node[] args, int length, RuleContext context) {
         super.checkArgs(length, context);
-        return (!nodeHasType(args[0], args[1], context));
+        return !nodeHasType(args[0], args[1], context);
     }
 
     private boolean nodeHasType(Node thing, Node type, RuleContext context) {

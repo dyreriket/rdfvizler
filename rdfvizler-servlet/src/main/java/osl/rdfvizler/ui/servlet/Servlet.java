@@ -6,18 +6,20 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import osl.util.Arrays;
 
+
 public abstract class Servlet extends HttpServlet {
     
-    protected static int[] OKCodes = { 200 };
+    protected static final List<Integer> OKCodes = Arrays.toUnmodifiableList(200);
     protected int maxFileSize;
 
     private static final long serialVersionUID = -7780985876220754149L;
@@ -43,9 +45,9 @@ public abstract class Servlet extends HttpServlet {
     //  (1) URL resolves, 
     //  (2) with code 200
     //  (3) content not larger than max limit.
-    protected void checkURIInput(String path, int[] codes, int maxSize) throws IOException {
+    protected void checkURIInput(String path, int maxSize) throws IOException {
         HttpURLConnection connection = getHttpConnection(path);
-        checkHttpCode(connection, codes);
+        checkHttpCode(connection);
         checkHttpContentSize(connection, maxSize);
     }
 
@@ -60,13 +62,12 @@ public abstract class Servlet extends HttpServlet {
         return connection;
     }
 
-    protected boolean checkHttpCode(HttpURLConnection connection, int... legalCodes) throws IOException {
+    protected boolean checkHttpCode(HttpURLConnection connection) throws IOException {
         int httpCode = connection.getResponseCode();
-        Integer[] intObjects = ArrayUtils.toObject(legalCodes);
-        if (Arrays.inArray(intObjects, httpCode)) {
+        if (OKCodes.contains(httpCode)) {
             throw new IOException("Error retrieving URI: '" + connection.getURL().toString() 
                     + "'. URI returned code " + httpCode
-                    + ", expected: " + Arrays.toString(intObjects, ", "));
+                    + ", expected: " + StringUtils.join(OKCodes, ", "));
         }
         return true;
     }

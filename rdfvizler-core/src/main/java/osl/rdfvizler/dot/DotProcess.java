@@ -2,19 +2,20 @@ package osl.rdfvizler.dot;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import org.apache.commons.io.IOUtils;
+
 import osl.util.Arrays;
 
 public abstract class DotProcess {
 
     public static final String ENV_RDFVIZLER_DOT_EXEC = "RDFVIZLER_DOT_EXEC";
     public static final String DEFAULT_EXEC = "/usr/bin/dot";
-    public static final String[] DOT_FORMATS = { "svg", "png", "pdf" };
+    public static final List<String> DOT_FORMATS = Arrays.toUnmodifiableList("svg", "png", "pdf");
     public static final String DEFAULT_FORMAT = "svg";
     
     private static final Charset CHARSET = StandardCharsets.UTF_8;
@@ -41,9 +42,10 @@ public abstract class DotProcess {
         Process process = getDotProcess(exec, format);
         writeOutputStream(dot, process.getOutputStream());
         if (process.getErrorStream().available() > 0) {
-            throw new IOException("Error parsing dot to " + format + ": " + readInputStream(process.getErrorStream()));
+            throw new IOException("Error parsing dot to " + format + ": " 
+                + IOUtils.toString(process.getErrorStream(), CHARSET));
         }
-        return readInputStream(process.getInputStream());
+        return IOUtils.toString(process.getInputStream(), CHARSET);
     }
     
     private static Process getDotProcess(String exec, String format) throws IOException {
@@ -55,15 +57,8 @@ public abstract class DotProcess {
     }
     
     private static void writeOutputStream(String dot, OutputStream outputStream) throws IOException {
-        BufferedOutputStream out = new BufferedOutputStream(outputStream);
-        out.write(dot.getBytes(CHARSET));
-        out.close();
+        try (BufferedOutputStream out = new BufferedOutputStream(outputStream)) {
+            out.write(dot.getBytes(CHARSET));
+        }
     }
-
-    // convenience method to slurp entire stream into a string
-    private static String readInputStream(InputStream stream) throws IOException {
-        String s = IOUtils.toString(stream, CHARSET);
-        IOUtils.closeQuietly(stream);
-        return s;
-    } 
 }

@@ -59,15 +59,15 @@ public class RDFVizlerServlet extends Servlet {
         String pathRules = null;
        
         try {
-            pathRDF = getURLParamValue(request, pRDF, pathRDF);
+            pathRDF = request.getParameter(pRDF);
             RDFVizler rdfvizler = new RDFVizler(pathRDF);
             rdfvizler.setDotExecutable(defaultDotExec);
 
             pathRules = getURLParamValue(request, pRules, defaultPathRules);
             rdfvizler.setRulesPath(pathRules);
 
-            super.checkURIInput(pathRDF, OKCodes, maxFileSize);
-            super.checkURIInput(pathRules, OKCodes, maxFileSize);
+            super.checkURIInput(pathRDF, maxFileSize);
+            super.checkURIInput(pathRules, maxFileSize);
             
             rdfvizler.setInputFormat(getURLParamValue(request, pRDFFormat, defaultInputFormat));
             String outputFormat = getURLParamValue(request, pDotFormat, defaultOutputFormat);

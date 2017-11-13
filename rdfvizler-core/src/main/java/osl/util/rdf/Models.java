@@ -1,10 +1,10 @@
 package osl.util.rdf;
 
+import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
@@ -20,7 +20,7 @@ import osl.util.Strings;
 
 public abstract class Models {
 
-    public static final String[] RDF_FORMATS = { "TTL", "RDF/XML", "N3", "N-TRIPLES" };
+    public static final List<String> RDF_FORMATS = Arrays.toUnmodifiableList("TTL", "RDF/XML", "N3", "N-TRIPLES");
     public static final String DEFAULT_RDF_FORMAT = "TTL";
     
     // hiding constructor
@@ -41,11 +41,15 @@ public abstract class Models {
     }
 
     public static String writeModel(Model model, String format) {
-        StringWriter str = new StringWriter();
-        model.write(str, format);
-        String modelString = str.toString();
-        str.flush();
-        IOUtils.closeQuietly(str);
+        String modelString = "";
+        try (StringWriter str = new StringWriter()) {
+            model.write(str, format);
+            modelString = str.toString();
+            str.flush();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         return modelString;
     }
 
@@ -73,7 +77,7 @@ public abstract class Models {
     }
 
     public static boolean isRDFFormat(String inputFormat) {
-        return Arrays.inArray(RDF_FORMATS, inputFormat);
+        return RDF_FORMATS.contains(inputFormat);
     }
 
 }
