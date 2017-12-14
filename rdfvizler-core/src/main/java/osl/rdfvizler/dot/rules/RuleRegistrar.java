@@ -3,8 +3,7 @@ package osl.rdfvizler.dot.rules;
 import org.apache.jena.reasoner.rulesys.BuiltinRegistry;
 
 public class RuleRegistrar {
-    
-    static {
+    public static void registerRules() {
         BuiltinRegistry.theRegistry.register(new ShortValue());
         BuiltinRegistry.theRegistry.register(new Namespace());
         BuiltinRegistry.theRegistry.register(new TypedValue());

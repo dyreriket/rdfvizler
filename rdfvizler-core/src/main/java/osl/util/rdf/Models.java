@@ -15,10 +15,15 @@ import org.apache.jena.util.FileManager;
 import org.apache.jena.util.FileUtils;
 import org.apache.jena.vocabulary.RDF;
 
+import osl.rdfvizler.dot.rules.RuleRegistrar;
 import osl.util.Arrays;
 import osl.util.Strings;
 
 public abstract class Models {
+
+    static {
+        RuleRegistrar.registerRules();
+    }
 
     public static final List<String> RDF_FORMATS = Arrays.toUnmodifiableList("TTL", "RDF/XML", "N3", "N-TRIPLES");
     public static final String DEFAULT_RDF_FORMAT = "TTL";
