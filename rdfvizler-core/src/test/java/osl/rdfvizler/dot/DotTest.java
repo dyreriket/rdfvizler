@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.jena.rdf.model.Model;
 import org.junit.Rule;
 import org.junit.Test;
@@ -24,15 +25,23 @@ public class DotTest {
     private final String simpleRdf = "simple_rdf.ttl";
 
 
+    /**
+     * Attempts to create the dot output for a simple RDF file applying
+     * the default rules. This should produce a DOT graph with nodes and edges
+     * This is tested by counting the number of polygons in the svg produced.
+     * This should be more than 1, as there is always one polygon in an empty svg
+     *
+     * TODO: This test should instead check if anything is drawn
+     * @throws IOException
+     */
     @Test
     public void shouldProduceNonEmptyGraph() throws IOException {
         RDFVizler rdfvizler = new RDFVizler(simpleRdf);
-        String out = rdfvizler.writeDotTextOutput();
-        int lines = out.split("\r\n|\r|\n").length;
-        assertTrue(lines > 5);
+        String out = rdfvizler.writeOutput("svg");
+        int numberOfPolygons = StringUtils.countMatches(out, "polygon");
+        assertTrue(numberOfPolygons > 1);
     }
 
-  
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder();
 
