@@ -4,7 +4,7 @@ import org.apache.jena.reasoner.rulesys.Builtin;
 import org.apache.jena.reasoner.rulesys.BuiltinRegistry;
 
 public class RuleRegistrar {
-	
+
     public static void registerRules() {
         register(new ShortValue());
         register(new Namespace());
