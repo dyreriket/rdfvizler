@@ -23,14 +23,16 @@ public class DotTest {
     private final String file1 = "test1.ttl";
     private final String simpleRdf = "simple_rdf.ttl";
 
+
     @Test
-    public void nonEmptyRdfShouldProduceNonEmptyGraph() throws IOException {
+    public void shouldProduceNonEmptyGraph() throws IOException {
         RDFVizler rdfvizler = new RDFVizler(simpleRdf);
         String out = rdfvizler.writeDotTextOutput();
         int lines = out.split("\r\n|\r|\n").length;
         assertTrue(lines > 5);
     }
 
+  
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder();
 
