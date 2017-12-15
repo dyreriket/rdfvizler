@@ -14,11 +14,22 @@ import osl.rdfvizler.ui.RDFVizler;
 import osl.util.Arrays;
 import osl.util.rdf.Models;
 
+import static org.junit.Assert.assertTrue;
+
 public class DotTest {
 
     private final boolean stdout = true; // print files also to stdout?
     
     private final String file1 = "test1.ttl";
+    private final String simpleRdf = "simple_rdf.ttl";
+
+    @Test
+    public void nonEmptyRdfShouldProduceNonEmptyGraph() throws IOException {
+        RDFVizler rdfvizler = new RDFVizler(simpleRdf);
+        String out = rdfvizler.writeDotTextOutput();
+        int lines = out.split("\r\n|\r|\n").length;
+        assertTrue(lines > 5);
+    }
 
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder();
