@@ -26,11 +26,12 @@ hs_err_pid*
 .classpath
 .project
 
-#maven
+# maven
 target
 .idea/
 work/
 
-\.checkstyle
+.checkstyle
+*/.pmd*
 
 *.iml
