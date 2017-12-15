@@ -1,5 +1,7 @@
 package osl.rdfvizler.dot;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -15,7 +17,7 @@ import osl.rdfvizler.ui.RDFVizler;
 import osl.util.Arrays;
 import osl.util.rdf.Models;
 
-import static org.junit.Assert.assertTrue;
+
 
 public class DotTest {
 
@@ -29,10 +31,9 @@ public class DotTest {
      * Attempts to create the dot output for a simple RDF file applying
      * the default rules. This should produce a DOT graph with nodes and edges
      * This is tested by counting the number of polygons in the svg produced.
-     * This should be more than 1, as there is always one polygon in an empty svg
-     *
+     * This should be more than 1, as there is always one polygon in an empty svg     *
      * TODO: This test should instead check if anything is drawn
-     * @throws IOException
+     * @throws IOException Exception thrown when file is not found
      */
     @Test
     public void shouldProduceNonEmptyGraph() throws IOException {
