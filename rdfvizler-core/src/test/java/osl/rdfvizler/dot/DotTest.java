@@ -1,9 +1,12 @@
 package osl.rdfvizler.dot;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.jena.rdf.model.Model;
 import org.junit.Rule;
 import org.junit.Test;
@@ -11,14 +14,33 @@ import org.junit.rules.TemporaryFolder;
 
 import osl.rdfvizler.ui.RDFVizler;
 
-import osl.util.Arrays;
 import osl.util.rdf.Models;
+
+
 
 public class DotTest {
 
-    private final boolean stdout = true; // print files also to stdout?
+    private final boolean stdout = false; // print files also to stdout?
     
     private final String file1 = "test1.ttl";
+    private final String simpleRdf = "simple_rdf.ttl";
+
+
+    /**
+     * Attempts to create the dot output for a simple RDF file applying
+     * the default rules. This should produce a DOT graph with nodes and edges
+     * This is tested by counting the number of polygons in the svg produced.
+     * This should be more than 1, as there is always one polygon in an empty svg     *
+     *
+     * @throws IOException Exception thrown when file is not found
+     */
+    @Test
+    public void shouldProduceNonEmptyGraph() throws IOException {
+        RDFVizler rdfvizler = new RDFVizler(simpleRdf);
+        String out = rdfvizler.writeOutput("svg");
+        int numberOfPolygons = StringUtils.countMatches(out, "polygon");
+        assertTrue(numberOfPolygons > 1);
+    }
 
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder();

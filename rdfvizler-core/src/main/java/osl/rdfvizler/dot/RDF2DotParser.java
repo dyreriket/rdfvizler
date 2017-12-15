@@ -9,11 +9,16 @@ import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
 
+import osl.rdfvizler.dot.rules.RuleRegistrar;
 import osl.util.Strings;
 import osl.util.rdf.Models;
 import osl.util.rdf.vocab.DotVocabulary;
 
 public class RDF2DotParser {
+
+    static {
+        RuleRegistrar.registerRules();
+    }
 
     private static final String STRICT = "strict ";
     private static final String GRAPH = "graph ";

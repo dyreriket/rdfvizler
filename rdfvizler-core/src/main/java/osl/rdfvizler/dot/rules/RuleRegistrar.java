@@ -1,16 +1,21 @@
 package osl.rdfvizler.dot.rules;
 
+import org.apache.jena.reasoner.rulesys.Builtin;
 import org.apache.jena.reasoner.rulesys.BuiltinRegistry;
 
 public class RuleRegistrar {
+
+    public static void registerRules() {
+        register(new ShortValue());
+        register(new Namespace());
+        register(new TypedValue());
+        register(new BeginsWith());
+        register(new Linewrap());
+        register(new ExcludeType());
+        register(new CreateUniqueIfLit());
+    }
     
-    static {
-        BuiltinRegistry.theRegistry.register(new ShortValue());
-        BuiltinRegistry.theRegistry.register(new Namespace());
-        BuiltinRegistry.theRegistry.register(new TypedValue());
-        BuiltinRegistry.theRegistry.register(new BeginsWith());
-        BuiltinRegistry.theRegistry.register(new Linewrap());
-        BuiltinRegistry.theRegistry.register(new ExcludeType());
-        BuiltinRegistry.theRegistry.register(new CreateUniqueIfLit());
+    public static void register(Builtin rule) {
+        BuiltinRegistry.theRegistry.register(rule);
     }
 }
