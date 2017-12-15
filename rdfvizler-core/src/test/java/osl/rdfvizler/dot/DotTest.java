@@ -32,7 +32,7 @@ public class DotTest {
      * the default rules. This should produce a DOT graph with nodes and edges
      * This is tested by counting the number of polygons in the svg produced.
      * This should be more than 1, as there is always one polygon in an empty svg     *
-     * TODO: This test should instead check if anything is drawn
+     *
      * @throws IOException Exception thrown when file is not found
      */
     @Test
