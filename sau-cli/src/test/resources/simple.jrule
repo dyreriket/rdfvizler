@@ -10,11 +10,12 @@
 
 @prefix :      <urn:temp#>
 
+
 [init:
 ->
    (:graph rdf:type gv:RootGraph)
    (:graph rdf:type gv:DiGraph)
-   (:graph gva:rankdir "LR")
+   (:graph gva:rankdir "TD")
    (:graph gva:nodesep "0.3")
    (:graph gva:ranksep "0.3")
    (:graph gva:center "true")
@@ -43,10 +44,12 @@
   // do not include type relationships
   notEqual(?xp, rdf:type)
   // literals cannot be subjects, so we skolemise everything (for simplicity):
+  notLiteral(?xo)
   makeSkolem(?s, ?xs)
   makeSkolem(?p, ?xs, ?xp, ?xo)
   makeSkolem(?o, ?xo)
   shortvalue(?xp, ?pname)
+
 ->
   (?s gv:hasID ?xs)
   (?o gv:hasID ?xo)
