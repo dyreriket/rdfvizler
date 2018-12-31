@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
 
 import xyz.dyreriket.sau.DotProcess;
 import xyz.dyreriket.sau.Sau;
+import xyz.dyreriket.sau.util.Models;
 
 public class SauServlet extends Servlet {
 
@@ -45,11 +46,11 @@ public class SauServlet extends Servlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        defaultDotExec = getInitValue(config, "DotExec", DotProcess.DEFAULT_EXEC);
+        defaultDotExec = getInitValue(config, "DotExec", DotProcess.DEFAULT_DOT_EXEC);
         maxFileSize = Integer.parseInt(getInitValue(config, "MaxInput", "30000"));
         defaultPathRules = getInitValue(config, "DefaultRules", Sau.DEFAULT_RULES);
-        defaultInputFormat = getInitValue(config, "DefaultFormatRDF", Sau.DEFAULT_INPUT_FORMAT);
-        defaultOutputFormat = getInitValue(config, "DefaultFormatDot", Sau.DEFAULT_OUTPUT_FORMAT);
+        defaultInputFormat = getInitValue(config, "DefaultFormatRDF", Models.DEFAULT_RDF_FORMAT.toString());
+        defaultOutputFormat = getInitValue(config, "DefaultFormatDot", Models.DEFAULT_RDF_FORMAT.toString());
     }
 
     @Override
@@ -59,20 +60,21 @@ public class SauServlet extends Servlet {
         String pathRules = null;
        
         try {
-            pathRDF = request.getParameter(pRDF);
-            Sau rdfvizler = new Sau(pathRDF);
-            rdfvizler.setDotExecutable(defaultDotExec);
+            Sau sau = new Sau();
+            sau.setDotExecutable(defaultDotExec);
 
             pathRules = getURLParamValue(request, pRules, defaultPathRules);
-            rdfvizler.setRulesPath(pathRules);
+            sau.setRulesPath(pathRules);
 
             super.checkURIInput(pathRDF, maxFileSize);
             super.checkURIInput(pathRules, maxFileSize);
             
-            rdfvizler.setInputFormat(getURLParamValue(request, pRDFFormat, defaultInputFormat));
+            sau.setInputFormat(Models.RDFformat.valueOf(getURLParamValue(request, pRDFFormat, defaultInputFormat)));
             String outputFormat = getURLParamValue(request, pDotFormat, defaultOutputFormat);
 
-            String output = rdfvizler.writeOutput(outputFormat);
+            pathRDF = request.getParameter(pRDF);
+            
+            String output = sau.write(pathRDF, outputFormat);
             String mimetype = super.setMimetype(outputFormat);
 
             super.respond(response, output, mimetype);

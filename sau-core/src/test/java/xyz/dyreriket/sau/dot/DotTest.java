@@ -18,7 +18,6 @@ import xyz.dyreriket.sau.Sau;
 import xyz.dyreriket.sau.util.Models;
 
 
-
 public class DotTest {
 
     private final boolean stdout = false; // print files also to stdout?
@@ -37,8 +36,8 @@ public class DotTest {
      */
     @Test
     public void shouldProduceNonEmptyGraph() throws IOException {
-        Sau rdfvizler = new Sau(simpleRdf);
-        String out = rdfvizler.writeOutput("svg");
+        Sau rdfvizler = new Sau();
+        String out = rdfvizler.writeDotImage(simpleRdf, DotProcess.ImageOutputFormat.svg);
         int numberOfPolygons = StringUtils.countMatches(out, "polygon");
         assertTrue(numberOfPolygons > 1);
     }
@@ -54,26 +53,26 @@ public class DotTest {
 
     @Test
     public void shouldOutputDotsvg() throws IOException {
-        print(file1 + ".svg", runDot(toDot(file1), "svg"));
+        print(file1 + ".svg", runDot(toDot(file1), DotProcess.ImageOutputFormat.svg));
     }
 
     @Test
     public void should() throws IllegalArgumentException, IOException {
+        
+        String file = "http://folk.uio.no/martige/foaf.rdf";
 
-        Sau rdfvizler = new Sau("http://folk.uio.no/martige/foaf.rdf");
+        Sau sau = new Sau();
+        sau.setInputFormat(Models.RDFformat.xml);
+        sau.setRulesPath("../docs/rules/rdf.jrule");
 
-        rdfvizler.setInputFormat("RDF/XML");
-        rdfvizler.setRulesPath("../docs/rules/rdf.jrule");
-
-
-        print("foaf.ttl" + ".dot", rdfvizler.writeOutput("TTL"));
-        print("foaf.rdf" + ".dot", rdfvizler.writeOutput("dot"));
-        print("foaf.rdf" + ".svg", rdfvizler.writeOutput("svg"));
+        print("foaf.ttl" + ".dot", sau.writeRDFDotModel(file, Models.RDFformat.ttl));
+        print("foaf.rdf" + ".dot", sau.writeDotGraph(file));
+        print("foaf.rdf" + ".svg", sau.writeDotImage(file, DotProcess.ImageOutputFormat.svg));
     }
 
     ////////////////////////////////////////
 
-    private String runDot(String content, String format) throws IOException {
+    private String runDot(String content, DotProcess.ImageOutputFormat format) throws IOException {
         return DotProcess.runDot(content, format);
     }
 
