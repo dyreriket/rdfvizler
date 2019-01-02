@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	xmlns:ex="https://example.org/">
+
+	<rdf:Description rdf:about="#one">
+		<ex:prop rdf:resource="#two" />
+		<ex:author></ex:author>
+	</rdf:Description>
+
+</rdf:RDF>

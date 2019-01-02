@@ -1,6 +1,8 @@
 package xyz.dyreriket.sau;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiFunction;
@@ -14,7 +16,7 @@ import xyz.dyreriket.sau.util.Models.RDFformat;
 
 public class Sau {
 
-    public static final String DEFAULT_RULES = "default.jrule";
+    public static final URI DEFAULT_RULES = makeURI("default.jrule");
 
     private static void addPrefixes(Model model) {
         // model.withDefaultMappings(PrefixMapping.Standard);
@@ -28,10 +30,12 @@ public class Sau {
         return Rule.rulesFromURL(path);
     }
 
-    private String pathRules = DEFAULT_RULES;
+    private String pathRules = DEFAULT_RULES.toString();
     private String pathDotExec = DotProcess.DEFAULT_DOT_EXEC;
 
-    private Models.RDFformat inputFormat = Models.DEFAULT_RDF_FORMAT;
+    public enum RDFInputFormat { ttl, rdf, nt, guess }
+
+    private Models.RDFformat inputFormat = null; // null means we guess format.
 
     private boolean skipRules = false;
 
@@ -40,6 +44,14 @@ public class Sau {
     };
 
     public Sau() {
+    }
+    
+    public static URI makeURI(String urlString) {
+        try {
+            return new URI(urlString);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private Model getRDFDotModel(String pathRDF) {
@@ -52,16 +64,26 @@ public class Sau {
         return model;
     }
 
+    // TODO: if input not set, then guess; if null, then guss 
     private Model readModel(String pathRDF) {
-        return Models.readModel(pathRDF, this.inputFormat);
+        if (this.inputFormat == null) {
+            return Models.readModel(pathRDF);
+        } else {
+            return Models.readModel(pathRDF, this.inputFormat);
+        }
     }
 
     public void setDotExecutable(String path) {
         this.pathDotExec = path;
     }
 
-    public void setInputFormat(Models.RDFformat inputFormat) {
-        this.inputFormat = inputFormat;
+    public void setInputFormat(RDFInputFormat inputFormat) {
+        if (RDFInputFormat.guess == inputFormat) {
+            this.inputFormat = null;
+        } else {
+            this.inputFormat = Models.RDFformat.valueOf(inputFormat.toString());    
+        }
+        
     }
 
     public void setRulesPath(String path) {

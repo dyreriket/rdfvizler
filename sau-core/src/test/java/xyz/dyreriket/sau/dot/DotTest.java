@@ -17,7 +17,6 @@ import xyz.dyreriket.sau.RDF2DotParser;
 import xyz.dyreriket.sau.Sau;
 import xyz.dyreriket.sau.util.Models;
 
-
 public class DotTest {
 
     private final boolean stdout = false; // print files also to stdout?
@@ -62,7 +61,7 @@ public class DotTest {
         String file = "http://folk.uio.no/martige/foaf.rdf";
 
         Sau sau = new Sau();
-        sau.setInputFormat(Models.RDFformat.xml);
+        //sau.setInputFormat(Models.RDFformat.rdf);
         sau.setRulesPath("../docs/rules/rdf.jrule");
 
         print("foaf.ttl" + ".dot", sau.writeRDFDotModel(file, Models.RDFformat.ttl));

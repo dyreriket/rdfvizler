@@ -21,43 +21,30 @@ import xyz.dyreriket.sau.util.Models;
     optionListHeading = "%nOptions:%n", 
     header = "%nSau:%n - Visualising RDF.%n"
             + " - Customised formatting via rule saturation.%n"
-            + " - Leverages Graphviz: http://graphviz.org/%n"
+            + " - Leverages Jena for handling RDF and Graphviz for graph visualisation.%n"
             + " - See https://github.com/dyreriket/sau", 
-    description = "", 
-    requiredOptionMarker = '*')
+    description = ""
+    )
 public class SauCLI implements Runnable {
-
-    // TODO CommandLine::setCaseInsensitiveEnumValuesAllowed
-
-    private enum Output {
+ 
+    private enum ExecutionMode {
         rdf, dot, image
     }
-
-    /**
-     * X -applyRules -ar default=yes X -output rdf, dot, *image* X -inRDFFormat -irf
-     * *ttl*, xml, nt X -outRDFFormat -orf (same) X -outDotFormat -odf *txt* X
-     * -outImageFormat -oif png, svg, pdf X -outExtension -oe same as format X
-     * -dotExecutable -dot X -rules -r path to rules LATER -rulesFormat -rf (jrules,
-     * construct) X -stdout write to stdout - see picocli LATER -stdin read from
-     * output - see picocli LATER -verbose LATER -quiet X -dryrun X -version - see
-     * picocli LATER -validateRDF
-     */
-
-    protected static final String ENV_RDFVIZLER_RULES_PATH = "RDFVIZLER_RULES_PATH";
-
+    
     public static void main(String[] args) throws IOException {
         CommandLine.run(new SauCLI(), args);
     }
 
-    @Parameters(paramLabel = "RDF_FILES", arity = "1..*", description = "Input RDF: URIs or file paths")
-    private URI[] inFiles;
+    @Parameters(paramLabel = "RDF_FILES", description = "Input RDF: URIs or file paths")
+    private URI[] inFiles = new URI[0];
 
     @Option(names = { "-x", "--executionMode" }, 
             description = "What output to produce. (legal values: ${COMPLETION-CANDIDATES}; default: ${DEFAULT-VALUE})")
-    private Output mode = Output.image;
+    private ExecutionMode mode = ExecutionMode.image;
 
-    @Option(names = { "-r", "--rules" }, description = "Input rules: URI or file path (default: ${DEFAULT-VALUE})")
-    private URI rules;
+    @Option(names = { "-r", "--rules" }, 
+            description = "Input rules: URI or file path (default: ${DEFAULT-VALUE})")
+    private URI rules = Sau.DEFAULT_RULES;
 
     // TODO
     /*
@@ -66,42 +53,42 @@ public class SauCLI implements Runnable {
      * false;
      */
 
-    /*
-     * @Option(names = { "--stdout" }, description =
-     * "Write output to stdout (default: ${DEFAULT-VALUE})") private boolean stdout
-     * = false;
-     * 
-     * @Option(names = { "-o", "--out" }, description =
-     * "Output file. Defaults to input file + --outExtension value. 
-     * NB! If a this option is set for then multiple inputs are (over)written to the same file."
-     * ) private File outFile;
-     * 
-     * @Option(names = { "-of", "--outFolder" }, description =
-     * "Output folder. Defaults to current directory.") private File outFolder;
-     * 
-     * @Option(names = { "-oe", "--outExtension" }, description =
-     * "Extension appended to output files when written to folder. Defaults to outputFormat value."
-     * ) private String outExtension;
-     */
+    /* 
+    @Option(names = { "--stdout" }, 
+            description = "Write output to stdout (default: ${DEFAULT-VALUE})") 
+    private boolean stdout = true;
 
-    @Option(names = { "--skipRules" }, description = "Skip rule application to input? (default: ${DEFAULT-VALUE})")
+    @Option(names = { "-o", "--out" }, 
+            description = "Output file. Defaults to input file + --outExtension value. "
+                    + "NB! If this option is set to a specific value when processing multiple inputs, "
+                    + "then all output will be written to this single output file.") 
+    private File outFile;
+
+    @Option(names = { "-of", "--outFolder" }, 
+            description = "Output folder. Defaults to current directory.") 
+    private File outFolder;
+
+    @Option(names = { "-oe", "--outExtension" }, 
+            description = "Extension appended to output files when written to folder. Defaults to outputFormat value." ) 
+    private String outExtension; 
+    */
+    
+    @Option(names = { "--skipRules" }, 
+            description = "Skip rule application to input? (default: ${DEFAULT-VALUE})")
     private boolean skipRules = false;
 
     // TODO: default, guess value based on extension
     @Option(names = { "--inputFormatRDF" }, 
             description = "Format of RDF input (legal values: ${COMPLETION-CANDIDATES}; "
-                    + "default: guess by file extension, then ${DEFAULT-VALUE})")
-    private Models.RDFformat inputFormatRDF = Models.DEFAULT_RDF_FORMAT;
+                    + "default: ${DEFAULT-VALUE} -- by file extension as per jena.util.FileUtils, then Turtle)")
+    private Sau.RDFInputFormat inputFormatRDF = Sau.RDFInputFormat.guess;
 
     /*
-     * Currently only one format.
-     * 
-     * @Option(names = { "-ofd", "--outputFormatDot" }, description =
-     * "Format of Dot output (legal values: ${COMPLETION-CANDIDATES}, default: ${DEFAULT-VALUE})"
-     * ) private DotProcess.TextOutputFormat outputFormatDot =
-     * DotProcess.DEFAULT_TEXT_FORMAT;
-     */
-
+    @Option(names = { "--outputFormatDot" }, 
+            description = "Format of Dot output (legal values: ${COMPLETION-CANDIDATES}, default: ${DEFAULT-VALUE})") 
+    private DotProcess.TextOutputFormat outputFormatDot = DotProcess.DEFAULT_TEXT_FORMAT;
+    */
+    
     @Option(names = { "--outputFormatRDF" }, 
             description = "Format of RDF output (legal values: ${COMPLETION-CANDIDATES}; default: ${DEFAULT-VALUE})")
     private Models.RDFformat outputFormatRDF = Models.DEFAULT_RDF_FORMAT;
@@ -110,7 +97,8 @@ public class SauCLI implements Runnable {
             description = "Format of image output (legal values: ${COMPLETION-CANDIDATES}; default: ${DEFAULT-VALUE})")
     private DotProcess.ImageOutputFormat outputFormatImage = DotProcess.DEFAULT_IMAGE_FORMAT;
 
-    @Option(names = { "--dotExecutable" }, description = "Path to dot executable (default: ${DEFAULT-VALUE})")
+    @Option(names = { "--dotExecutable" }, 
+            description = "Path to dot executable (default: ${DEFAULT-VALUE})")
     private String dotExec = DotProcess.DEFAULT_DOT_EXEC;
 
     /*
@@ -120,7 +108,8 @@ public class SauCLI implements Runnable {
      */
 
     // TODO flag
-    @Option(names = { "--dryrun" }, description = "Produces no output other than what is written to console")
+    @Option(names = { "--dryrun" }, 
+            description = "Produces no output other than what is written to console")
     boolean dryrun = false;
 
     @Option(names = { "--version" }, versionHelp = true, description = "display version info")

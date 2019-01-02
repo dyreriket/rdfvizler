@@ -18,7 +18,7 @@ import org.apache.jena.vocabulary.RDF;
 public abstract class Models {
 
     public enum RDFformat {
-        ttl(FileUtils.langTurtle), xml(FileUtils.langXMLAbbrev), nt(FileUtils.langNTriple);
+        ttl(FileUtils.langTurtle), rdf(FileUtils.langXMLAbbrev), nt(FileUtils.langNTriple);
 
         private final String format;
 
@@ -57,7 +57,11 @@ public abstract class Models {
     }
 
     private static Model readModel(String file, String format) {
-        return FileManager.get().loadModel(file, format);
+        if (format == null || format.isEmpty()) {
+            return readModel(file);
+        } else {
+            return FileManager.get().loadModel(file, format);
+        }
     }
 
     public static String shortName(Model model, Collection<Resource> resources) {

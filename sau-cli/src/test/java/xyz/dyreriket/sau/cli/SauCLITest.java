@@ -1,7 +1,6 @@
 package xyz.dyreriket.sau.cli;
 
 import static org.junit.Assert.assertTrue;
-import static xyz.dyreriket.sau.cli.SauCLI.ENV_RDFVIZLER_RULES_PATH;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,42 +8,47 @@ import java.net.URL;
 import java.util.Arrays;
 
 import org.apache.commons.io.FileUtils;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.contrib.java.lang.system.EnvironmentVariables;
 import org.junit.rules.TemporaryFolder;
 
 import xyz.dyreriket.sau.cli.SauCLI;
 
 public class SauCLITest {
 
-    // private final String resources = "src/test/resources/";
-    // private final String file1 = "test1.ttl";
-    private final String input1 = "input1.ttl";
-    private final String rdfXmlFile = "input1.xml";
-    // private final String simpleRulesFile = "simple.jrule";
-    
-    @Rule
-    public final EnvironmentVariables environmentVariables = new EnvironmentVariables();
+    //@Rule
+    //public final EnvironmentVariables environmentVariables = new EnvironmentVariables();
 
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder();
-    
-    
+        
     @Test
     public void shouldReadUriXmlformat() throws Exception {
-
-        environmentVariables.set(ENV_RDFVIZLER_RULES_PATH, null);
-
-        String input = getResourcePath(rdfXmlFile).getAbsolutePath();
-        String args = input; //+ " --inputFormatRDF xml";
-
+        String input = getResourcePath("input1.rdf").getAbsolutePath();
+        String args = input;
+        SauCLI.main(args.split(" "));        
+    }
+    
+    @Test
+    public void shouldReadTurtleEvenThoughItsCalledRdfXml() throws Exception {
+        String input = getResourcePath("input1-ttl.rdf").getAbsolutePath();
+        String args = input + " --inputFormatRDF ttl";
+        SauCLI.main(args.split(" "));        
+    }
+    
+    @Test
+    public void shouldReadRdfXmlEvenThoughItsCalledTtl() throws Exception {
+        String input = getResourcePath("input1-rdf.ttl").getAbsolutePath();
+        String args = input + " --inputFormatRDF rdf";
         SauCLI.main(args.split(" "));        
     }
 
+    
+    @Ignore // we don't write to files yet, just stdout
     @Test
     public void shouldInferFilename() throws IOException {
-        File inputFile = getResourcePath(input1);
+        File inputFile = getResourcePath("input1.ttl");
         File root = testFolder.getRoot();
 
         // moving the input file to the temp folder, so that
@@ -60,7 +64,7 @@ public class SauCLITest {
         assertTrue(Arrays.stream(root.listFiles()).map(File::getName).anyMatch("input1.ttl.svg"::equals));
     }
 
-    public File getResourcePath(String fileName) {
+    private File getResourcePath(String fileName) {
         ClassLoader classLoader = getClass().getClassLoader();
 
         URL url = classLoader.getResource(fileName);
