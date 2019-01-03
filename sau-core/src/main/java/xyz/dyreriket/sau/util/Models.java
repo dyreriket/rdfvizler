@@ -17,38 +17,21 @@ import org.apache.jena.vocabulary.RDF;
 
 public abstract class Models {
 
-    public static final List<String> RDF_FORMATS = Arrays.toUnmodifiableList("TTL", "RDF/XML", "N3", "N-TRIPLES");
-    public static final String DEFAULT_RDF_FORMAT = "TTL";
-    
-    // hiding constructor
-    private Models() {
-        throw new IllegalStateException("Utility class");
-    }
+    public enum RDFformat {
+        ttl(FileUtils.langTurtle), rdf(FileUtils.langXMLAbbrev), nt(FileUtils.langNTriple);
 
-    public static Model readModel(String file) {
-        return readModel(file, FileUtils.guessLang(file, DEFAULT_RDF_FORMAT));
-    }
+        private final String format;
 
-    public static Model readModel(String file, String serialisation) {
-        if (serialisation == null) {
-            return readModel(file);
-        } else {
-            return FileManager.get().loadModel(file, serialisation);
+        private RDFformat(String format) {
+            this.format = format;
+        }
+
+        public String getFormat() {
+            return this.format;
         }
     }
 
-    public static String writeModel(Model model, String format) {
-        String modelString = "";
-        try (StringWriter str = new StringWriter()) {
-            model.write(str, format);
-            modelString = str.toString();
-            str.flush();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        return modelString;
-    }
+    public static final RDFformat DEFAULT_RDF_FORMAT = RDFformat.ttl;
 
     public static Model applyRules(Model model, List<Rule> rules) {
         Reasoner reasoner = new GenericRuleReasoner(rules);
@@ -60,21 +43,51 @@ public abstract class Models {
     public static boolean isOfType(Model model, Resource instance, Resource klass) {
         return model.contains(instance, RDF.type, klass);
     }
-    
+
     public static List<Resource> listInstancesOfClass(Model model, Resource cls) {
         return model.listResourcesWithProperty(RDF.type, cls).toList();
     }
 
-    public static String shortName(Model model, Resource resource) {
-        return model.shortForm(resource.getURI());
+    public static Model readModel(String file) {
+        return readModel(file, FileUtils.guessLang(file, DEFAULT_RDF_FORMAT.getFormat()));
+    }
+
+    public static Model readModel(String file, RDFformat serialisation) {
+        return FileManager.get().loadModel(file, serialisation.getFormat());
+    }
+
+    private static Model readModel(String file, String format) {
+        if (format == null || format.isEmpty()) {
+            return readModel(file);
+        } else {
+            return FileManager.get().loadModel(file, format);
+        }
     }
 
     public static String shortName(Model model, Collection<Resource> resources) {
         return "[" + Strings.toString(resources, r -> shortName(model, r), ", ") + "]";
     }
 
-    public static boolean isRDFFormat(String inputFormat) {
-        return RDF_FORMATS.contains(inputFormat);
+    public static String shortName(Model model, Resource resource) {
+        return model.shortForm(resource.getURI());
+    }
+
+    public static String writeModel(Model model, RDFformat format) {
+        String modelString = "";
+        try (StringWriter str = new StringWriter()) {
+            model.write(str, format.getFormat());
+            modelString = str.toString();
+            str.flush();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return modelString;
+    }
+
+    // hiding constructor
+    private Models() {
+        throw new IllegalStateException("Utility class");
     }
 
 }

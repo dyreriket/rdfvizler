@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 
@@ -13,52 +12,58 @@ import xyz.dyreriket.sau.util.Arrays;
 
 public abstract class DotProcess {
 
+    public enum ImageOutputFormat {
+        svg, png, pdf
+    }
+
+    public enum TextOutputFormat {
+        dot
+    }
+
+    // TODO
     public static final String ENV_RDFVIZLER_DOT_EXEC = "RDFVIZLER_DOT_EXEC";
-    public static final String DEFAULT_EXEC = "/usr/bin/dot";
-    public static final List<String> DOT_FORMATS = Arrays.toUnmodifiableList("svg", "png", "pdf");
-    public static final String DEFAULT_FORMAT = "svg";
-    
+    public static final String DEFAULT_DOT_EXEC = "/usr/bin/dot";
+    public static final TextOutputFormat DEFAULT_TEXT_FORMAT = TextOutputFormat.dot;
+    public static final ImageOutputFormat DEFAULT_IMAGE_FORMAT = ImageOutputFormat.svg;
+
     private static final Charset CHARSET = StandardCharsets.UTF_8;
 
-    private static final String defaultExec = Arrays.getFirstNonEmpty(
-            System.getenv(ENV_RDFVIZLER_DOT_EXEC),
-            DEFAULT_EXEC);
+    private static final String defaultExec = Arrays.getFirstNonEmpty(System.getenv(ENV_RDFVIZLER_DOT_EXEC),
+            DEFAULT_DOT_EXEC);
 
-    // hiding constructor
-    private DotProcess() {
-        throw new IllegalStateException("Utility class");
+    private static Process getDotProcess(String exec, ImageOutputFormat format) throws IOException {
+        Runtime runtime = Runtime.getRuntime();
+        Process process = runtime.exec(exec + " -Gcharset=" + CHARSET.name() + " -T" + format.toString());
+        return process;
     }
-    
+
     public static String runDot(String dot) throws IOException {
-        return runDot(defaultExec, dot, DEFAULT_FORMAT);
+        return runDot(defaultExec, dot, DEFAULT_IMAGE_FORMAT);
     }
-    
-    public static String runDot(String dot, String format) throws IOException {
+
+    public static String runDot(String dot, ImageOutputFormat format) throws IOException {
         return runDot(defaultExec, dot, format);
     }
 
     // convert dot spec into output format
-    public static String runDot(String exec, String dot, String format) throws IOException {
+    public static String runDot(String exec, String dot, ImageOutputFormat format) throws IOException {
         Process process = getDotProcess(exec, format);
         writeOutputStream(dot, process.getOutputStream());
         if (process.getErrorStream().available() > 0) {
-            throw new IOException("Error parsing dot to " + format + ": " 
-                + IOUtils.toString(process.getErrorStream(), CHARSET));
+            throw new IOException(
+                    "Error parsing dot to " + format + ": " + IOUtils.toString(process.getErrorStream(), CHARSET));
         }
         return IOUtils.toString(process.getInputStream(), CHARSET);
     }
-    
-    private static Process getDotProcess(String exec, String format) throws IOException {
-        Runtime runtime = Runtime.getRuntime();
-        Process process = runtime.exec(exec 
-                + " -Gcharset=" + CHARSET.name() 
-                + " -T" + format);
-        return process;
-    }
-    
+
     private static void writeOutputStream(String dot, OutputStream outputStream) throws IOException {
         try (BufferedOutputStream out = new BufferedOutputStream(outputStream)) {
             out.write(dot.getBytes(CHARSET));
         }
+    }
+
+    // hiding constructor
+    private DotProcess() {
+        throw new IllegalStateException("Utility class");
     }
 }
