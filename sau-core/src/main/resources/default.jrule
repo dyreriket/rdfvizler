@@ -3,10 +3,10 @@
 @prefix owl:   <http://www.w3.org/2002/07/owl#>.
 @prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
 
-@prefix gv:    <http://dyreriket.xyz/sau/vocab/core#>
-@prefix gva:   <http://dyreriket.xyz/sau/vocab/attribute#>
-@prefix gvn:   <http://dyreriket.xyz/sau/vocab/attribute/default/node#>
-@prefix gve:   <http://dyreriket.xyz/sau/vocab/attribute/default/edge#>
+@prefix gv:    <http://sau.dyreriket.xyz/vocabulary/core#>
+@prefix gva:   <http://sau.dyreriket.xyz/vocabulary/attribute#>
+@prefix gvn:   <http://sau.dyreriket.xyz/vocabulary/attribute/default/node#>
+@prefix gve:   <http://sau.dyreriket.xyz/vocabulary/attribute/default/edge#>
 
 @prefix :      <urn:temp#>
 

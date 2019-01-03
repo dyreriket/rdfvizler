@@ -6,7 +6,7 @@ import org.apache.jena.rdf.model.ResourceFactory;
 
 public abstract class SauVocabulary {
 
-    private static final String ROOT = "http://dyreriket.xyz/sau/vocab/";
+    private static final String ROOT = "http://sau.dyreriket.xyz/vocabulary/";
     private static final String NS = ROOT + "core#";
 
     // namespaces
