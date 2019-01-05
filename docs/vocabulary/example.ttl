@@ -1,0 +1,43 @@
+@prefix rvz:  <http://rdfvizler.dyreriket.xyz/vocabulary/core#> .
+@prefix rvz-a: <http://rdfvizler.dyreriket.xyz/vocabulary/attribute#> .
+@prefix rvz-n: <http://rdfvizler.dyreriket.xyz/vocabulary/attribute-default-node#> .
+@prefix rvz-e: <http://rdfvizler.dyreriket.xyz/vocabulary/attribute-default-edge#> .
+@prefix : <http://example.com/ns#> .
+## This is an example of a graph with nodes, edges, and subgraph.
+
+## This is the root graph resource. This graph is directed and strict.
+:root a rvz:RootGraph , rvz:DiGraph , rvz:StrictGraph ;
+  rvz-a:rankdir "LR"; rvz-a:nodesep "0.3";   ## Set attributes on the graph using rvz-a namespace
+  rvz-n:fontsize "10px"; rvz-n:style "box";  ## Set default node attributes using rvz-n namespace
+  rvz-e:style "dashed";                      ## Set default edge attribute using rvz-e namespace
+  rvz:hasNode :n1, :n2, :n3 ;                ## List the nodes of the graph
+  rvz:hasEdge :e1, :e2, :e3 ;                ## List the edges of the graph
+  rvz:hasSubGraph :g1.                       ## List the subgraphs of the graph
+
+## This is a node.
+:n1 rvz:hasID "asdf" ;                                               ## Specify ID for node.
+  rvz-a:shape "box"; rvz-a:style "filled"; rvz-a:fillcolor "blue" .  ## Node attributes using rvz-a namespace.
+
+## This is an edge.
+:e1
+  rvz:hasSource :n1 ; rvz:hasTarget :m1 ;  ## Source and target node for edge.
+  rvz-a:style "dotted".                    ## Edge attribute using rvz-a namespace.
+
+:e2
+  rvz:hasSource :n1 ;
+  rvz:hasTarget :n3 ;
+  rvz-a:color "red".
+
+:e3
+  rvz:hasSource :n2 ;
+  rvz:hasTarget :n3 .
+
+## This is a subgraph.
+:g1
+  rvz:hasID "clusterG1" ;
+  rvz:hasNode :m1, :m2;
+  rvz:hasEdge :f1 .
+
+:f1
+  rvz:hasSource :m1;
+  rvz:hasTarget :m2.
