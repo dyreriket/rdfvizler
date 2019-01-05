@@ -116,10 +116,10 @@ public class RDFVizlerCLI implements Runnable {
     */
 
     @Option(names = { "--version" }, versionHelp = true, description = "Display version info")
-    boolean versionInfoRequested;
+    private boolean versionInfoRequested;
     
     @Option(names = {"--help"}, usageHelp = true, description = "Display this help message")
-    boolean usageHelpRequested;
+    private boolean usageHelpRequested;
 
     public static void main(String[] args) {
         CommandLine.run(new RDFVizlerCLI(), args);
