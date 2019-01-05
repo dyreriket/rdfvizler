@@ -48,19 +48,15 @@ public class DotTest {
     public void shouldOutputDot() throws IOException {
         String dot = toDot(file1);
         print(file1 + ".dot", dot);
-        // We're happy if the test arrives here without throwing an exception:
-        assertTrue(true);
     }
 
     @Test
     public void shouldOutputDotsvg() throws IOException {
         print(file1 + ".svg", runDot(toDot(file1), DotProcess.ImageOutputFormat.svg));
-        // We're happy if the test arrives here without throwing an exception:
-        assertTrue(true); 
     }
 
     @Test
-    public void shouldWork() throws IllegalArgumentException, IOException {
+    public void shouldWork() throws IOException {
         
         String file = "http://folk.uio.no/martige/foaf.rdf";
 
@@ -71,8 +67,6 @@ public class DotTest {
         print("foaf.ttl" + ".dot", rdfvizler.writeRDFDotModel(file, Models.RDFformat.ttl));
         print("foaf.rdf" + ".dot", rdfvizler.writeDotGraph(file));
         print("foaf.rdf" + ".svg", rdfvizler.writeDotImage(file, DotProcess.ImageOutputFormat.svg));
-        // We're happy if the test arrives here without throwing an exception:
-        assertTrue(true);
     }
 
     ////////////////////////////////////////

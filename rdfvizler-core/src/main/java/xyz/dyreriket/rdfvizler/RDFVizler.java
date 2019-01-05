@@ -22,6 +22,10 @@ public class RDFVizler {
     private Models.RDFformat inputFormat = null; // null means we guess format.
     private boolean skipRules = false;
     
+    private BiFunction<Enum<?>[], String, Boolean> contains = (es, e) -> {
+        return Arrays.stream(es).allMatch(t -> t.name().equals(e));
+    };
+    
     public enum RDFInputFormat { ttl, rdf, nt, guess }
     
     public static final URI DEFAULT_RULES = makeURI("http://rdfvizler.dyreriket.xyz/rules/rdf.jrule");
@@ -38,10 +42,6 @@ public class RDFVizler {
         return Rule.rulesFromURL(path);
     }
 
-    private BiFunction<Enum<?>[], String, Boolean> contains = (es, e) -> {
-        return Arrays.stream(es).allMatch(t -> t.name().equals(e));
-    };
-    
     public static URI makeURI(String urlString) {
         try {
             return new URI(urlString);

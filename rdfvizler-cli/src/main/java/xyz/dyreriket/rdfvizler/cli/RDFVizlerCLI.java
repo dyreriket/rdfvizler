@@ -35,10 +35,6 @@ public class RDFVizlerCLI implements Runnable {
         rdf, dot, image
     }
     
-    public static void main(String[] args) throws IOException {
-        CommandLine.run(new RDFVizlerCLI(), args);
-    }
-
     @Parameters(paramLabel = "RDF_FILES", 
             arity = "1..*", 
             description = "Input RDF: URIs or file paths")
@@ -125,9 +121,10 @@ public class RDFVizlerCLI implements Runnable {
     @Option(names = {"--help"}, usageHelp = true, description = "Display this help message")
     boolean usageHelpRequested;
 
-    public RDFVizlerCLI() {
+    public static void main(String[] args) {
+        CommandLine.run(new RDFVizlerCLI(), args);
     }
-
+    
     @Override
     public void run() {
 
@@ -144,20 +141,17 @@ public class RDFVizlerCLI implements Runnable {
 
             // get output
             String output = "";
-            switch (this.mode) {
-                case rdf:
-                    output = theViz.writeRDFDotModel(filePath, this.outputFormatRDF);
-                    break;
-                case dot:
-                    output = theViz.writeDotGraph(filePath);
-                    break;
-                default: // case image:
-                    try {
-                        output = theViz.writeDotImage(filePath, this.outputFormatImage);
-                    } catch (IOException e) {
-                        System.err.println("Error running dot process:");
-                        e.printStackTrace();
-                    }
+            if (this.mode == ExecutionMode.rdf) {
+                output = theViz.writeRDFDotModel(filePath, this.outputFormatRDF);
+            } else if (this.mode == ExecutionMode.dot) {
+                output = theViz.writeDotGraph(filePath);
+            } else {
+                try {
+                    output = theViz.writeDotImage(filePath, this.outputFormatImage);
+                } catch (IOException e) {
+                    System.err.println("Error running dot process:");
+                    e.printStackTrace();
+                }
             }
             // print output
             System.out.println(output);            
