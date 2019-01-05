@@ -1,5 +1,7 @@
 package xyz.dyreriket.rdfvizler.cli;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import java.io.IOException;
 import java.net.URI;
 
@@ -25,6 +27,9 @@ import xyz.dyreriket.rdfvizler.util.Models;
             + "installed on the system. RDFVizler can saturate any RDF graph with the RDFVizler vocabulary by applying "
             + "Jena rules to the input. For more details, see http://rdfvizler.dyreriket.xyz."
     )
+@SuppressFBWarnings(
+        value = "URF_UNREAD_FIELD", 
+        justification = "Errornous unread field report, perhaps due to picoli?")
 public class RDFVizlerCLI implements Runnable {
  
     private enum ExecutionMode {
