@@ -24,6 +24,8 @@ public class DotTest {
     private final String file1 = "test1.ttl";
     private final String simpleRdf = "simple_rdf.ttl";
 
+    @Rule
+    public TemporaryFolder testFolder = new TemporaryFolder();
 
     /**
      * Attempts to create the dot output for a simple RDF file applying
@@ -41,22 +43,24 @@ public class DotTest {
         assertTrue(numberOfPolygons > 1);
     }
 
-    @Rule
-    public TemporaryFolder testFolder = new TemporaryFolder();
-
+   
     @Test
     public void shouldOutputDot() throws IOException {
         String dot = toDot(file1);
         print(file1 + ".dot", dot);
+        // We're happy if the test arrives here without throwing an exception:
+        assertTrue(true);
     }
 
     @Test
     public void shouldOutputDotsvg() throws IOException {
         print(file1 + ".svg", runDot(toDot(file1), DotProcess.ImageOutputFormat.svg));
+        // We're happy if the test arrives here without throwing an exception:
+        assertTrue(true); 
     }
 
     @Test
-    public void should() throws IllegalArgumentException, IOException {
+    public void shouldWork() throws IllegalArgumentException, IOException {
         
         String file = "http://folk.uio.no/martige/foaf.rdf";
 
@@ -67,6 +71,8 @@ public class DotTest {
         print("foaf.ttl" + ".dot", rdfvizler.writeRDFDotModel(file, Models.RDFformat.ttl));
         print("foaf.rdf" + ".dot", rdfvizler.writeDotGraph(file));
         print("foaf.rdf" + ".svg", rdfvizler.writeDotImage(file, DotProcess.ImageOutputFormat.svg));
+        // We're happy if the test arrives here without throwing an exception:
+        assertTrue(true);
     }
 
     ////////////////////////////////////////

@@ -17,6 +17,13 @@ import xyz.dyreriket.rdfvizler.util.Models.RDFformat;
 
 public class RDFVizler {
 
+    private String pathRules = DEFAULT_RULES.toString();
+    private String pathDotExec = DotProcess.DEFAULT_DOT_EXEC;
+    private Models.RDFformat inputFormat = null; // null means we guess format.
+    private boolean skipRules = false;
+    
+    public enum RDFInputFormat { ttl, rdf, nt, guess }
+    
     public static final URI DEFAULT_RULES = makeURI("http://rdfvizler.dyreriket.xyz/rules/rdf.jrule");
 
     private static void addPrefixes(Model model) {
@@ -31,15 +38,6 @@ public class RDFVizler {
         return Rule.rulesFromURL(path);
     }
 
-    private String pathRules = DEFAULT_RULES.toString();
-    private String pathDotExec = DotProcess.DEFAULT_DOT_EXEC;
-
-    public enum RDFInputFormat { ttl, rdf, nt, guess }
-
-    private Models.RDFformat inputFormat = null; // null means we guess format.
-
-    private boolean skipRules = false;
-
     private BiFunction<Enum<?>[], String, Boolean> contains = (es, e) -> {
         return Arrays.stream(es).allMatch(t -> t.name().equals(e));
     };
@@ -48,7 +46,7 @@ public class RDFVizler {
         try {
             return new URI(urlString);
         } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
+            throw new IllegalArgumentException(e);
         }
     }
 

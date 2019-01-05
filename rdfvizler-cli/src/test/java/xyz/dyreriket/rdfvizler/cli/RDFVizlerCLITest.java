@@ -22,26 +22,32 @@ public class RDFVizlerCLITest {
 
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder();
-        
+
     @Test
     public void shouldReadUriXmlformat() throws Exception {
         String input = getResourcePath("input1.rdf").getAbsolutePath();
         String args = input;
-        RDFVizlerCLI.main(args.split(" "));        
+        RDFVizlerCLI.main(args.split(" "));
+        // We're happy if the test arrives here without throwing an exception:
+        assertTrue(true); 
     }
     
     @Test
     public void shouldReadTurtleEvenThoughItsCalledRdfXml() throws Exception {
         String input = getResourcePath("input1-ttl.rdf").getAbsolutePath();
         String args = input + " --inputFormatRDF ttl";
-        RDFVizlerCLI.main(args.split(" "));        
+        RDFVizlerCLI.main(args.split(" "));
+        // We're happy if the test arrives here without throwing an exception:
+        assertTrue(true);
     }
     
     @Test
     public void shouldReadRdfXmlEvenThoughItsCalledTtl() throws Exception {
         String input = getResourcePath("input1-rdf.ttl").getAbsolutePath();
         String args = input + " --inputFormatRDF rdf";
-        RDFVizlerCLI.main(args.split(" "));        
+        RDFVizlerCLI.main(args.split(" "));
+        // We're happy if the test arrives here without throwing an exception:
+        assertTrue(true); 
     }
 
     
