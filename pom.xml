@@ -1,14 +1,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>xyz.dyreriket.sau</groupId>
-	<artifactId>sau</artifactId>
+	<groupId>xyz.dyreriket.rdfvizler</groupId>
+	<artifactId>rdfvizler</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<modules>
-		<module>sau-core</module>
-		<module>sau-cli</module>
-		<module>sau-servlet</module>
+		<module>rdfvizler-core</module>
+		<module>rdfvizler-cli</module>
+		<module>rdfvizler-servlet</module>
 	</modules>
 
 	<properties>
@@ -135,20 +135,29 @@
 		</plugins>
 	</reporting>
 
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
 	<dependencyManagement>
 		<dependencies>
 
 			<dependency>
-				<groupId>xyz.dyreriket.sau</groupId>
-				<artifactId>sau-core</artifactId>
+				<groupId>xyz.dyreriket.rdfvizler</groupId>
+				<artifactId>rdfvizler-core</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 
-			<dependency>
+			<!--dependency>
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-lang3</artifactId>
 				<version>3.4</version>
-			</dependency>
+			</dependency-->
 
 			<dependency>
 				<groupId>commons-io</groupId>
@@ -160,6 +169,13 @@
 				<groupId>org.apache.jena</groupId>
 				<artifactId>jena-core</artifactId>
 				<version>3.1.0</version>
+			</dependency>
+
+			<!-- https://mvnrepository.com/artifact/info.picocli/picocli -->
+			<dependency>
+				<groupId>info.picocli</groupId>
+				<artifactId>picocli</artifactId>
+				<version>3.8.2</version>
 			</dependency>
 
 			<dependency>
@@ -175,20 +191,13 @@
 			</dependency>
 
 			<dependency>
-				<groupId>junit</groupId>
-				<artifactId>junit</artifactId>
-				<version>4.12</version>
-				<scope>test</scope>
-			</dependency>
-
-			<dependency>
 				<groupId>com.github.stefanbirkner</groupId>
 				<artifactId>system-rules</artifactId>
 				<version>1.16.0</version>
 				<scope>test</scope>
 			</dependency>
 
-
 		</dependencies>
 	</dependencyManagement>
+
 </project>
