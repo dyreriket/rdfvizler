@@ -15,23 +15,22 @@ import xyz.dyreriket.rdfvizler.util.Models;
 
 @Command(
     name = "java -jar rdfvizler.jar", 
-    version = { "RDFVizler 0.1" }, 
+    version = { "RDFVizler 0.1.0-alpha" }, 
     sortOptions = false, 
     synopsisHeading = "Usage:%n", 
     descriptionHeading = "%nDescription:%n", 
     parameterListHeading = "%nParameters:%n", 
     optionListHeading = "%nOptions:%n",
     header = "%nRDFVizler%n",
-    description = "RDFVizler visualises RDF by parsing a designated RDF RDFVizler vocabulary into Graphviz syntax "
-            + "and processing this to a graph using Graphviz' dot software. This requires dot to be "
-            + "installed on the system. RDFVizler can saturate any RDF graph with the RDFVizler vocabulary by applying "
-            + "Jena rules to the input. For more details, see http://rdfvizler.dyreriket.xyz."
+    description = "RDFVizler visualises RDF by parsing a designated RDF RDFVizler "
+            + "vocabulary into Graphviz syntax and processing this to a graph using "
+            + "Graphviz' dot software. For more details, see http://rdfvizler.dyreriket.xyz."
     )
 @SuppressFBWarnings(
         value = "URF_UNREAD_FIELD", 
-        justification = "Errornous unread field report, perhaps due to picoli?")
+        justification = "Errornous unread field report, perhaps due to picocli?")
 public class RDFVizlerCLI implements Runnable {
- 
+
     private enum ExecutionMode {
         rdf, dot, image
     }

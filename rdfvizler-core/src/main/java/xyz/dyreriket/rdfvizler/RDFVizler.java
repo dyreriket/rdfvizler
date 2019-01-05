@@ -9,6 +9,7 @@ import java.util.function.BiFunction;
 
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.reasoner.rulesys.Rule;
+import org.apache.jena.shared.PrefixMapping;
 
 import xyz.dyreriket.rdfvizler.DotProcess.ImageOutputFormat;
 import xyz.dyreriket.rdfvizler.util.Models;
@@ -19,7 +20,7 @@ public class RDFVizler {
     public static final URI DEFAULT_RULES = makeURI("http://rdfvizler.dyreriket.xyz/rules/rdf.jrule");
 
     private static void addPrefixes(Model model) {
-        // model.withDefaultMappings(PrefixMapping.Standard);
+        model.withDefaultMappings(PrefixMapping.Standard);
         model.setNsPrefix(RDFVizlerVocabulary.NAMESPACE_PREFIX, RDFVizlerVocabulary.NAMESPACE);
         model.setNsPrefix(RDFVizlerVocabulary.NAMESPACE_ATTR_PREFIX, RDFVizlerVocabulary.NAMESPACE_ATTR);
         model.setNsPrefix(RDFVizlerVocabulary.NAMESPACE_ATTRNODE_PREFIX, RDFVizlerVocabulary.NAMESPACE_ATTRNODE);
@@ -42,9 +43,6 @@ public class RDFVizler {
     private BiFunction<Enum<?>[], String, Boolean> contains = (es, e) -> {
         return Arrays.stream(es).allMatch(t -> t.name().equals(e));
     };
-
-    public RDFVizler() {
-    }
     
     public static URI makeURI(String urlString) {
         try {

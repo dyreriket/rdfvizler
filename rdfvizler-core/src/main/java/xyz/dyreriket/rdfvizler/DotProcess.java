@@ -11,7 +11,7 @@ import org.apache.commons.io.IOUtils;
 public abstract class DotProcess {
 
     public enum ImageOutputFormat {
-        svg, png, pdf
+        svg//, png, pdf
     }
 
     public enum TextOutputFormat {
