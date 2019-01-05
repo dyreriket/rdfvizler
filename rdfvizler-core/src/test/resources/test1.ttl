@@ -1,0 +1,48 @@
+@prefix rvz:  <http://rdfvizler.dyreriket.xyz/vocabulary/core#> .
+@prefix rvz-a: <http://rdfvizler.dyreriket.xyz/vocabulary/attribute#> .
+@prefix rvz-n: <http://rdfvizler.dyreriket.xyz/vocabulary/attribute-default-node#> .
+@prefix rvz-e: <http://rdfvizler.dyreriket.xyz/vocabulary/attribute-default-edge#> .
+
+@prefix :  <http://example.com#> .
+
+:root a rvz:RootGraph , rvz:DiGraph , rvz:StrictGraph ;
+  rvz-a:rankdir "LR";
+  rvz-a:nodesep "0.3";
+  :something "else";
+  rvz-n:fontsize "10px";
+  rvz-n:style "box";
+  rvz-e:style "dashed";	
+  rvz:hasNode :n1, :n2, :n3 ;
+  rvz:hasEdge :e1, :e2, :e3 ;
+  rvz:hasSubGraph :g1.
+
+
+:n1 rvz:hasID "asdf" ;
+    rvz-a:shape "box";
+    rvz-a:style "filled";
+    rvz-a:fillcolor "blue" .
+
+:e1
+  rvz:hasSource :n1 ;
+  rvz:hasTarget :m1 ;
+  rvz-a:style "dotted".
+  
+
+:e2
+  rvz:hasSource :n1 ;
+  rvz:hasTarget :n3 ;
+  rvz-a:color "red".
+
+:e3
+  rvz:hasSource :n2 ;
+  rvz:hasTarget :n3 .
+
+
+:g1
+  rvz:hasID "clusterG1" ;
+  rvz:hasNode :m1, :m2;
+  rvz:hasEdge :f1 .
+
+:f1
+  rvz:hasSource :m1;
+  rvz:hasTarget :m2.

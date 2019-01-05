@@ -1,0 +1,35 @@
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix ex:    <http://example.com/ns#> .
+
+ex:RulesEngine a ex:Process ;
+  rdfs:label "Jena Rules\napplication" ;
+  ex:in ex:RDF , ex:Rules ;
+  ex:out ex:RDFVizlerRDF .
+
+ex:Parser a ex:Process ;
+  rdfs:label "RDFVizler's\nRDF to Dot\nparser" ;
+  ex:in ex:RDFVizlerRDF ;
+  ex:out ex:Dot .
+
+ex:Graphviz a ex:Process ;
+  rdfs:label "Graphviz\nsoftware" ;
+  ex:in ex:Dot ;
+  ex:out ex:Image .
+
+ex:RDF a ex:Data, ex:Input ;
+  rdfs:label "RDF data" .
+
+ex:Rules a ex:Data, ex:Input ;
+  rdfs:label "Jena Rules" .
+
+ex:RDFVizlerRDF a ex:Data, ex:Output ;
+  rdfs:label "RDFVizler\nsaturated RDF" .
+
+ex:Dot a ex:Data, ex:Output ;
+  rdfs:label "DOT syntax" .
+
+ex:Image a ex:Data, ex:Output ;
+  rdfs:label "Image" .

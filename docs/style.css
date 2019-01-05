@@ -1,0 +1,64 @@
+body {
+  padding: 30px;
+  font-family: Arial;
+  margin-bottom: 70px;
+}
+
+#content {
+  width: 900px;
+  margin: 0 auto;
+}
+
+h1#heading {
+  font-size: 120pt;
+  text-align: center;
+  color: #4E8975;
+  margin: 0;
+  padding: 0;
+  font-weight: normal;
+}
+
+h2 {
+  font-size: 40pt;
+  padding-top: 30px;
+  border-bottom: 8px solid gold;
+}
+
+h3 {
+  padding-top: 20px;
+}
+
+pre.example, pre.src {
+  padding: 20px;
+  color: #eee;
+  background-color: DarkSlateGray;
+}
+
+code {
+  font-size: 120%;
+}
+
+
+/* TOC */
+nav#table-of-contents h2 {
+  display: none;
+}
+nav#table-of-contents ul {
+  margin: 0;
+  padding: 30px;
+  text-align: center;
+}
+nav#table-of-contents ul li {
+  display: inline;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+nav#table-of-contents ul li a {
+  color: black;
+  font-size: 20pt;
+  text-decoration: none;
+  border-bottom: 1px dotted #aaa;
+}
+nav#table-of-contents ul li a:hover {
+  background-color: gold;
+}

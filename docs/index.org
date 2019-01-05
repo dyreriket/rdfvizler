@@ -1,0 +1,670 @@
+
+#+OPTIONS: ':nil *:t -:t ::t <:t H:3 \n:nil ^:t arch:headline
+#+OPTIONS: author:nil broken-links:nil c:nil creator:nil
+#+OPTIONS: d:(not "LOGBOOK") date:nil e:t email:nil f:t inline:t num:nil
+#+OPTIONS: p:nil pri:nil prop:nil stat:nil tags:nil tasks:nil tex:t
+#+OPTIONS: timestamp:nil title:nil toc:nil todo:nil |:t
+#+OPTIONS: html-link-use-abs-url:nil html-postamble:nil
+#+OPTIONS: html-preamble:nil html-scripts:nil html-style:nil
+#+OPTIONS: html5-fancy:til tex:t
+
+#+LANGUAGE: en
+#+SELECT_TAGS: export
+#+EXCLUDE_TAGS: noexport
+
+#+HTML_DOCTYPE: html5
+#+HTML_CONTAINER: div
+
+#+DESCRIPTION:
+#+KEYWORDS:
+
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="style.css" />
+#+HTML_HEAD_EXTRA:
+
+#+TITLE: RDFVizler
+
+#+TOC: headlines 1
+
+#+HTML: <center><img src="rdfvizler.png" id="logo" alt="RDFVizler logo"/></center>
+#+HTML: <h1 id="heading">RDFVizler</h1>
+
+
+* Introduction
+
+  RDFVizler is a simple RDF visualisation software built with the [[https://jena.apache.org/][Apache
+  Jena Java API]] and [[https://www.graphviz.org/][Graphviz]] visualisation software. It requires Java
+  8 and Graphviz to be installed on the system.
+
+  RDFVizler visualises RDF graphs by parsing a designated RDFVizler OWL vocabulary
+  into [[https://www.graphviz.org/doc/info/lang.html][Graphviz's DOT language]] and then straight-forwardly to images using the Graphviz
+  software. The RDFVizler vocabulary acts as a mere "RDF wrapper language"
+  for the DOT language, all graph, edge and node attributes are taken directly from DOT.
+
+  RDFVizler can visualise any RDF graph (also those which do not use
+  the RDFVizler vocabulary). It does this by allowing rules (in [[https://jena.apache.org/documentation/inference/#rules][Jena
+  rule]] syntax) to be applied to the input, rules which should add the
+  necessary RDFVizler vocabulary statements in order to properly
+  visualise the input.  This means that RDFVizler can visualise RDF
+  graphs in many different ways as specified by the rules.  A default
+  rule set is available, suited for generic RDF graph visualisation.
+
+#+ATTR_HTML: :style width: 100%
+[[./example/intro-image.svg]]
+
+** Example
+
+This example will show how we can generate the above graph
+visualisation from an RDF graph.
+
+The RDF graph describes the main processing steps performed
+by the RDFVizler software with their input and output data. The RDF graph
+uses no particular vocabulary---it could be any other vocabulary,
+the point we want to make is that we can write rules
+that fit the input data to make pretty graph visualisation from it.
+
+#+BEGIN_SRC ttl :mkdirp yes :noweb strip-export :tangle example/intro-data.ttl
+<<prefixes-std>>
+@prefix ex:    <http://example.com/ns#> .
+
+ex:RulesEngine a ex:Process ;
+  rdfs:label "Jena Rules\napplication" ;
+  ex:in ex:RDF , ex:Rules ;
+  ex:out ex:RDFVizlerRDF .
+
+ex:Parser a ex:Process ;
+  rdfs:label "RDFVizler's\nRDF to Dot\nparser" ;
+  ex:in ex:RDFVizlerRDF ;
+  ex:out ex:Dot .
+
+ex:Graphviz a ex:Process ;
+  rdfs:label "Graphviz\nsoftware" ;
+  ex:in ex:Dot ;
+  ex:out ex:Image .
+
+ex:RDF a ex:Data, ex:Input ;
+  rdfs:label "RDF data" .
+
+ex:Rules a ex:Data, ex:Input ;
+  rdfs:label "Jena Rules" .
+
+ex:RDFVizlerRDF a ex:Data, ex:Output ;
+  rdfs:label "RDFVizler\nsaturated RDF" .
+
+ex:Dot a ex:Data, ex:Output ;
+  rdfs:label "DOT syntax" .
+
+ex:Image a ex:Data, ex:Output ;
+  rdfs:label "Image" .
+#+END_SRC
+
+To visualise the RDF data we use the following rule set 
+that draws processes as diamonds and data nodes as boxes, and 
+makes edges out of each ~ex:in~ and ~ex:out~ relationship.
+
+#+BEGIN_SRC txt :mkdirp yes :noweb strip-export :tangle example/intro-rules.jrule
+<<prefixes-std>>
+<<prefixes-rdfvizler>>
+@prefix ex:    <http://example.com/ns#>
+@prefix :      <urn:temp#>
+
+// Create graph instance and set some defaults:
+[init:
+->
+   (:graph rdf:type rvz:RootGraph)
+   (:graph rdf:type rvz:DiGraph)
+   (:graph rvz-a:rankdir "LR")
+   (:graph rvz-a:center "true")
+   (:graph rvz-a:overlap "false")
+   (:graph rvz-a:splines "true")
+   // node defaults
+   (:graph rvz-n:fontname "Arial")
+   (:graph rvz-n:fontsize "10px")
+   (:graph rvz-n:style "filled") 
+   // edge defaults
+   (:graph rvz-e:fontname "Arial")
+   (:graph rvz-e:fontsize "10px")
+]
+
+[Process-in-out:
+  (?process rdf:type ex:Process)
+  (?process ex:in ?source) 
+  (?process ex:out ?target)
+  // invent ids for graph edges:
+  makeSkolem(?inedge, ?source, ?process)
+  makeSkolem(?outedge, ?process, ?target)
+->
+  // add nodes to the graph:
+  (:graph rvz:hasNode ?process)
+  (:graph rvz:hasNode ?source)
+  (:graph rvz:hasNode ?target)
+  // add edges to the graph:
+  (:graph rvz:hasEdge ?inedge)
+  (:graph rvz:hasEdge ?outedge)
+  // set source and target for each egde:
+  (?inedge rvz:hasSource ?source)
+  (?inedge rvz:hasTarget ?process)
+  (?outedge rvz:hasSource ?process)
+  (?outedge rvz:hasTarget ?target)
+]
+
+[Process-styling:
+  (?x rdf:type ex:Process) ->  (?x rvz-a:shape "diamond") (?x rvz-a:fillcolor "lightgreen")
+]
+
+[Data-styling:
+  (?x rdf:type ex:Data) ->  (?x rvz-a:shape "box") (?x rvz-a:style "filled")
+]
+
+[InputData-styling:
+  (?x rdf:type ex:Input) -> (?x rvz-a:fillcolor "pink")
+]
+
+[OutputData-styling:
+  (?x rdf:type ex:Output) -> (?x rvz-a:fillcolor "lightskyblue") 
+]
+
+[Labels:
+  (?any rdfs:label ?label) -> (?any rvz-a:label ?label)
+]
+#+END_SRC
+
+This is how we use the RDFVizler software to process the input + rules to output svg:
+
+#+BEGIN_SRC sh :results output :exports both
+java -jar rdfvizler.jar --rules example/intro-rules.jrule example/intro-data.ttl > example/intro-image.svg
+#+END_SRC
+
+#+RESULTS:
+
+And this is how the svg image looks like:
+
+#+ATTR_HTML: :style width: 100%
+[[./example/intro-image.svg]]
+
+RDFVizler can also output the saturated RDF or the DOT rendering of the
+graph; here is the DOT output of our example:
+
+#+BEGIN_SRC sh :results output :exports results
+java -jar rdfvizler.jar --rules example/intro-rules.jrule example/intro-data.ttl -x dot
+#+END_SRC
+
+
+#+RESULTS:
+#+begin_example
+digraph "urn:temp#graph" {
+rankdir = "LR"; splines = "true"; overlap = "false"; center = "true";
+node  [ fontsize = "10px"; fontname = "Arial" ];
+edge  [ fontsize = "10px"; fontname = "Arial" ];
+
+   // NODES
+   "http://example.com/ns#Image" [ fillcolor = "lightskyblue"; style = "filled"; shape = "box"; label = "Image" ];
+   "http://example.com/ns#Graphviz" [ label = "Graphviz
+software"; fillcolor = "lightgreen"; style = "filled"; shape = "diamond" ];
+   "http://example.com/ns#Rules" [ fillcolor = "lightskyblue"; style = "filled"; shape = "box"; label = "Jena Rules" ];
+   "http://example.com/ns#RulesEngine" [ label = "Jena Rules
+application"; fillcolor = "lightgreen"; style = "filled"; shape = "diamond" ];
+   "http://example.com/ns#RDFVizlerRDF" [ fillcolor = "lightskyblue"; style = "filled"; shape = "box"; label = "RDFVizler saturated RDF" ];
+   "http://example.com/ns#Parser" [ label = "RDFVizler's
+RDF to Dot
+parser"; fillcolor = "lightgreen"; style = "filled"; shape = "diamond" ];
+   "http://example.com/ns#Input" [ fillcolor = "lightskyblue"; style = "filled"; shape = "box"; label = "RDF data" ];
+   "http://example.com/ns#Dot" [ fillcolor = "lightskyblue"; style = "filled"; shape = "box"; label = "DOT syntax" ];
+
+   // EDGES
+   "http://example.com/ns#Graphviz" -> "http://example.com/ns#Image";
+   "http://example.com/ns#Dot" -> "http://example.com/ns#Graphviz";
+   "http://example.com/ns#RulesEngine" -> "http://example.com/ns#RDFVizlerRDF";
+   "http://example.com/ns#Rules" -> "http://example.com/ns#RulesEngine";
+   "http://example.com/ns#RDFVizlerRDF" -> "http://example.com/ns#Parser";
+   "http://example.com/ns#Parser" -> "http://example.com/ns#Dot";
+   "http://example.com/ns#Input" -> "http://example.com/ns#RulesEngine";
+}
+
+#+end_example
+
+This is the result of processing the input using the default rule set:
+
+#+BEGIN_SRC sh :exports both :output results
+java -jar rdfvizler.jar --rules rules/rdf.jrule example/intro-data.ttl > example/intro-image-default.svg
+#+END_SRC
+
+#+RESULTS:
+
+[[./example/intro-image-default.svg]]
+
+#+RESULTS:
+
+* Prefixes                                                         :noexport:
+
+#+NAME: prefixes-std
+#+BEGIN_SRC ttl
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+#+END_SRC
+
+#+NAME: prefixes-std+
+#+BEGIN_SRC ttl :noweb yes
+<<prefixes-std>>
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix dc: <http://purl.org/dc/elements/1.1/>.
+#+END_SRC
+
+#+NAME: prefixes-rdfvizler
+#+BEGIN_SRC ttl
+@prefix rvz:  <http://rdfvizler.dyreriket.xyz/vocabulary/core#> .
+@prefix rvz-a: <http://rdfvizler.dyreriket.xyz/vocabulary/attribute#> .
+@prefix rvz-n: <http://rdfvizler.dyreriket.xyz/vocabulary/attribute-default-node#> .
+@prefix rvz-e: <http://rdfvizler.dyreriket.xyz/vocabulary/attribute-default-edge#> .
+#+END_SRC
+
+* Software
+
+The RDFVizler software is written in Java and is available as a runnable
+jar.
+
+The project is open source under LGPL:
+http://github.com/dyreriket/rdfvizler/.
+
+This is its help output:
+
+#+BEGIN_SRC sh :exports both :results output
+java -jar rdfvizler.jar --help
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+
+RDFVizler: Visualising RDF.
+
+Usage:
+java -jar rdfvizler.jar [--help] [--skipRules] [--version]
+                  [--dotExecutable=<dotExec>]
+                  [--inputFormatRDF=<inputFormatRDF>]
+                  [--outputFormatRDF=<outputFormatRDF>]
+                  [-i=<outputFormatImage>] [-r=<rules>] [-x=<mode>] RDF_FILES...
+
+Description:
+RDFVizler visualises RDF by parsing a designated RDF RDFVizler vocabulary into Graphviz
+syntax and processing this to a graph using Graphviz' dot software. This
+requires dot to be installed on the system. RDFVizler can saturate any RDF graph with
+the RDFVizler vocabulary by applying Jena rules to the input. More details are given
+below.
+
+Parameters:
+      RDF_FILES...      Input RDF: URIs or file paths
+
+Options:
+  -x, --executionMode=<mode>
+                        What output to produce. (legal values: rdf, dot, image;
+                          default: image)
+  -r, --rules=<rules>   Input rules: URI or file path (default: http://rdfvizler.dyreriket.
+                          xyz/rules/rdf.jrule)
+      --skipRules       Skip rule application to input? (default: false)
+      --inputFormatRDF=<inputFormatRDF>
+                        Format of RDF input (legal values: ttl, rdf, nt, guess;
+                          default: guess -- by file extension as per jena.util.
+                          FileUtils, then Turtle)
+      --outputFormatRDF=<outputFormatRDF>
+                        Format of RDF output (legal values: ttl, rdf, nt; default:
+                          ttl)
+  -i, --outputFormatImage=<outputFormatImage>
+                        Format of image output (legal values: svg, png, pdf;
+                          default: svg)
+      --dotExecutable=<dotExec>
+                        Path to dot executable (default: /usr/bin/dot)
+      --version         Display version info
+      --help            Display this help message
+
+
+Details:
+
+http://rdfvizler.dyreriket.xyz/vocabulary/core#
+#+end_example
+
+* Vocabulary
+
+  This is the RDFVizler vocabulary. Read the ~rdfs:comment~ on the ontology
+  and see the example below to learn the basics of using the
+  vocabulary.
+
+Source: [[./vocabulary/core]]
+
+#+BEGIN_SRC ttl :mkdirp yes :noweb strip-export :tangle vocabulary/core
+<<prefixes-std+>>
+<<prefixes-rdfvizler>>
+<http://rdfvizler.dyreriket.xyz/vocabulary/core> a owl:Ontology ;
+
+  owl:versionIRI <http://rdfvizler.dyreriket.xyz/vocabulary/core-0.1> ;
+  owl:versionInfo "0.1" ;
+  dc:date "2019-01-03" ;
+  
+  rdfs:label "RDFVizler vocabulary" ;
+  
+  rdfs:comment """ 
+
+    The RDFVizler vocabulary describes graphs which can be converted to
+    Graphviz dot graphs and visualised with Graphviz' dot software.
+
+    The basic rules of using the RDFVizler vocabulary are:
+
+    - There must be a single rvz:Rootgraph, this graph can also be a
+      rvz:StrictGraph and a rvz:DiGraph (directed graph).
+    - All rvz:Node-s, rvz:Edge-s and rvz:SubGraph-s must be
+      associated with the rvz:Graph to which is belongs, with
+      respectively the properties rvz:hasNode, rvz:hasEdge and
+      rvz:hasSubGraph.
+    - An rvz:Edge must have a rvz:hasSource and rvz:hasTarget
+      which are rvz:Node-s.
+    - The vocabulary does not specify any resources in the namespaces
+      rvz-a, rvz-n and rvz-e, but these are "catch-all" namespaces
+      that are used to associate Graphviz attributes to Graphs, Nodes,
+      and Edges.  Any property placed in these namespaces are
+      interpreted as attributes, e.g., the property rvz-a:label is
+      used set labels since label is an attribute in the DOT language.
+      The namespace rvz-a is used to associate an attribute to any
+      class, i.e, rvz:Node, rvz:Egde or rvz:Graph, while the
+      namespaces rvz-n and rvz-e are used to specify default node
+      and edge attributes, respectively, to a Graph.
+   """ ;
+  <<example-incl>>  
+    rdfs:seeAlso <http://rdfvizler.dyreriket.xyz> ;
+    dc:creator <http://folk.uio.no/martige/foaf#me> ;
+    foaf:logo <http://rdfvizler.dyreriket.xyz/rdfvizler.png> . 
+   
+rvz:Graph a owl:Class.
+
+rvz:RootGraph a owl:Class; 
+  rdfs:subClassOf rvz:Graph ;
+  rdfs:comment "Every graph must have exactly one RootGraph." .
+
+rvz:DiGraph a owl:Class; 
+  rdfs:subClassOf rvz:RootGraph ;
+  rdfs:comment "A directed graph, i.e., edges have a direction" .
+
+rvz:StrictGraph a owl:Class;
+  rdfs:subClassOf rvz:RootGraph ;
+  rdfs:comment """A strict graph "forbids the creation of multi-edges". 
+    For more details see https://www.graphviz.org/doc/info/lang.html. """ .
+
+rvz:Node a owl:Class ;
+  rdfs:comment "A graph node" .
+
+rvz:Edge a owl:Class ;
+  rdfs:comment "A graph edge. An edge must have a source node and a target node." .
+
+rvz:hasID a owl:DatatypeProperty ;
+  rdfs:comment "Associates an ID label to a graph, node or edge.".
+    
+rvz:hasNode a owl:ObjectProperty ;
+  rdfs:domain rvz:Graph ;
+  rdfs:range rvz:Node ;
+  rdfs:comment "Associates a node with the graph to which it belongs." .
+  
+rvz:hasEdge a owl:ObjectProperty ;
+  rdfs:domain rvz:Graph ;
+  rdfs:range rvz:Edge ;
+  rdfs:comment "Associates an edge with the graph to which it belongs." .
+  
+rvz:hasSource a owl:ObjectProperty ;
+  rdfs:domain rvz:Edge ;
+  rdfs:range rvz:Node ;
+  rdfs:comment "Associates an edge with its source node." .
+  
+rvz:hasTarget a owl:ObjectProperty ;
+  rdfs:domain rvz:Edge ;
+  rdfs:range rvz:Node ;
+  rdfs:comment "Associates an edge with its target node." .
+  
+rvz:hasSubGraph a owl:ObjectProperty ;
+  rdfs:domain rvz:Graph ;
+  rdfs:range rvz:Graph .
+#+END_SRC
+
+#+NAME: example-incl
+#+BEGIN_SRC ttl :noweb yes :exports none
+  skos:example """
+<<example>>
+    """ ;
+#+END_SRC
+
+** Example
+
+   This example illustrates the (direct) use of the RDFVizler vocabulary.
+
+   Source: [[./vocabulary/example.ttl]]
+
+#+BEGIN_SRC ttl :mkdirp yes :noweb yes :tangle vocabulary/example.ttl :exports none
+<<prefixes-rdfvizler>>
+@prefix : <http://example.com/ns#> .
+<<example>>
+#+END_SRC
+
+#+NAME: example
+#+BEGIN_SRC ttl
+## This is an example of a graph with nodes, edges, and subgraph.
+
+## This is the root graph resource. This graph is directed and strict.
+:root a rvz:RootGraph , rvz:DiGraph , rvz:StrictGraph ;
+  rvz-a:rankdir "LR"; rvz-a:nodesep "0.3";   ## Set attributes on the graph using rvz-a namespace
+  rvz-n:fontsize "10px"; rvz-n:style "box";  ## Set default node attributes using rvz-n namespace
+  rvz-e:style "dashed";                      ## Set default edge attribute using rvz-e namespace
+  rvz:hasNode :n1, :n2, :n3 ;                ## List the nodes of the graph
+  rvz:hasEdge :e1, :e2, :e3 ;                ## List the edges of the graph
+  rvz:hasSubGraph :g1.                       ## List the subgraphs of the graph
+
+## This is a node.
+:n1 rvz:hasID "asdf" ;                                               ## Specify ID for node.
+  rvz-a:shape "box"; rvz-a:style "filled"; rvz-a:fillcolor "blue" .  ## Node attributes using rvz-a namespace.
+
+## This is an edge.
+:e1
+  rvz:hasSource :n1 ; rvz:hasTarget :m1 ;  ## Source and target node for edge.
+  rvz-a:style "dotted".                    ## Edge attribute using rvz-a namespace.
+
+:e2
+  rvz:hasSource :n1 ;
+  rvz:hasTarget :n3 ;
+  rvz-a:color "red".
+
+:e3
+  rvz:hasSource :n2 ;
+  rvz:hasTarget :n3 .
+
+## This is a subgraph.
+:g1
+  rvz:hasID "clusterG1" ;
+  rvz:hasNode :m1, :m2;
+  rvz:hasEdge :f1 .
+
+:f1
+  rvz:hasSource :m1;
+  rvz:hasTarget :m2.
+#+END_SRC
+
+ This file may be visualised with RDFVizler with the following command. We use
+ ~--skipRules~ since the input RDF graph already uses the RDFVizler
+ vocabulary.
+
+ #+BEGIN_SRC sh :exports both :results output
+java -jar rdfvizler.jar vocabulary/example.ttl --skipRules > vocabulary/example.svg
+ #+END_SRC
+
+ #+RESULTS:
+
+ The resulting output is this:
+
+ [[./vocabulary/example.svg]]
+
+* Rules
+
+  This is the default rule set. 
+
+Source: [[./rules/rdf.jrule]].
+
+#+BEGIN_SRC txt :noweb strip-export :mkdirp yes :tangle rules/rdf.jrule
+<<prefixes-std>>
+<<prefixes-rdfvizler>>
+@prefix :      <urn:temp#>
+
+
+// Set some defaults
+[init:
+->
+   (:graph rdf:type rvz:RootGraph)
+   (:graph rdf:type rvz:DiGraph)
+   (:graph rvz-a:rankdir "LR")
+   (:graph rvz-a:nodesep "0.3")
+   (:graph rvz-a:ranksep "0.3")
+   (:graph rvz-a:center "true")
+   (:graph rvz-a:overlap "false")
+   (:graph rvz-a:splines "true")
+   // node defaults
+   (:graph rvz-n:shape "box")
+   (:graph rvz-n:fontname "Arial")
+   (:graph rvz-n:fontsize "10px")
+   (:graph rvz-n:height "0")
+   (:graph rvz-n:width "0")
+   // edge defaults
+   (:graph rvz-e:fontname "Arial")
+   (:graph rvz-e:fontsize "10px")
+]
+
+// Add nodes and edges for (almost) all triples.
+[Triples2Dot:
+  (?xs ?xp ?xo)
+  namespace(?xp, ?ns)
+  // need this to terminate: do not include rule produced triples
+  notEqual(?ns, "urn:temp#")
+  notEqual(?ns, "http://rdfvizler.dyreriket.xyz/vocabulary/core#")
+  notEqual(?ns, "http://rdfvizler.dyreriket.xyz/vocabulary/attribute#")
+  notEqual(?ns, "http://rdfvizler.dyreriket.xyz/vocabulary/attribute-default-node#")
+  notEqual(?ns, "http://rdfvizler.dyreriket.xyz/vocabulary/attribute-default-edge#")
+  // do not include type relationships
+  notEqual(?xp, rdf:type)
+  // literals cannot be subjects, so we just skolemise everything to get a usable ID:
+  makeSkolem(?s, ?xs)
+  makeSkolem(?p, ?xs, ?xp, ?xo)
+  makeSkolem(?o, ?xo)
+  shortvalue(?xp, ?pname)
+->
+  (?s rvz:hasID ?xs)
+  (?o rvz:hasID ?xo)
+  (:graph rvz:hasEdge ?p)
+  (:graph rvz:hasNode ?s)
+  (:graph rvz:hasNode ?o)
+  (?p rvz:hasSource ?s)
+  (?p rvz:hasTarget ?o)
+  (?p rvz-a:label ?pname)
+]
+
+// style URIs
+[URIs:
+  (:graph rvz:hasNode ?node) (?node rvz:hasID ?id)
+  notBNode(?id) notLiteral(?id)
+  typedvalue(?id, ?name)
+->
+  (?node rvz-a:label ?name)
+  (?node rvz-a:style "filled")
+  (?node rvz-a:fillcolor "lightskyblue")
+  (?node rvz-a:URL ?id)
+]
+
+// style blank nodes
+[Blanks:
+  (:graph rvz:hasNode ?node) (?node rvz:hasID ?id)
+  isBNode(?id)
+  typedvalue(?id, ?name)
+->
+  (?node rvz-a:label ?name)
+  (?node rvz-a:style "filled,dashed")
+  (?node rvz-a:fillcolor "gray90")
+  (?node rvz-a:height ".3")
+  (?node rvz-a:width ".3")
+]
+
+// style literals
+[Literals:
+  (:graph rvz:hasNode ?node) (?node rvz:hasID ?id)
+  isLiteral(?id)
+  typedvalue(?id, ?name)
+->
+  (?node rvz-a:label ?name)
+  (?node rvz-a:style "rounded,filled")
+  (?node rvz-a:fillcolor "lemonchiffon")
+  (?node rvz-a:fontname "Times")
+]
+#+END_SRC
+
+* Built-in and custom rule functions                               :noexport:
+
+* CSS                                                              :noexport:
+
+#+BEGIN_SRC txt :tangle style.css
+body {
+  padding: 30px;
+  font-family: Arial;
+  margin-bottom: 70px;
+}
+
+#content {
+  width: 900px;
+  margin: 0 auto;
+}
+
+h1#heading {
+  font-size: 120pt;
+  text-align: center;
+  color: #4E8975;
+  margin: 0;
+  padding: 0;
+  font-weight: normal;
+}
+
+h2 {
+  font-size: 40pt;
+  padding-top: 30px;
+  border-bottom: 8px solid gold;
+}
+
+h3 {
+  padding-top: 20px;
+}
+
+pre.example, pre.src {
+  padding: 20px;
+  color: #eee;
+  background-color: DarkSlateGray;
+}
+
+code {
+  font-size: 120%;
+}
+
+
+/* TOC */
+nav#table-of-contents h2 {
+  display: none;
+}
+nav#table-of-contents ul {
+  margin: 0;
+  padding: 30px;
+  text-align: center;
+}
+nav#table-of-contents ul li {
+  display: inline;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+nav#table-of-contents ul li a {
+  color: black;
+  font-size: 20pt;
+  text-decoration: none;
+  border-bottom: 1px dotted #aaa;
+}
+nav#table-of-contents ul li a:hover {
+  background-color: gold;
+}
+#+END_SRC

@@ -1,0 +1,136 @@
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix dc: <http://purl.org/dc/elements/1.1/>.
+@prefix rvz:  <http://rdfvizler.dyreriket.xyz/vocabulary/core#> .
+@prefix rvz-a: <http://rdfvizler.dyreriket.xyz/vocabulary/attribute#> .
+@prefix rvz-n: <http://rdfvizler.dyreriket.xyz/vocabulary/attribute-default-node#> .
+@prefix rvz-e: <http://rdfvizler.dyreriket.xyz/vocabulary/attribute-default-edge#> .
+<http://rdfvizler.dyreriket.xyz/vocabulary/core> a owl:Ontology ;
+
+  owl:versionIRI <http://rdfvizler.dyreriket.xyz/vocabulary/core-0.1> ;
+  owl:versionInfo "0.1" ;
+  dc:date "2019-01-03" ;
+  
+  rdfs:label "RDFVizler vocabulary" ;
+  
+  rdfs:comment """ 
+
+    The RDFVizler vocabulary describes graphs which can be converted to
+    Graphviz dot graphs and visualised with Graphviz' dot software.
+
+    The basic rules of using the RDFVizler vocabulary are:
+
+    - There must be a single rvz:Rootgraph, this graph can also be a
+      rvz:StrictGraph and a rvz:DiGraph (directed graph).
+    - All rvz:Node-s, rvz:Edge-s and rvz:SubGraph-s must be
+      associated with the rvz:Graph to which is belongs, with
+      respectively the properties rvz:hasNode, rvz:hasEdge and
+      rvz:hasSubGraph.
+    - An rvz:Edge must have a rvz:hasSource and rvz:hasTarget
+      which are rvz:Node-s.
+    - The vocabulary does not specify any resources in the namespaces
+      rvz-a, rvz-n and rvz-e, but these are "catch-all" namespaces
+      that are used to associate Graphviz attributes to Graphs, Nodes,
+      and Edges.  Any property placed in these namespaces are
+      interpreted as attributes, e.g., the property rvz-a:label is
+      used set labels since label is an attribute in the DOT language.
+      The namespace rvz-a is used to associate an attribute to any
+      class, i.e, rvz:Node, rvz:Egde or rvz:Graph, while the
+      namespaces rvz-n and rvz-e are used to specify default node
+      and edge attributes, respectively, to a Graph.
+   """ ;
+    skos:example """
+  ## This is an example of a graph with nodes, edges, and subgraph.
+  
+  ## This is the root graph resource. This graph is directed and strict.
+  :root a rvz:RootGraph , rvz:DiGraph , rvz:StrictGraph ;
+    rvz-a:rankdir "LR"; rvz-a:nodesep "0.3";   ## Set attributes on the graph using rvz-a namespace
+    rvz-n:fontsize "10px"; rvz-n:style "box";  ## Set default node attributes using rvz-n namespace
+    rvz-e:style "dashed";                      ## Set default edge attribute using rvz-e namespace
+    rvz:hasNode :n1, :n2, :n3 ;                ## List the nodes of the graph
+    rvz:hasEdge :e1, :e2, :e3 ;                ## List the edges of the graph
+    rvz:hasSubGraph :g1.                       ## List the subgraphs of the graph
+  
+  ## This is a node.
+  :n1 rvz:hasID "asdf" ;                                               ## Specify ID for node.
+    rvz-a:shape "box"; rvz-a:style "filled"; rvz-a:fillcolor "blue" .  ## Node attributes using rvz-a namespace.
+  
+  ## This is an edge.
+  :e1
+    rvz:hasSource :n1 ; rvz:hasTarget :m1 ;  ## Source and target node for edge.
+    rvz-a:style "dotted".                    ## Edge attribute using rvz-a namespace.
+  
+  :e2
+    rvz:hasSource :n1 ;
+    rvz:hasTarget :n3 ;
+    rvz-a:color "red".
+  
+  :e3
+    rvz:hasSource :n2 ;
+    rvz:hasTarget :n3 .
+  
+  ## This is a subgraph.
+  :g1
+    rvz:hasID "clusterG1" ;
+    rvz:hasNode :m1, :m2;
+    rvz:hasEdge :f1 .
+  
+  :f1
+    rvz:hasSource :m1;
+    rvz:hasTarget :m2.
+      """ ;  
+    rdfs:seeAlso <http://rdfvizler.dyreriket.xyz> ;
+    dc:creator <http://folk.uio.no/martige/foaf#me> ;
+    foaf:logo <http://rdfvizler.dyreriket.xyz/rdfvizler.png> . 
+   
+rvz:Graph a owl:Class.
+
+rvz:RootGraph a owl:Class; 
+  rdfs:subClassOf rvz:Graph ;
+  rdfs:comment "Every graph must have exactly one RootGraph." .
+
+rvz:DiGraph a owl:Class; 
+  rdfs:subClassOf rvz:RootGraph ;
+  rdfs:comment "A directed graph, i.e., edges have a direction" .
+
+rvz:StrictGraph a owl:Class;
+  rdfs:subClassOf rvz:RootGraph ;
+  rdfs:comment """A strict graph "forbids the creation of multi-edges". 
+    For more details see https://www.graphviz.org/doc/info/lang.html. """ .
+
+rvz:Node a owl:Class ;
+  rdfs:comment "A graph node" .
+
+rvz:Edge a owl:Class ;
+  rdfs:comment "A graph edge. An edge must have a source node and a target node." .
+
+rvz:hasID a owl:DatatypeProperty ;
+  rdfs:comment "Associates an ID label to a graph, node or edge.".
+    
+rvz:hasNode a owl:ObjectProperty ;
+  rdfs:domain rvz:Graph ;
+  rdfs:range rvz:Node ;
+  rdfs:comment "Associates a node with the graph to which it belongs." .
+  
+rvz:hasEdge a owl:ObjectProperty ;
+  rdfs:domain rvz:Graph ;
+  rdfs:range rvz:Edge ;
+  rdfs:comment "Associates an edge with the graph to which it belongs." .
+  
+rvz:hasSource a owl:ObjectProperty ;
+  rdfs:domain rvz:Edge ;
+  rdfs:range rvz:Node ;
+  rdfs:comment "Associates an edge with its source node." .
+  
+rvz:hasTarget a owl:ObjectProperty ;
+  rdfs:domain rvz:Edge ;
+  rdfs:range rvz:Node ;
+  rdfs:comment "Associates an edge with its target node." .
+  
+rvz:hasSubGraph a owl:ObjectProperty ;
+  rdfs:domain rvz:Graph ;
+  rdfs:range rvz:Graph .

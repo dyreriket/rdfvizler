@@ -1,0 +1,4 @@
+@prefix e:  <http://example.com/> .
+
+
+e:x e:p "Some Literal" .

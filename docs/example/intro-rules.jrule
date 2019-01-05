@@ -1,0 +1,70 @@
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix rvz:  <http://rdfvizler.dyreriket.xyz/vocabulary/core#> .
+@prefix rvz-a: <http://rdfvizler.dyreriket.xyz/vocabulary/attribute#> .
+@prefix rvz-n: <http://rdfvizler.dyreriket.xyz/vocabulary/attribute-default-node#> .
+@prefix rvz-e: <http://rdfvizler.dyreriket.xyz/vocabulary/attribute-default-edge#> .
+@prefix ex:    <http://example.com/ns#>
+@prefix :      <urn:temp#>
+
+// Create graph instance and set some defaults:
+[init:
+->
+   (:graph rdf:type rvz:RootGraph)
+   (:graph rdf:type rvz:DiGraph)
+   (:graph rvz-a:rankdir "LR")
+   (:graph rvz-a:center "true")
+   (:graph rvz-a:overlap "false")
+   (:graph rvz-a:splines "true")
+   // node defaults
+   (:graph rvz-n:fontname "Arial")
+   (:graph rvz-n:fontsize "10px")
+   (:graph rvz-n:style "filled") 
+   // edge defaults
+   (:graph rvz-e:fontname "Arial")
+   (:graph rvz-e:fontsize "10px")
+]
+
+[Process-in-out:
+  (?process rdf:type ex:Process)
+  (?process ex:in ?source) 
+  (?process ex:out ?target)
+  // invent ids for graph edges:
+  makeSkolem(?inedge, ?source, ?process)
+  makeSkolem(?outedge, ?process, ?target)
+->
+  // add nodes to the graph:
+  (:graph rvz:hasNode ?process)
+  (:graph rvz:hasNode ?source)
+  (:graph rvz:hasNode ?target)
+  // add edges to the graph:
+  (:graph rvz:hasEdge ?inedge)
+  (:graph rvz:hasEdge ?outedge)
+  // set source and target for each egde:
+  (?inedge rvz:hasSource ?source)
+  (?inedge rvz:hasTarget ?process)
+  (?outedge rvz:hasSource ?process)
+  (?outedge rvz:hasTarget ?target)
+]
+
+[Process-styling:
+  (?x rdf:type ex:Process) ->  (?x rvz-a:shape "diamond") (?x rvz-a:fillcolor "lightgreen")
+]
+
+[Data-styling:
+  (?x rdf:type ex:Data) ->  (?x rvz-a:shape "box") (?x rvz-a:style "filled")
+]
+
+[InputData-styling:
+  (?x rdf:type ex:Input) -> (?x rvz-a:fillcolor "pink")
+]
+
+[OutputData-styling:
+  (?x rdf:type ex:Output) -> (?x rvz-a:fillcolor "lightskyblue") 
+]
+
+[Labels:
+  (?any rdfs:label ?label) -> (?any rvz-a:label ?label)
+]
