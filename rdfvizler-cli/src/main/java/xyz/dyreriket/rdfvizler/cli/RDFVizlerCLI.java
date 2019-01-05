@@ -170,8 +170,7 @@ public class RDFVizlerCLI implements Runnable {
     static class VersionProvider implements IVersionProvider {
         public String[] getVersion() throws Exception {
             return new String[] { 
-                RDFVizlerCLI.AppName,
-                "Version: " + RDFVizlerCLI.class.getPackage().getImplementationVersion(),
+                RDFVizlerCLI.AppName + " " + RDFVizlerCLI.class.getPackage().getImplementationVersion(),
                 "",
                 "",
                 "  **,.*..  ..(.    Bæææ                ",
