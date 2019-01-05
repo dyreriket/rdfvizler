@@ -7,6 +7,7 @@ import java.net.URI;
 
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
+import picocli.CommandLine.IVersionProvider;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 import xyz.dyreriket.rdfvizler.DotProcess;
@@ -14,14 +15,14 @@ import xyz.dyreriket.rdfvizler.RDFVizler;
 import xyz.dyreriket.rdfvizler.util.Models;
 
 @Command(
-    name = "java -jar rdfvizler.jar", 
-    version = { "RDFVizler 0.1.0-alpha" }, 
+    name = "java -jar rdfvizler-[version].jar", 
+    versionProvider = xyz.dyreriket.rdfvizler.cli.RDFVizlerCLI.VersionProvider.class,
     sortOptions = false, 
     synopsisHeading = "Usage:%n", 
     descriptionHeading = "%nDescription:%n", 
     parameterListHeading = "%nParameters:%n", 
     optionListHeading = "%nOptions:%n",
-    header = "%nRDFVizler%n",
+    header = "%n" + RDFVizlerCLI.AppName + ": RDF visualisation%n",
     description = "RDFVizler visualises RDF by parsing a designated RDF RDFVizler "
             + "vocabulary into Graphviz syntax and processing this to a graph using "
             + "Graphviz' dot software. For more details, see http://rdfvizler.dyreriket.xyz."
@@ -29,8 +30,11 @@ import xyz.dyreriket.rdfvizler.util.Models;
 @SuppressFBWarnings(
         value = "URF_UNREAD_FIELD", 
         justification = "Errornous unread field report, perhaps due to picocli?")
+@SuppressWarnings({"PMD.UnusedPrivateField"})
 public class RDFVizlerCLI implements Runnable {
 
+    public static final String AppName = "RDFVizler";
+    
     private enum ExecutionMode {
         rdf, dot, image
     }
@@ -106,6 +110,11 @@ public class RDFVizlerCLI implements Runnable {
      * // TODO flag
      * 
      * @Option(names = {"--quiet"}) boolean quiet = false;
+     * HINTS: 
+     * if (line.hasOption(quiet)) {
+           org.apache.log4j.Logger rootLogger = org.apache.log4j.Logger.getRootLogger();
+             rootLogger.setLevel(Level.OFF);
+       }
      */
 
     /*
@@ -120,7 +129,7 @@ public class RDFVizlerCLI implements Runnable {
     
     @Option(names = {"--help"}, usageHelp = true, description = "Display this help message")
     private boolean usageHelpRequested;
-
+    
     public static void main(String[] args) {
         CommandLine.run(new RDFVizlerCLI(), args);
     }
@@ -155,6 +164,36 @@ public class RDFVizlerCLI implements Runnable {
             }
             // print output
             System.out.println(output);            
+        }
+    }
+
+    static class VersionProvider implements IVersionProvider {
+        public String[] getVersion() throws Exception {
+            return new String[] { 
+                RDFVizlerCLI.AppName,
+                "Version: " + RDFVizlerCLI.class.getPackage().getImplementationVersion(),
+                "",
+                "",
+                "  **,.*..  ..(.    Bæææ                ",
+                "   .**..., %(/    /                    ",
+                "      ... .,.    /                     ",
+                "     **.*,*(,,.                        ",
+                "     *,,(#/**..**                      ",
+                "     .,.. .,..  .*..,. ,... .., ,      ",
+                "     ,,.... .,........   .  .. ..,,    ",
+                "     ,.     .. ...          . .. .,,   ",
+                "     ...    ....     .     .. . .*,    ",
+                "       ..    ...  .      ..... . ,.    ",
+                "      .. **   ....     ...,,.  .,,     ",
+                "       *,  /  ..*.,,*,,,(*,, .., ,     ",
+                "        *.*.*,    ... .   ,,(*. ..     ",
+                "        * ,. .              .(*(,/     ",
+                "         , *.               *,,,       ",
+                "            *        .      (/         ",
+                "        /,*.,              .,,/.       ",
+                "",
+                ""
+                };
         }
     }
 }
