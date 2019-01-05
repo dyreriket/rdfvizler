@@ -39,6 +39,8 @@ public class RDFVizlerCLI implements Runnable {
         rdf, dot, image
     }
     
+    private RDFVizler viz;
+    
     @Parameters(paramLabel = "RDF_FILES", 
             arity = "1..*", 
             description = "Input RDF: URIs or file paths")
@@ -134,36 +136,43 @@ public class RDFVizlerCLI implements Runnable {
         CommandLine.run(new RDFVizlerCLI(), args);
     }
     
+    public RDFVizlerCLI() {
+        this.viz = new RDFVizler();
+    }
+    
+    private void init() {
+        viz.setSkipRules(this.skipRules);
+        viz.setDotExecutable(this.dotExec);
+        viz.setRulesPath(this.rules.toString());
+        viz.setInputFormat(this.inputFormatRDF);
+    }
+    
+    private void processFile(URI file) {
+        String filePath = file.toString();
+
+        // get output
+        String output = "";
+        if (this.mode == ExecutionMode.rdf) {
+            output = viz.writeRDFDotModel(filePath, this.outputFormatRDF);
+        } else if (this.mode == ExecutionMode.dot) {
+            output = viz.writeDotGraph(filePath);
+        } else {
+            try {
+                output = viz.writeDotImage(filePath, this.outputFormatImage);
+            } catch (IOException e) {
+                System.err.println("Error running dot process:");
+                e.printStackTrace();
+            }
+        }
+        // print output
+        System.out.println(output);            
+    }
+    
     @Override
     public void run() {
-
-        RDFVizler theViz = new RDFVizler();
-
-        theViz.setSkipRules(this.skipRules);
-        theViz.setDotExecutable(this.dotExec);
-        theViz.setRulesPath(this.rules.toString());
-        theViz.setInputFormat(this.inputFormatRDF);
-
+        init();
         for (URI file : this.inFiles) {
-
-            String filePath = file.toString();
-
-            // get output
-            String output = "";
-            if (this.mode == ExecutionMode.rdf) {
-                output = theViz.writeRDFDotModel(filePath, this.outputFormatRDF);
-            } else if (this.mode == ExecutionMode.dot) {
-                output = theViz.writeDotGraph(filePath);
-            } else {
-                try {
-                    output = theViz.writeDotImage(filePath, this.outputFormatImage);
-                } catch (IOException e) {
-                    System.err.println("Error running dot process:");
-                    e.printStackTrace();
-                }
-            }
-            // print output
-            System.out.println(output);            
+            processFile(file);
         }
     }
 
