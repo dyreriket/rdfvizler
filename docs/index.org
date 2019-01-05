@@ -28,6 +28,13 @@
 #+HTML: <center><img src="rdfvizler.png" id="logo" alt="RDFVizler logo"/></center>
 #+HTML: <h1 id="heading">RDFVizler</h1>
 
+* Init                                                             :noexport:
+
+#+BEGIN_SRC sh
+wget https://github.com/dyreriket/rdfvizler/releases/download/v0.1.0-alpha/rdfvizler.jar
+#+END_SRC
+
+#+RESULTS:
 
 * Introduction
 
@@ -264,6 +271,8 @@ java -jar rdfvizler.jar --rules rules/rdf.jrule example/intro-data.ttl > example
 
 The RDFVizler software is written in Java and is available as a runnable
 jar.
+
+Download at https://github.com/dyreriket/rdfvizler/releases.
 
 The project is open source under LGPL:
 http://github.com/dyreriket/rdfvizler/.

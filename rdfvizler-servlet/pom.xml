@@ -20,7 +20,7 @@
 				<version>3.0.0</version>
 				<configuration>
 					<warSourceDirectory>WebContent</warSourceDirectory>
-					<warName>rdfvizler</warName>
+					<warName>rdfvizler-${project.version}</warName>
 					<webXml>WebContent/WEB-INF/web.xml</webXml>
 				</configuration>
 			</plugin>

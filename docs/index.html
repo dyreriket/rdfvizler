@@ -13,10 +13,10 @@
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#org850d704">Introduction</a></li>
-<li><a href="#org3cc19f5">Software</a></li>
-<li><a href="#org263ade2">Vocabulary</a></li>
-<li><a href="#orga1cf2e4">Rules</a></li>
+<li><a href="#org2e6f6d5">Introduction</a></li>
+<li><a href="#org32e099c">Software</a></li>
+<li><a href="#orge9cf69e">Vocabulary</a></li>
+<li><a href="#org49fb787">Rules</a></li>
 </ul>
 </div>
 </nav>
@@ -24,10 +24,9 @@
 <center><img src="rdfvizler.png" id="logo" alt="RDFVizler logo"/></center>
 <h1 id="heading">RDFVizler</h1>
 
-
-<div id="outline-container-org850d704" class="outline-2">
-<h2 id="org850d704">Introduction</h2>
-<div class="outline-text-2" id="text-org850d704">
+<div id="outline-container-org2e6f6d5" class="outline-2">
+<h2 id="org2e6f6d5">Introduction</h2>
+<div class="outline-text-2" id="text-org2e6f6d5">
 <p>
 RDFVizler is a simple RDF visualisation software built with the <a href="https://jena.apache.org/">Apache
 Jena Java API</a> and <a href="https://www.graphviz.org/">Graphviz</a> visualisation software. It requires Java
@@ -59,9 +58,9 @@ Sorry, your browser does not support SVG.</object>
 </figure>
 </div>
 
-<div id="outline-container-orge6e6af5" class="outline-3">
-<h3 id="orge6e6af5">Example</h3>
-<div class="outline-text-3" id="text-orge6e6af5">
+<div id="outline-container-orgf12c5a3" class="outline-3">
+<h3 id="orgf12c5a3">Example</h3>
+<div class="outline-text-3" id="text-orgf12c5a3">
 <p>
 This example will show how we can generate the above graph
 visualisation from an RDF graph.
@@ -262,12 +261,16 @@ Sorry, your browser does not support SVG.</object>
 </div>
 </div>
 
-<div id="outline-container-org3cc19f5" class="outline-2">
-<h2 id="org3cc19f5">Software</h2>
-<div class="outline-text-2" id="text-org3cc19f5">
+<div id="outline-container-org32e099c" class="outline-2">
+<h2 id="org32e099c">Software</h2>
+<div class="outline-text-2" id="text-org32e099c">
 <p>
 The RDFVizler software is written in Java and is available as a runnable
 jar.
+</p>
+
+<p>
+Download at <a href="https://github.com/dyreriket/rdfvizler/releases">https://github.com/dyreriket/rdfvizler/releases</a>.
 </p>
 
 <p>
@@ -299,9 +302,7 @@ java -jar rdfvizler.jar [--help] [--skipRules] [--version]
 Description:
 RDFVizler visualises RDF by parsing a designated RDF RDFVizler vocabulary into
 Graphviz syntax and processing this to a graph using Graphviz' dot software.
-This requires dot to be installed on the system. RDFVizler can saturate any RDF
-graph with the RDFVizler vocabulary by applying Jena rules to the input. For
-more details, see http://rdfvizler.dyreriket.xyz.
+For more details, see http://rdfvizler.dyreriket.xyz.
 
 Parameters:
       RDF_FILES...      Input RDF: URIs or file paths
@@ -321,8 +322,7 @@ Options:
                         Format of RDF output (legal values: ttl, rdf, nt; default:
                           ttl)
   -i, --outputFormatImage=&lt;outputFormatImage&gt;
-                        Format of image output (legal values: svg, png, pdf;
-                          default: svg)
+                        Format of image output (legal values: svg; default: svg)
       --dotExecutable=&lt;dotExec&gt;
                         Path to dot executable (default: /usr/bin/dot)
       --version         Display version info
@@ -331,9 +331,9 @@ Options:
 </div>
 </div>
 
-<div id="outline-container-org263ade2" class="outline-2">
-<h2 id="org263ade2">Vocabulary</h2>
-<div class="outline-text-2" id="text-org263ade2">
+<div id="outline-container-orge9cf69e" class="outline-2">
+<h2 id="orge9cf69e">Vocabulary</h2>
+<div class="outline-text-2" id="text-orge9cf69e">
 <p>
 This is the RDFVizler vocabulary. Read the <code>rdfs:comment</code> on the ontology
 and see the example below to learn the basics of using the
@@ -341,7 +341,7 @@ vocabulary.
 </p>
 
 <p>
-Source: <a href="./vocabulary/core">./vocabulary/core</a>
+Source: <a href="./vocabulary/core.owl.ttl">./vocabulary/core.owl.ttl</a>
 </p>
 
 <div class="org-src-container">
@@ -437,9 +437,9 @@ Source: <a href="./vocabulary/core">./vocabulary/core</a>
 </div>
 </div>
 
-<div id="outline-container-org4918086" class="outline-3">
-<h3 id="org4918086">Example</h3>
-<div class="outline-text-3" id="text-org4918086">
+<div id="outline-container-org5ec5d42" class="outline-3">
+<h3 id="org5ec5d42">Example</h3>
+<div class="outline-text-3" id="text-org5ec5d42">
 <p>
 This example illustrates the (direct) use of the RDFVizler vocabulary.
 </p>
@@ -449,7 +449,7 @@ Source: <a href="./vocabulary/example.ttl">./vocabulary/example.ttl</a>
 </p>
 
 <div class="org-src-container">
-<pre class="src src-ttl" id="org05a257d"><span style="color: #ff7f24;">## This is an example of a graph with nodes, edges, and subgraph.</span>
+<pre class="src src-ttl" id="org8736a90"><span style="color: #ff7f24;">## This is an example of a graph with nodes, edges, and subgraph.</span>
 
 <span style="color: #ff7f24;">## This is the root graph resource. This graph is directed and strict.</span>
 :<span style="color: #7fffd4;">root</span> <span style="color: #00ffff;">a</span> <span style="color: #98fb98;">rvz:</span><span style="color: #7fffd4;">RootGraph</span> <span style="color: #00ffff;">,</span> <span style="color: #98fb98;">rvz:</span><span style="color: #7fffd4;">DiGraph</span> <span style="color: #00ffff;">,</span> <span style="color: #98fb98;">rvz:</span><span style="color: #7fffd4;">StrictGraph</span> <span style="color: #00ffff;">;</span>
@@ -515,9 +515,9 @@ Sorry, your browser does not support SVG.</object>
 </div>
 </div>
 
-<div id="outline-container-orga1cf2e4" class="outline-2">
-<h2 id="orga1cf2e4">Rules</h2>
-<div class="outline-text-2" id="text-orga1cf2e4">
+<div id="outline-container-org49fb787" class="outline-2">
+<h2 id="org49fb787">Rules</h2>
+<div class="outline-text-2" id="text-org49fb787">
 <p>
 This is the default rule set. 
 </p>
