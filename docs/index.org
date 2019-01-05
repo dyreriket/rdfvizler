@@ -330,9 +330,9 @@ http://rdfvizler.dyreriket.xyz/vocabulary/core#
   and see the example below to learn the basics of using the
   vocabulary.
 
-Source: [[./vocabulary/core]]
+Source: [[./vocabulary/core.owl.ttl]]
 
-#+BEGIN_SRC ttl :mkdirp yes :noweb strip-export :tangle vocabulary/core
+#+BEGIN_SRC ttl :mkdirp yes :noweb strip-export :tangle vocabulary/core.owl.ttl
 <<prefixes-std+>>
 <<prefixes-rdfvizler>>
 <http://rdfvizler.dyreriket.xyz/vocabulary/core> a owl:Ontology ;
