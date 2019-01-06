@@ -15,10 +15,30 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <name>${project.groupId}:${project.artifactId}</name>
+    <description>
+        RDFVizler is a simple RDF visualisation software built with the Apache Jena Java API and Graphviz visualisation software. 
+        It requires Java 8 and Graphviz to work.
+    </description>
+    <url>http://rdfvizler.dyreriket.xyz</url>
+
+    <licenses>
+        <license>
+            <name>LGPL, GNU LESSER GENERAL PUBLIC LICENSE, Version 3</name>
+            <url>https://www.gnu.org/licenses/lgpl-3.0.en.html</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Martin G. Skjæveland</name>
+        </developer>
+    </developers>
+
     <scm>
         <url>https://github.com/dyreriket/rdfvizler</url>
         <connection>scm:git:https://github.com/dyreriket/rdfvizler.git</connection>
-        <tag>HEAD</tag>
+        <developerConnection>scm:git:https://github.com/dyreriket/rdfvizler.git</developerConnection>
     </scm>
 
     <build>
@@ -180,9 +200,6 @@
                 <artifactId>rdfvizler-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
-
-            <!--dependency> <groupId>org.apache.commons</groupId> <artifactId>commons-lang3</artifactId> 
-                <version>3.4</version> </dependency -->
 
             <dependency>
                 <groupId>commons-io</groupId>
