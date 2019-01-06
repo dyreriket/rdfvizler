@@ -147,7 +147,7 @@ makes edges out of each ~ex:in~ and ~ex:out~ relationship.
   // add edges to the graph:
   (:graph rvz:hasEdge ?inedge)
   (:graph rvz:hasEdge ?outedge)
-  // set source and target for each egde:
+  // set source and target for each edge:
   (?inedge rvz:hasSource ?source)
   (?inedge rvz:hasTarget ?process)
   (?outedge rvz:hasSource ?process)
@@ -270,14 +270,10 @@ java -jar rdfvizler.jar --rules rules/rdf.jrule example/intro-data.ttl > example
 * Software
 
 The RDFVizler software is written in Java and is available as a runnable
-jar.
+jar at https://github.com/dyreriket/rdfvizler/releases.
 
-Download at https://github.com/dyreriket/rdfvizler/releases.
-
-The project is open source under LGPL:
-http://github.com/dyreriket/rdfvizler/.
-
-This is its help output:
+This is its help output, which give hints to its current features and
+supported input and output formats.
 
 #+BEGIN_SRC sh :exports both :results output
 java -jar rdfvizler.jar --help
@@ -286,21 +282,20 @@ java -jar rdfvizler.jar --help
 #+RESULTS:
 #+begin_example
 
-RDFVizler: Visualising RDF.
+RDFVizler
 
 Usage:
 java -jar rdfvizler.jar [--help] [--skipRules] [--version]
-                  [--dotExecutable=<dotExec>]
-                  [--inputFormatRDF=<inputFormatRDF>]
-                  [--outputFormatRDF=<outputFormatRDF>]
-                  [-i=<outputFormatImage>] [-r=<rules>] [-x=<mode>] RDF_FILES...
+                        [--dotExecutable=<dotExec>]
+                        [--inputFormatRDF=<inputFormatRDF>]
+                        [--outputFormatRDF=<outputFormatRDF>]
+                        [-i=<outputFormatImage>] [-r=<rules>] [-x=<mode>]
+                        RDF_FILES...
 
 Description:
-RDFVizler visualises RDF by parsing a designated RDF RDFVizler vocabulary into Graphviz
-syntax and processing this to a graph using Graphviz' dot software. This
-requires dot to be installed on the system. RDFVizler can saturate any RDF graph with
-the RDFVizler vocabulary by applying Jena rules to the input. More details are given
-below.
+RDFVizler visualises RDF by parsing a designated RDF RDFVizler vocabulary into
+Graphviz syntax and processing this to a graph using Graphviz' dot software.
+For more details, see http://rdfvizler.dyreriket.xyz.
 
 Parameters:
       RDF_FILES...      Input RDF: URIs or file paths
@@ -309,8 +304,8 @@ Options:
   -x, --executionMode=<mode>
                         What output to produce. (legal values: rdf, dot, image;
                           default: image)
-  -r, --rules=<rules>   Input rules: URI or file path (default: http://rdfvizler.dyreriket.
-                          xyz/rules/rdf.jrule)
+  -r, --rules=<rules>   Input rules: URI or file path (default: http://rdfvizler.
+                          dyreriket.xyz/rules/rdf.jrule)
       --skipRules       Skip rule application to input? (default: false)
       --inputFormatRDF=<inputFormatRDF>
                         Format of RDF input (legal values: ttl, rdf, nt, guess;
@@ -320,18 +315,30 @@ Options:
                         Format of RDF output (legal values: ttl, rdf, nt; default:
                           ttl)
   -i, --outputFormatImage=<outputFormatImage>
-                        Format of image output (legal values: svg, png, pdf;
-                          default: svg)
+                        Format of image output (legal values: svg; default: svg)
       --dotExecutable=<dotExec>
                         Path to dot executable (default: /usr/bin/dot)
       --version         Display version info
       --help            Display this help message
-
-
-Details:
-
-http://rdfvizler.dyreriket.xyz/vocabulary/core#
 #+end_example
+
+** Contribute
+
+   The project is hosted at github,
+   http://github.com/dyreriket/rdfvizler/, is open source under LGPL
+   and open for contributions.
+
+   The project is set up using maven and employs a somewhat strict
+   code style regime in order to let the code remain consistent across
+   different contributors. All tests can be run with
+
+ : mvn package install
+
+   The project consists of 3 modules:
+   1. ~core~ contains the core functionality: RDF processing, RDF to
+      Dot parser, interaction with the dot executable, and output.
+   2. ~cli~ contains (just) the command line interface
+   3. ~servlet~ contains (just) a web servlet
 
 * Vocabulary
 
@@ -607,7 +614,25 @@ Source: [[./rules/rdf.jrule]].
 ]
 #+END_SRC
 
-* Built-in and custom rule functions                               :noexport:
+** Built-in and custom rule functions
+
+
+   The functionality of rules may be extended in different ways, see
+   https://jena.apache.org/documentation/inference/#extensions. RDFVizler
+   includes a few custom built-ins which are kept in
+   https://github.com/dyreriket/rdfvizler/tree/master/rdfvizler-core/src/main/java/xyz/dyreriket/rdfvizler/rules. New
+   built-ins should be added here, and must also be added to the
+   RuleRegistrar in the same package to be made available for the use
+   in rules. Please add a clear description of new built-ins and
+   preferably also unit tests.
+
+* Contact
+
+  Please use the issues in the github project for all requests:
+  https://github.com/dyreriket/rdfvizler/issues.
+
+  If this is impossible, then send email to
+  ~m.g.skjaeveland@gmail.com~.
 
 * CSS                                                              :noexport:
 

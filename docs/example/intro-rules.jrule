@@ -42,7 +42,7 @@
   // add edges to the graph:
   (:graph rvz:hasEdge ?inedge)
   (:graph rvz:hasEdge ?outedge)
-  // set source and target for each egde:
+  // set source and target for each edge:
   (?inedge rvz:hasSource ?source)
   (?inedge rvz:hasTarget ?process)
   (?outedge rvz:hasSource ?process)
