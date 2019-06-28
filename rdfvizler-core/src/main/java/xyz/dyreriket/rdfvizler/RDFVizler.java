@@ -50,8 +50,15 @@ public class RDFVizler {
         }
     }
 
-    private Model getRDFDotModel(String pathRDF) {
-        Model model = this.readModel(pathRDF);
+    private Model readModel(String pathRDF) {
+        if (this.inputFormat == null) {
+            return Models.readModel(pathRDF);
+        } else {
+            return Models.readModel(pathRDF, this.inputFormat);
+        }
+    }
+
+    private Model getRDFDotModel(Model model) {
         addPrefixes(model);
         if (!this.skipRules) {
             List<Rule> rules = getRules(this.pathRules);
@@ -60,12 +67,8 @@ public class RDFVizler {
         return model;
     }
 
-    private Model readModel(String pathRDF) {
-        if (this.inputFormat == null) {
-            return Models.readModel(pathRDF);
-        } else {
-            return Models.readModel(pathRDF, this.inputFormat);
-        }
+    private Model getRDFDotModel(String pathRDF) {
+        return getRDFDotModel(this.readModel(pathRDF));
     }
 
     public void setDotExecutable(String path) {
@@ -101,10 +104,20 @@ public class RDFVizler {
         }
     }
 
-    public String writeDotGraph(String pathRDF) {
-        Model model = this.getRDFDotModel(pathRDF);
-        RDF2DotParser parser = new RDF2DotParser(model);
+
+    public String writeDotGraph(Model model) {
+        Model dotModel = this.getRDFDotModel(model);
+        RDF2DotParser parser = new RDF2DotParser(dotModel);
         return parser.toDot();
+    }
+
+    public String writeDotGraph(String pathRDF) {
+        return writeDotGraph(readModel(pathRDF));
+    }
+
+    public String writeDotImage(Model model, DotProcess.ImageOutputFormat format) throws IOException {
+        String dot = this.writeDotGraph(model);
+        return DotProcess.runDot(this.pathDotExec, dot, format);
     }
 
     public String writeDotImage(String pathRDF, DotProcess.ImageOutputFormat format) throws IOException {
