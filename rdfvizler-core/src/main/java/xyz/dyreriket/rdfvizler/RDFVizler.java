@@ -1,8 +1,12 @@
 package xyz.dyreriket.rdfvizler;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiFunction;
@@ -22,9 +26,7 @@ public class RDFVizler {
     private Models.RDFformat inputFormat = null; // null means we guess format.
     private boolean skipRules = false;
     
-    private BiFunction<Enum<?>[], String, Boolean> contains = (es, e) -> {
-        return Arrays.stream(es).allMatch(t -> t.name().equals(e));
-    };
+    private BiFunction<Enum<?>[], String, Boolean> contains = (es, e) -> Arrays.stream(es).allMatch(t -> t.name().equals(e));
     
     public enum RDFInputFormat { ttl, rdf, nt, guess }
     
@@ -38,11 +40,18 @@ public class RDFVizler {
         model.setNsPrefix(RDFVizlerVocabulary.NAMESPACE_ATTREDGE_PREFIX, RDFVizlerVocabulary.NAMESPACE_ATTREDGE);
     }
 
-    private static List<Rule> getRules(String path) {
+    public static List<Rule> getRules(String path) {
         return Rule.rulesFromURL(path);
     }
 
-    public static URI makeURI(String urlString) {
+    public static List<Rule> getRules(InputStream inputStream) {
+        return Rule.parseRules(
+            Rule.rulesParserFromReader(
+                new BufferedReader(
+                    new InputStreamReader(inputStream, Charset.forName("UTF-8")))));
+    }
+
+    private static URI makeURI(String urlString) {
         try {
             return new URI(urlString);
         } catch (URISyntaxException e) {
@@ -58,13 +67,14 @@ public class RDFVizler {
         }
     }
 
-    private Model getRDFDotModel(Model model) {
+    public Model getRDFDotModel(Model model, List<Rule> rules) {
         addPrefixes(model);
-        if (!this.skipRules) {
-            List<Rule> rules = getRules(this.pathRules);
-            model = Models.applyRules(model, rules);
-        }
+        model = Models.applyRules(model, rules);
         return model;
+    }
+
+    public Model getRDFDotModel(Model model) {
+        return getRDFDotModel(model, getRules(this.pathRules));
     }
 
     private Model getRDFDotModel(String pathRDF) {
@@ -117,11 +127,15 @@ public class RDFVizler {
 
     public String writeDotImage(Model model, DotProcess.ImageOutputFormat format) throws IOException {
         String dot = this.writeDotGraph(model);
-        return DotProcess.runDot(this.pathDotExec, dot, format);
+        return getDotImage(dot,format);
     }
 
     public String writeDotImage(String pathRDF, DotProcess.ImageOutputFormat format) throws IOException {
         String dot = this.writeDotGraph(pathRDF);
+        return getDotImage(dot,format);
+    }
+
+    public String getDotImage(String dot, DotProcess.ImageOutputFormat format) throws IOException {
         return DotProcess.runDot(this.pathDotExec, dot, format);
     }
 
