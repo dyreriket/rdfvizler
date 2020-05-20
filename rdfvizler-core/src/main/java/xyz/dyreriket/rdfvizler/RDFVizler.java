@@ -116,7 +116,7 @@ public class RDFVizler {
 
 
     public String writeDotGraph(Model model) {
-        Model dotModel = this.getRDFDotModel(model);
+        Model dotModel = this.skipRules ? model : this.getRDFDotModel(model);
         RDF2DotParser parser = new RDF2DotParser(dotModel);
         return parser.toDot();
     }
