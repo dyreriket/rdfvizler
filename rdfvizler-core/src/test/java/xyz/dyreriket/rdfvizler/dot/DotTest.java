@@ -2,6 +2,8 @@ package xyz.dyreriket.rdfvizler.dot;
 
 import static org.junit.Assert.assertTrue;
 
+import guru.nidi.graphviz.engine.Format;
+import guru.nidi.graphviz.engine.Graphviz;
 import java.io.File;
 import java.io.IOException;
 
@@ -12,14 +14,13 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import xyz.dyreriket.rdfvizler.DotProcess;
 import xyz.dyreriket.rdfvizler.RDF2DotParser;
 import xyz.dyreriket.rdfvizler.RDFVizler;
 import xyz.dyreriket.rdfvizler.util.Models;
 
 public class DotTest {
 
-    private final boolean stdout = false; // print files also to stdout?
+    private final boolean stdout = true; // print files also to stdout?
     
     private final String file1 = "test1.ttl";
     private final String simpleRdf = "simple_rdf.ttl";
@@ -38,7 +39,7 @@ public class DotTest {
     @Test
     public void shouldProduceNonEmptyGraph() throws IOException {
         RDFVizler rdfvizler = new RDFVizler();
-        String out = rdfvizler.writeDotImage(simpleRdf, DotProcess.ImageOutputFormat.svg);
+        String out = rdfvizler.write(simpleRdf, Format.SVG_STANDALONE.toString());
         int numberOfPolygons = StringUtils.countMatches(out, "polygon");
         assertTrue(numberOfPolygons > 1);
     }
@@ -52,7 +53,7 @@ public class DotTest {
 
     @Test
     public void shouldOutputDotsvg() throws IOException {
-        print(file1 + ".svg", runDot(toDot(file1), DotProcess.ImageOutputFormat.svg));
+        print(file1 + ".svg", runDot(toDot(file1), Format.SVG_STANDALONE));
     }
 
     @Test
@@ -66,13 +67,15 @@ public class DotTest {
 
         print("foaf.ttl" + ".dot", rdfvizler.writeRDFDotModel(file, Models.RDFformat.ttl));
         print("foaf.rdf" + ".dot", rdfvizler.writeDotGraph(file));
-        print("foaf.rdf" + ".svg", rdfvizler.writeDotImage(file, DotProcess.ImageOutputFormat.svg));
+        print("foaf.rdf" + ".svg", rdfvizler.write(file, Format.SVG_STANDALONE.toString()));
     }
 
     ////////////////////////////////////////
 
-    private String runDot(String content, DotProcess.ImageOutputFormat format) throws IOException {
-        return DotProcess.runDot(content, format);
+    private String runDot(String content, Format format) throws IOException {
+        return Graphviz.fromString(content)
+            .render(format)
+            .toString();
     }
 
     private String toDot(String file) {

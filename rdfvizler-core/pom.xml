@@ -33,6 +33,11 @@
             <artifactId>jena-core</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>guru.nidi</groupId>
+            <artifactId>graphviz-java</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>

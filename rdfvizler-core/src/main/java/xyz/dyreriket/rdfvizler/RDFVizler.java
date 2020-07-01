@@ -1,7 +1,8 @@
 package xyz.dyreriket.rdfvizler;
 
+import guru.nidi.graphviz.engine.Format;
+import guru.nidi.graphviz.engine.Graphviz;
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
@@ -15,14 +16,12 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.reasoner.rulesys.Rule;
 import org.apache.jena.shared.PrefixMapping;
 
-import xyz.dyreriket.rdfvizler.DotProcess.ImageOutputFormat;
 import xyz.dyreriket.rdfvizler.util.Models;
 import xyz.dyreriket.rdfvizler.util.Models.RDFformat;
 
 public class RDFVizler {
 
     private String pathRules = DEFAULT_RULES.toString();
-    private String pathDotExec = DotProcess.DEFAULT_DOT_EXEC;
     private Models.RDFformat inputFormat = null; // null means we guess format.
     private boolean skipRules = false;
     
@@ -81,17 +80,12 @@ public class RDFVizler {
         return getRDFDotModel(this.readModel(pathRDF));
     }
 
-    public void setDotExecutable(String path) {
-        this.pathDotExec = path;
-    }
-
     public void setInputFormat(RDFInputFormat inputFormat) {
         if (RDFInputFormat.guess == inputFormat) {
             this.inputFormat = null;
         } else {
             this.inputFormat = Models.RDFformat.valueOf(inputFormat.toString());    
         }
-        
     }
 
     public void setRulesPath(String path) {
@@ -102,15 +96,11 @@ public class RDFVizler {
         this.skipRules = skipRules;
     }
 
-    public String write(String pathRDF, String format) throws IOException {
+    public String write(String pathRDF, String format) {
         if (this.contains.apply(RDFformat.values(), format)) {
             return this.writeRDFDotModel(pathRDF, Models.RDFformat.valueOf(format));
-        } else if (this.contains.apply(DotProcess.TextOutputFormat.values(), format)) {
-            return this.writeDotGraph(pathRDF);
-        } else if (this.contains.apply(DotProcess.ImageOutputFormat.values(), format)) {
-            return this.writeDotImage(pathRDF, ImageOutputFormat.valueOf(format));
         } else {
-            throw new IllegalArgumentException("Error processing: " + pathRDF + ". Unexpected format: " + format);
+            return this.getDotImage(writeDotGraph(pathRDF), Format.valueOf(format));
         }
     }
 
@@ -125,18 +115,14 @@ public class RDFVizler {
         return writeDotGraph(readModel(pathRDF));
     }
 
-    public String writeDotImage(Model model, DotProcess.ImageOutputFormat format) throws IOException {
-        String dot = this.writeDotGraph(model);
-        return getDotImage(dot,format);
+    public String getDotImage(String dot, String format) {
+        return getDotImage(dot, Format.valueOf(format));
     }
 
-    public String writeDotImage(String pathRDF, DotProcess.ImageOutputFormat format) throws IOException {
-        String dot = this.writeDotGraph(pathRDF);
-        return getDotImage(dot,format);
-    }
-
-    public String getDotImage(String dot, DotProcess.ImageOutputFormat format) throws IOException {
-        return DotProcess.runDot(this.pathDotExec, dot, format);
+    public String getDotImage(String dot, Format format) {
+        return Graphviz.fromString(dot)
+            .render(format)
+            .toString();
     }
 
     public String writeRDFDotModel(String pathRDF, Models.RDFformat format) {

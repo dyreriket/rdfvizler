@@ -2,7 +2,7 @@ package xyz.dyreriket.rdfvizler.cli;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
-import java.io.IOException;
+import guru.nidi.graphviz.engine.Format;
 import java.net.URI;
 
 import picocli.CommandLine;
@@ -10,7 +10,6 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.IVersionProvider;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
-import xyz.dyreriket.rdfvizler.DotProcess;
 import xyz.dyreriket.rdfvizler.RDFVizler;
 import xyz.dyreriket.rdfvizler.util.Models;
 
@@ -29,7 +28,7 @@ import xyz.dyreriket.rdfvizler.util.Models;
     )
 @SuppressFBWarnings(
         value = "URF_UNREAD_FIELD", 
-        justification = "Errornous unread field report, perhaps due to picocli?")
+        justification = "Erroneous unread field report, perhaps due to picocli?")
 @SuppressWarnings({"PMD.UnusedPrivateField"})
 public class RDFVizlerCLI implements Runnable {
 
@@ -102,11 +101,7 @@ public class RDFVizlerCLI implements Runnable {
 
     @Option(names = { "-i", "--outputFormatImage" }, 
             description = "Format of image output (legal values: ${COMPLETION-CANDIDATES}; default: ${DEFAULT-VALUE})")
-    private DotProcess.ImageOutputFormat outputFormatImage = DotProcess.DEFAULT_IMAGE_FORMAT;
-
-    @Option(names = { "--dotExecutable" }, 
-            description = "Path to dot executable (default: ${DEFAULT-VALUE})")
-    private String dotExec = DotProcess.DEFAULT_DOT_EXEC;
+    private Format outputFormatImage = Format.SVG_STANDALONE;
 
     /*
      * // TODO flag
@@ -142,7 +137,6 @@ public class RDFVizlerCLI implements Runnable {
     
     private void init() {
         viz.setSkipRules(this.skipRules);
-        viz.setDotExecutable(this.dotExec);
         viz.setRulesPath(this.rules.toString());
         viz.setInputFormat(this.inputFormatRDF);
     }
@@ -157,12 +151,7 @@ public class RDFVizlerCLI implements Runnable {
         } else if (this.mode == ExecutionMode.dot) {
             output = viz.writeDotGraph(filePath);
         } else {
-            try {
-                output = viz.writeDotImage(filePath, this.outputFormatImage);
-            } catch (IOException e) {
-                System.err.println("Error running dot process:");
-                e.printStackTrace();
-            }
+            output = viz.write(filePath, this.outputFormatImage.toString());
         }
         // print output
         System.out.println(output);            

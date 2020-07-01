@@ -181,9 +181,6 @@
                 <version>${project.version}</version>
             </dependency>
 
-            <!--dependency> <groupId>org.apache.commons</groupId> <artifactId>commons-lang3</artifactId> 
-                <version>3.4</version> </dependency -->
-
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
@@ -194,6 +191,12 @@
                 <groupId>org.apache.jena</groupId>
                 <artifactId>jena-core</artifactId>
                 <version>3.1.0</version>
+            </dependency>
+
+            <dependency>
+                <groupId>guru.nidi</groupId>
+                <artifactId>graphviz-java</artifactId>
+                <version>0.16.3</version>
             </dependency>
 
             <!-- https://mvnrepository.com/artifact/info.picocli/picocli -->
