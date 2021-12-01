@@ -1,10 +1,8 @@
 package xyz.dyreriket.rdfvizler.cli;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
 import guru.nidi.graphviz.engine.Format;
 import java.net.URI;
-
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.IVersionProvider;

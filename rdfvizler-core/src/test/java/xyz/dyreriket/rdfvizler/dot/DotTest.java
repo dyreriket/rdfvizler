@@ -6,14 +6,12 @@ import guru.nidi.graphviz.engine.Format;
 import guru.nidi.graphviz.engine.Graphviz;
 import java.io.File;
 import java.io.IOException;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jena.rdf.model.Model;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-
 import xyz.dyreriket.rdfvizler.RDF2DotParser;
 import xyz.dyreriket.rdfvizler.RDFVizler;
 import xyz.dyreriket.rdfvizler.util.Models;

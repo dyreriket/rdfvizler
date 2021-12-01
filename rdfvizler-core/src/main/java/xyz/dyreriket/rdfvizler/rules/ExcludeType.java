@@ -1,7 +1,6 @@
 package xyz.dyreriket.rdfvizler.rules;
 
 import java.util.List;
-
 import org.apache.jena.graph.Node;
 import org.apache.jena.reasoner.rulesys.RuleContext;
 import org.apache.jena.reasoner.rulesys.builtins.BaseBuiltin;

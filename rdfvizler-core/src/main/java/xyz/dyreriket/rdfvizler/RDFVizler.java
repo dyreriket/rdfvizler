@@ -11,11 +11,9 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiFunction;
-
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.reasoner.rulesys.Rule;
 import org.apache.jena.shared.PrefixMapping;
-
 import xyz.dyreriket.rdfvizler.util.Models;
 import xyz.dyreriket.rdfvizler.util.Models.RDFformat;
 
