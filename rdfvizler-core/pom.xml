@@ -58,7 +58,6 @@
                             <outputDirectory>${local.path}</outputDirectory>
                         </configuration>
                     </execution>
-
                 </executions>
             </plugin>
         </plugins>

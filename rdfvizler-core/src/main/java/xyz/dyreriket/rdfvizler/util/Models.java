@@ -17,11 +17,11 @@ import org.apache.jena.vocabulary.RDF;
 public abstract class Models {
 
     public enum RDFformat {
-        ttl(FileUtils.langTurtle), rdf(FileUtils.langXMLAbbrev), nt(FileUtils.langNTriple);
+        rdf(FileUtils.langXMLAbbrev);
 
         private final String format;
 
-        private RDFformat(String format) {
+        RDFformat(String format) {
             this.format = format;
         }
 
@@ -30,7 +30,7 @@ public abstract class Models {
         }
     }
 
-    public static final RDFformat DEFAULT_RDF_FORMAT = RDFformat.ttl;
+    public static final RDFformat DEFAULT_RDF_FORMAT = RDFformat.rdf;
 
     public static Model applyRules(Model model, List<Rule> rules) {
         Reasoner reasoner = new GenericRuleReasoner(rules);

@@ -26,7 +26,8 @@ public class RDFVizlerCLITest {
         String args = input;
         RDFVizlerCLI.main(args.split(" "));
     }
-    
+
+    @Ignore("support for ttl parked")
     @Test
     public void shouldReadTurtleEvenThoughItsCalledRdfXml() throws Exception {
         String input = getResourcePath("input1-ttl.rdf").getAbsolutePath();

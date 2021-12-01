@@ -18,7 +18,7 @@ import xyz.dyreriket.rdfvizler.util.Models;
 
 public class DotTest {
 
-    private final boolean stdout = true; // print files also to stdout?
+    private final boolean stdout = false; // print files also to stdout?
     
     private final String file1 = "test1.ttl";
     private final String simpleRdf = "simple_rdf.ttl";
@@ -63,7 +63,7 @@ public class DotTest {
         //rdfvizler.setInputFormat(Models.RDFformat.rdf);
         rdfvizler.setRulesPath("../docs/rules/rdf.jrule");
 
-        print("Q100000.ttl" + ".dot", rdfvizler.writeRDFDotModel(file, Models.RDFformat.ttl));
+        print("Q100000.ttl" + ".dot", rdfvizler.writeRDFDotModel(file, Models.RDFformat.rdf));
         print("Q100000.rdf" + ".dot", rdfvizler.writeDotGraph(file));
         print("Q100000.rdf" + ".svg", rdfvizler.write(file, Format.SVG_STANDALONE.toString()));
     }

@@ -17,8 +17,7 @@
 
     <name>${project.groupId}:${project.artifactId}</name>
     <description>
-        RDFVizler is a simple RDF visualisation software built with the Apache Jena Java API and Graphviz visualisation software. 
-        It requires Java 8 and Graphviz to work.
+        RDFVizler is a simple RDF visualisation software built with the Apache Jena Java API.
     </description>
     <url>http://rdfvizler.dyreriket.xyz</url>
 
@@ -48,8 +47,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.5.1</version>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>11</source>
+                    <target>11</target>
                 </configuration>
             </plugin>
 
@@ -89,7 +88,7 @@
                     <dependency>
                         <groupId>com.puppycrawl.tools</groupId>
                         <artifactId>checkstyle</artifactId>
-                        <version>8.29</version>
+                        <version>9.2</version>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -113,22 +112,9 @@
             </plugin>
 
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>findbugs-maven-plugin</artifactId>
-                <version>3.0.5</version>
-                <configuration>
-                    <effort>Max</effort>
-                    <threshold>Low</threshold>
-                    <xmlOutput>true</xmlOutput>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <version>4.4.2.2</version>
             </plugin>
 
             <plugin>
@@ -172,14 +158,6 @@
                     </reportSet>
                 </reportSets>
             </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>findbugs-maven-plugin</artifactId>
-                <version>3.0.5</version>
-                <configuration>
-                    <xmlOutput>true</xmlOutput>
-                </configuration>
-            </plugin>
         </plugins>
     </reporting>
 
@@ -210,7 +188,7 @@
             <dependency>
                 <groupId>org.apache.jena</groupId>
                 <artifactId>jena-core</artifactId>
-                <version>3.1.0</version>
+                <version>4.2.0</version>
             </dependency>
 
             <dependency>
