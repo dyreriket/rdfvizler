@@ -58,19 +58,18 @@ public class DotTest {
 
     @Test
     public void shouldWork() throws IOException {
-        
-        String file = "http://folk.uio.no/martige/foaf.rdf";
+
+        String file = "https://www.wikidata.org/entity/Q100000.ttl";
 
         RDFVizler rdfvizler = new RDFVizler();
         //rdfvizler.setInputFormat(Models.RDFformat.rdf);
         rdfvizler.setRulesPath("../docs/rules/rdf.jrule");
 
-        print("foaf.ttl" + ".dot", rdfvizler.writeRDFDotModel(file, Models.RDFformat.ttl));
-        print("foaf.rdf" + ".dot", rdfvizler.writeDotGraph(file));
-        print("foaf.rdf" + ".svg", rdfvizler.write(file, Format.SVG_STANDALONE.toString()));
+        print("Q100000.ttl" + ".dot", rdfvizler.writeRDFDotModel(file, Models.RDFformat.ttl));
+        print("Q100000.rdf" + ".dot", rdfvizler.writeDotGraph(file));
+        print("Q100000.rdf" + ".svg", rdfvizler.write(file, Format.SVG_STANDALONE.toString()));
     }
-
-    ////////////////////////////////////////
+    
 
     private String runDot(String content, Format format) throws IOException {
         return Graphviz.fromString(content)
