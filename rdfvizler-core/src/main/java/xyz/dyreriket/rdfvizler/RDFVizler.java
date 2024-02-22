@@ -25,8 +25,6 @@ public class RDFVizler {
     
     private BiFunction<Enum<?>[], String, Boolean> contains = (es, e) -> Arrays.stream(es).allMatch(t -> t.name().equals(e));
     
-    public enum RDFInputFormat { ttl, rdf, nt, guess }
-    
     public static final URI DEFAULT_RULES = makeURI("http://rdfvizler.dyreriket.xyz/rules/rdf.jrule");
 
     private static void addPrefixes(Model model) {
@@ -78,8 +76,8 @@ public class RDFVizler {
         return getRDFDotModel(this.readModel(pathRDF));
     }
 
-    public void setInputFormat(RDFInputFormat inputFormat) {
-        if (RDFInputFormat.guess == inputFormat) {
+    public void setInputFormat(Models.RDFformat inputFormat) {
+        if (Models.RDFformat.guess == inputFormat) {
             this.inputFormat = null;
         } else {
             this.inputFormat = Models.RDFformat.valueOf(inputFormat.toString());    

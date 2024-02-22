@@ -64,7 +64,7 @@ public class RDFVizlerServlet extends Servlet {
             super.checkURIInput(pathRDF, maxFileSize);
             super.checkURIInput(pathRules, maxFileSize);
 
-            rdfvizler.setInputFormat(RDFVizler.RDFInputFormat.valueOf(getURLParamValue(request, pRDFFormat, defaultInputFormat)));
+            rdfvizler.setInputFormat(Models.RDFformat.valueOf(getURLParamValue(request, pRDFFormat, defaultInputFormat)));
             String outputFormat = getURLParamValue(request, pDotFormat, defaultOutputFormat);
 
             String output = rdfvizler.write(pathRDF, outputFormat);

@@ -85,7 +85,11 @@ public class RDFVizlerCLI implements Runnable {
     @Option(names = { "--inputFormatRDF" }, 
             description = "Format of RDF input (legal values: ${COMPLETION-CANDIDATES}; "
                     + "default: ${DEFAULT-VALUE} -- by file extension as per jena.util.FileUtils, then Turtle)")
-    private RDFVizler.RDFInputFormat inputFormatRDF = RDFVizler.RDFInputFormat.guess;
+    private Models.RDFformat inputFormatRDF = Models.RDFformat.guess;
+
+    @Option(names = { "--mergeInput" },
+        description = "Merge input files to a single model to visualise?")
+    private boolean merge = false;
 
     /*
     @Option(names = { "--outputFormatDot" }, 

@@ -17,7 +17,10 @@ import org.apache.jena.vocabulary.RDF;
 public abstract class Models {
 
     public enum RDFformat {
-        rdf(FileUtils.langXMLAbbrev);
+        rdf(FileUtils.langXMLAbbrev),
+        ttl(FileUtils.langTurtle),
+        nt(FileUtils.langNTriple),
+        guess(null);
 
         private final String format;
 
