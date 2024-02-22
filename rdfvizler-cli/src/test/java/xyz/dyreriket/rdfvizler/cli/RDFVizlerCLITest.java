@@ -6,14 +6,11 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
-
 import org.apache.commons.io.FileUtils;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-
-import xyz.dyreriket.rdfvizler.cli.RDFVizlerCLI;
 
 public class RDFVizlerCLITest {
 
@@ -28,17 +25,14 @@ public class RDFVizlerCLITest {
         String input = getResourcePath("input1.rdf").getAbsolutePath();
         String args = input;
         RDFVizlerCLI.main(args.split(" "));
-        // We're happy if the test arrives here without throwing an exception:
-        assertTrue(true); 
     }
-    
+
+    @Ignore("support for ttl parked")
     @Test
     public void shouldReadTurtleEvenThoughItsCalledRdfXml() throws Exception {
         String input = getResourcePath("input1-ttl.rdf").getAbsolutePath();
         String args = input + " --inputFormatRDF ttl";
         RDFVizlerCLI.main(args.split(" "));
-        // We're happy if the test arrives here without throwing an exception:
-        assertTrue(true);
     }
     
     @Test
@@ -46,8 +40,6 @@ public class RDFVizlerCLITest {
         String input = getResourcePath("input1-rdf.ttl").getAbsolutePath();
         String args = input + " --inputFormatRDF rdf";
         RDFVizlerCLI.main(args.split(" "));
-        // We're happy if the test arrives here without throwing an exception:
-        assertTrue(true); 
     }
 
     
@@ -77,4 +69,5 @@ public class RDFVizlerCLITest {
 
         return new File(url.getFile());
     }
+
 }

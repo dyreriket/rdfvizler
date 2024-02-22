@@ -6,10 +6,7 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang3.StringEscapeUtils;
-
-import xyz.dyreriket.rdfvizler.DotProcess;
 import xyz.dyreriket.rdfvizler.RDFVizler;
 import xyz.dyreriket.rdfvizler.util.Models;
 
@@ -24,7 +21,6 @@ public class RDFVizlerServlet extends Servlet {
     private static final String pDotFormat = "out";
     
     // defaults, also available in web.xml
-    private String defaultDotExec;
     private String defaultPathRules;
     private String defaultInputFormat;
     private String defaultOutputFormat;
@@ -46,7 +42,6 @@ public class RDFVizlerServlet extends Servlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        defaultDotExec = getInitValue(config, "DotExec", DotProcess.DEFAULT_DOT_EXEC);
         maxFileSize = Integer.parseInt(getInitValue(config, "MaxInput", "30000"));
         defaultPathRules = getInitValue(config, "DefaultRules", RDFVizler.DEFAULT_RULES.toString());
         defaultInputFormat = getInitValue(config, "DefaultFormatRDF", Models.DEFAULT_RDF_FORMAT.toString());
@@ -61,7 +56,6 @@ public class RDFVizlerServlet extends Servlet {
        
         try {
             RDFVizler rdfvizler = new RDFVizler();
-            rdfvizler.setDotExecutable(defaultDotExec);
 
             pathRDF = request.getParameter(pRDF);
             pathRules = getURLParamValue(request, pRules, defaultPathRules);
@@ -70,7 +64,7 @@ public class RDFVizlerServlet extends Servlet {
             super.checkURIInput(pathRDF, maxFileSize);
             super.checkURIInput(pathRules, maxFileSize);
 
-            rdfvizler.setInputFormat(RDFVizler.RDFInputFormat.valueOf(getURLParamValue(request, pRDFFormat, defaultInputFormat)));
+            rdfvizler.setInputFormat(Models.RDFformat.valueOf(getURLParamValue(request, pRDFFormat, defaultInputFormat)));
             String outputFormat = getURLParamValue(request, pDotFormat, defaultOutputFormat);
 
             String output = rdfvizler.write(pathRDF, outputFormat);

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jena.graph.Node;
 import org.apache.jena.rdf.model.ResourceFactory;
@@ -12,7 +11,6 @@ import org.apache.jena.reasoner.rulesys.BuiltinException;
 import org.apache.jena.reasoner.rulesys.RuleContext;
 import org.apache.jena.reasoner.rulesys.builtins.BaseBuiltin;
 import org.apache.jena.vocabulary.RDF;
-
 import xyz.dyreriket.rdfvizler.util.Strings;
 
 public abstract class RuleUtils {

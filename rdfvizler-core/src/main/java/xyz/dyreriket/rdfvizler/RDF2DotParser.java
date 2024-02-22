@@ -1,14 +1,16 @@
 package xyz.dyreriket.rdfvizler;
 
+import static java.util.stream.Collectors.groupingBy;
+
 import java.util.List;
 import java.util.Locale;
 import java.util.function.Function;
-
+import java.util.stream.Collectors;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
-
 import xyz.dyreriket.rdfvizler.rules.RuleRegistrar;
 import xyz.dyreriket.rdfvizler.util.Models;
 import xyz.dyreriket.rdfvizler.util.Strings;
@@ -105,11 +107,17 @@ public class RDF2DotParser {
     }
 
     private String parseAttributes(Resource resource, String namespace) {
-        List<Statement> stmts = resource.listProperties().toList();
-        stmts.removeIf(s -> !s.getPredicate().getNameSpace().equals(namespace));
-        return Strings.toString(stmts, 
-            s -> s.getPredicate().getLocalName() + " = " + QT + s.getObject().toString() + QT,
-            SC + " ");
+        return resource.listProperties().toList().stream()
+            .filter(s -> s.getPredicate().getNameSpace().equals(namespace))
+            .collect(groupingBy(Statement::getPredicate)).entrySet().stream()
+            .map(entry ->
+                entry.getKey().getLocalName()
+                    + " = "
+                    + entry.getValue().stream()
+                    .map(Statement::getObject)
+                    .map(RDFNode::toString)
+                    .collect(Collectors.joining(",", QT, QT)))
+            .collect(Collectors.joining(SC + " "));
     }
 
     private String parseAttributeList(Resource resource, String namespace) {

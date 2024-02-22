@@ -12,13 +12,18 @@ public class TypedValue extends ShortValue {
     }
     
     protected Node value(Node node, RuleContext context) {
-        Node shortname = super.value(node, context);
+
+        String nodeString = node.isBlank()
+            ? ""
+            : RuleUtils.getShortForm(node, context);
+
         String types = RuleUtils.printSortedTypes(node, context);
-        
+
         if (StringUtils.isNotEmpty(types)) {
-            return RuleUtils.stringAsNode(types + "\n" + shortname.toString());
-        } else {
-            return shortname;
+            types += "\n";
         }
+
+        return RuleUtils.stringAsNode(types + nodeString);
     }
+
 }

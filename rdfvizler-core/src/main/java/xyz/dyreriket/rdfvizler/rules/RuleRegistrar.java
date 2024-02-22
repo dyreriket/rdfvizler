@@ -13,6 +13,7 @@ public class RuleRegistrar {
         register(new Linewrap());
         register(new ExcludeType());
         register(new CreateUniqueIfLit());
+        register(new EqualsSome());
     }
     
     public static void register(Builtin rule) {

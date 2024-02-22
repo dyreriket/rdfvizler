@@ -1,7 +1,6 @@
 package xyz.dyreriket.rdfvizler.rules;
 
 import java.util.UUID;
-
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.reasoner.rulesys.RuleContext;

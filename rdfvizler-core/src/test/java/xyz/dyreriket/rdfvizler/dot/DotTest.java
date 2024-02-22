@@ -2,17 +2,16 @@ package xyz.dyreriket.rdfvizler.dot;
 
 import static org.junit.Assert.assertTrue;
 
+import guru.nidi.graphviz.engine.Format;
+import guru.nidi.graphviz.engine.Graphviz;
 import java.io.File;
 import java.io.IOException;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jena.rdf.model.Model;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-
-import xyz.dyreriket.rdfvizler.DotProcess;
 import xyz.dyreriket.rdfvizler.RDF2DotParser;
 import xyz.dyreriket.rdfvizler.RDFVizler;
 import xyz.dyreriket.rdfvizler.util.Models;
@@ -38,7 +37,7 @@ public class DotTest {
     @Test
     public void shouldProduceNonEmptyGraph() throws IOException {
         RDFVizler rdfvizler = new RDFVizler();
-        String out = rdfvizler.writeDotImage(simpleRdf, DotProcess.ImageOutputFormat.svg);
+        String out = rdfvizler.write(simpleRdf, Format.SVG_STANDALONE.toString());
         int numberOfPolygons = StringUtils.countMatches(out, "polygon");
         assertTrue(numberOfPolygons > 1);
     }
@@ -48,37 +47,32 @@ public class DotTest {
     public void shouldOutputDot() throws IOException {
         String dot = toDot(file1);
         print(file1 + ".dot", dot);
-        // We're happy if the test arrives here without throwing an exception:
-        assertTrue(true);
     }
 
     @Test
     public void shouldOutputDotsvg() throws IOException {
-        print(file1 + ".svg", runDot(toDot(file1), DotProcess.ImageOutputFormat.svg));
-        // We're happy if the test arrives here without throwing an exception:
-        assertTrue(true); 
+        print(file1 + ".svg", runDot(toDot(file1), Format.SVG_STANDALONE));
     }
 
     @Test
-    public void shouldWork() throws IllegalArgumentException, IOException {
-        
-        String file = "http://folk.uio.no/martige/foaf.rdf";
+    public void shouldWork() throws IOException {
+
+        String file = "https://www.wikidata.org/entity/Q100000.ttl";
 
         RDFVizler rdfvizler = new RDFVizler();
         //rdfvizler.setInputFormat(Models.RDFformat.rdf);
         rdfvizler.setRulesPath("../docs/rules/rdf.jrule");
 
-        print("foaf.ttl" + ".dot", rdfvizler.writeRDFDotModel(file, Models.RDFformat.ttl));
-        print("foaf.rdf" + ".dot", rdfvizler.writeDotGraph(file));
-        print("foaf.rdf" + ".svg", rdfvizler.writeDotImage(file, DotProcess.ImageOutputFormat.svg));
-        // We're happy if the test arrives here without throwing an exception:
-        assertTrue(true);
+        print("Q100000.ttl" + ".dot", rdfvizler.writeRDFDotModel(file, Models.RDFformat.rdf));
+        print("Q100000.rdf" + ".dot", rdfvizler.writeDotGraph(file));
+        print("Q100000.rdf" + ".svg", rdfvizler.write(file, Format.SVG_STANDALONE.toString()));
     }
+    
 
-    ////////////////////////////////////////
-
-    private String runDot(String content, DotProcess.ImageOutputFormat format) throws IOException {
-        return DotProcess.runDot(content, format);
+    private String runDot(String content, Format format) throws IOException {
+        return Graphviz.fromString(content)
+            .render(format)
+            .toString();
     }
 
     private String toDot(String file) {
