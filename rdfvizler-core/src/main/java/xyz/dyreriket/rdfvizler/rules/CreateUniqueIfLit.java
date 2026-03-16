@@ -31,7 +31,7 @@ public class CreateUniqueIfLit extends NodeFunction {
         if (node.isLiteral()) {
             UUID uuid = UUID.randomUUID();
             String uniqueLiteral = uuid.toString();
-            return NodeFactory.createLiteral(uniqueLiteral);
+            return NodeFactory.createLiteralString(uniqueLiteral);
         } else {
             return node;
         }

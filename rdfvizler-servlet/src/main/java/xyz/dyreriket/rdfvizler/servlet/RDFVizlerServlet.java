@@ -6,7 +6,7 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import xyz.dyreriket.rdfvizler.RDFVizler;
 import xyz.dyreriket.rdfvizler.util.Models;
 
@@ -42,10 +42,14 @@ public class RDFVizlerServlet extends Servlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        maxFileSize = Integer.parseInt(getInitValue(config, "MaxInput", "30000"));
+        try {
+            maxFileSize = Integer.parseInt(getInitValue(config, "MaxInput", "30000"));
+        } catch (NumberFormatException e) {
+            throw new ServletException("Invalid MaxInput configuration value: must be an integer", e);
+        }
         defaultPathRules = getInitValue(config, "DefaultRules", RDFVizler.DEFAULT_RULES.toString());
-        defaultInputFormat = getInitValue(config, "DefaultFormatRDF", Models.DEFAULT_RDF_FORMAT.toString());
-        defaultOutputFormat = getInitValue(config, "DefaultFormatDot", Models.DEFAULT_RDF_FORMAT.toString());
+        defaultInputFormat = getInitValue(config, "DefaultFormatRDF", Models.DEFAULT_RDF_FORMAT_NAME);
+        defaultOutputFormat = getInitValue(config, "DefaultFormatDot", Models.DEFAULT_RDF_FORMAT_NAME);
     }
 
     @Override
@@ -55,23 +59,28 @@ public class RDFVizlerServlet extends Servlet {
         String pathRules = null;
        
         try {
-            RDFVizler rdfvizler = new RDFVizler();
-
             pathRDF = request.getParameter(pRDF);
+            if (pathRDF == null || pathRDF.isEmpty()) {
+                throw new IllegalArgumentException("Missing required parameter: '" + pRDF + "'");
+            }
             pathRules = getURLParamValue(request, pRules, defaultPathRules);
+
+            RDFVizler rdfvizler = new RDFVizler();
             rdfvizler.setRulesPath(pathRules);
-            
+
             super.checkURIInput(pathRDF, maxFileSize);
             super.checkURIInput(pathRules, maxFileSize);
 
-            rdfvizler.setInputFormat(Models.RDFformat.valueOf(getURLParamValue(request, pRDFFormat, defaultInputFormat)));
+            rdfvizler.setInputFormat(getURLParamValue(request, pRDFFormat, defaultInputFormat));
             String outputFormat = getURLParamValue(request, pDotFormat, defaultOutputFormat);
 
             String output = rdfvizler.write(pathRDF, outputFormat);
             String mimetype = super.setMimetype(outputFormat);
 
             super.respond(response, output, mimetype);
-        } catch (RuntimeException | IOException e) {
+        } catch (IllegalArgumentException e) {
+            super.respond(response, getErrorMessage(400, pathRDF, pathRules, e), "text/html");
+        } catch (IOException | RuntimeException e) {
             super.respond(response, getErrorMessage(500, pathRDF, pathRules, e), "text/html");
         }
     }

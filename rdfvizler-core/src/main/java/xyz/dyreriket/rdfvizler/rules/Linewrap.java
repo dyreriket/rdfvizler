@@ -1,6 +1,6 @@
 package xyz.dyreriket.rdfvizler.rules;
 
-import org.apache.commons.lang3.text.WordUtils;
+import org.apache.commons.text.WordUtils;
 import org.apache.jena.graph.Node;
 import org.apache.jena.reasoner.rulesys.BuiltinException;
 import org.apache.jena.reasoner.rulesys.RuleContext;
@@ -33,7 +33,12 @@ public class Linewrap extends BaseBuiltin {
             throw new BuiltinException(this, context, "Third argument must be a number");
         }
         String splitStr = length.getLiteralLexicalForm();
-        int splitPoint = Integer.parseInt(splitStr);
+        int splitPoint;
+        try {
+            splitPoint = Integer.parseInt(splitStr);
+        } catch (NumberFormatException e) {
+            throw new BuiltinException(this, context, "Third argument must be an integer, got: " + splitStr);
+        }
         String val = RuleUtils.lexicalValue(literal, this, context);
         String valWrapped = WordUtils.wrap(val, splitPoint);
         return RuleUtils.stringAsNode(valWrapped);

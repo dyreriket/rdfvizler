@@ -97,7 +97,7 @@ public class RDF2DotParser {
     private String parseElements(Resource resource, Property element, Function<Resource, String> parser, String tabs) {
         return Strings.processNonEmpty(
             Strings.toString(resource.listProperties(element).toList(),
-                s -> parser.apply(s.getObject().asResource()), tabs),
+                s -> parser.apply(toResource(s.getObject())), tabs),
             s -> BR + tabs + "// " + getElementType(element) + BR // comment "headline"
                 + tabs + s);
     }
@@ -133,13 +133,20 @@ public class RDF2DotParser {
     }
 
     private String parseEdge(Resource resource) {
-        return getID(resource.getRequiredProperty(RDFVizlerVocabulary.hasSource).getObject().asResource()) // source node
+        return getID(toResource(resource.getRequiredProperty(RDFVizlerVocabulary.hasSource).getObject())) // source node
             + edgeOperator
-            + getID(resource.getRequiredProperty(RDFVizlerVocabulary.hasTarget).getObject().asResource()) // target node
+            + getID(toResource(resource.getRequiredProperty(RDFVizlerVocabulary.hasTarget).getObject())) // target node
             + parseAttributeList(resource, RDFVizlerVocabulary.NAMESPACE_ATTR)
             + SC + BR;
     }
     
+    private static Resource toResource(RDFNode node) {
+        if (!node.isResource()) {
+            throw new IllegalArgumentException("Expected RDF resource but got literal: " + node);
+        }
+        return node.asResource();
+    }
+
     private String getID(Resource resource) {
         Statement statement = resource.getProperty(RDFVizlerVocabulary.hasID);
         String id;

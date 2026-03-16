@@ -1,7 +1,7 @@
 package xyz.dyreriket.rdfvizler.util;
 
-import java.io.IOException;
-import java.io.StringWriter;
+import java.io.ByteArrayOutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.List;
 import org.apache.jena.rdf.model.Model;
@@ -10,30 +10,17 @@ import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.reasoner.Reasoner;
 import org.apache.jena.reasoner.rulesys.GenericRuleReasoner;
 import org.apache.jena.reasoner.rulesys.Rule;
-import org.apache.jena.util.FileManager;
-import org.apache.jena.util.FileUtils;
+import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFLanguages;
+import org.apache.jena.riot.RDFParser;
+import org.apache.jena.riot.RDFWriter;
 import org.apache.jena.vocabulary.RDF;
 
 public abstract class Models {
 
-    public enum RDFformat {
-        rdf(FileUtils.langXMLAbbrev),
-        ttl(FileUtils.langTurtle),
-        nt(FileUtils.langNTriple),
-        guess(null);
 
-        private final String format;
-
-        RDFformat(String format) {
-            this.format = format;
-        }
-
-        public String getFormat() {
-            return this.format;
-        }
-    }
-
-    public static final RDFformat DEFAULT_RDF_FORMAT = RDFformat.rdf;
+    public static final Lang DEFAULT_RDF_FORMAT = Lang.TURTLE;
+    public static final String DEFAULT_RDF_FORMAT_NAME = DEFAULT_RDF_FORMAT.getName();
 
     public static Model applyRules(Model model, List<Rule> rules) {
         Reasoner reasoner = new GenericRuleReasoner(rules);
@@ -51,18 +38,22 @@ public abstract class Models {
     }
 
     public static Model readModel(String file) {
-        return readModel(file, FileUtils.guessLang(file, DEFAULT_RDF_FORMAT.getFormat()));
+        return readModel(file, RDFLanguages.filenameToLang(file, DEFAULT_RDF_FORMAT));
     }
 
-    public static Model readModel(String file, RDFformat serialisation) {
-        return FileManager.get().loadModel(file, serialisation.getFormat());
+    public static Model readModel(String file, Lang lang) {
+        Model model = ModelFactory.createDefaultModel();
+        RDFParser.source(file)
+             .forceLang(lang)
+             .parse(model);
+        return model;
     }
 
     private static Model readModel(String file, String format) {
         if (format == null || format.isEmpty()) {
             return readModel(file);
         } else {
-            return FileManager.get().loadModel(file, format);
+            return readModel(file, RDFLanguages.shortnameToLang(format));
         }
     }
 
@@ -74,17 +65,13 @@ public abstract class Models {
         return model.shortForm(resource.getURI());
     }
 
-    public static String writeModel(Model model, RDFformat format) {
-        String modelString = "";
-        try (StringWriter str = new StringWriter()) {
-            model.write(str, format.getFormat());
-            modelString = str.toString();
-            str.flush();
-        } catch (IOException e) {
-            System.err.println("Error writing model to string:");
-            e.printStackTrace();
-        }
-        return modelString;
+    public static String writeModel(Model model, String lang) {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        RDFWriter.create()
+             .source(model)
+             .lang(RDFLanguages.shortnameToLang(lang))
+             .output(out);
+        return out.toString(StandardCharsets.UTF_8);
     }
 
     // hiding constructor
