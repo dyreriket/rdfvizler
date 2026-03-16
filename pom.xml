@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>xyz.dyreriket.rdfvizler</groupId>
     <artifactId>rdfvizler</artifactId>
-    <version>0.0.3-SNAPSHOT</version>
+    <version>0.0.3</version>
     <packaging>pom</packaging>
     <modules>
         <module>rdfvizler-core</module>
@@ -37,6 +37,7 @@
         <url>https://github.com/dyreriket/rdfvizler</url>
         <connection>scm:git:https://github.com/dyreriket/rdfvizler.git</connection>
         <developerConnection>scm:git:https://github.com/dyreriket/rdfvizler.git</developerConnection>
+    <tag>v0.0.3</tag>
   </scm>
 
     <build>
