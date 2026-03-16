@@ -3,6 +3,7 @@ package xyz.dyreriket.rdfvizler.servlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
@@ -34,20 +35,24 @@ public abstract class Servlet extends HttpServlet {
         return MIMETYPE.getOrDefault(format, "text/plain");
     }
 
-    // check that 
-    //  (1) URL resolves, 
+    // check that
+    //  (1) URL resolves,
     //  (2) with code 200
     //  (3) content not larger than max limit.
     protected void checkURIInput(String path, int maxSize) throws IOException {
         HttpURLConnection connection = getHttpConnection(path);
-        checkHttpCode(connection);
-        checkHttpContentSize(connection, maxSize);
+        try {
+            checkHttpCode(connection);
+            checkHttpContentSize(connection, maxSize);
+        } finally {
+            connection.disconnect();
+        }
     }
 
     protected static HttpURLConnection getHttpConnection(String path) throws IOException {
         HttpURLConnection connection;
         try {
-            URL url = new URL(path);
+            URL url = URI.create(path).toURL();
             connection = (HttpURLConnection) url.openConnection();
         } catch (IOException ex) {
             throw new IOException("Error handling URI: '" + path + "': Malformed URL " + ex.getMessage());
@@ -77,10 +82,10 @@ public abstract class Servlet extends HttpServlet {
     protected static void respond(HttpServletResponse response, String content, String mimetype) throws IOException {
         response.setCharacterEncoding(UTF8);
         response.setContentType(mimetype);
-        PrintWriter writer = response.getWriter();
-        writer.write(content);
-        writer.flush();
-        writer.close();
+        try (PrintWriter writer = response.getWriter()) {
+            writer.write(content);
+            writer.flush();
+        }
     }
 
 }

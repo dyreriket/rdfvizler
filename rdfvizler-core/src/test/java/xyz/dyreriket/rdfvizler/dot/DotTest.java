@@ -56,16 +56,11 @@ public class DotTest {
 
     @Test
     public void shouldWork() throws IOException {
-
-        String file = "https://www.wikidata.org/entity/Q100000.ttl";
-
         RDFVizler rdfvizler = new RDFVizler();
-        //rdfvizler.setInputFormat(Models.RDFformat.rdf);
-        rdfvizler.setRulesPath("../docs/rules/rdf.jrule");
 
-        print("Q100000.ttl" + ".dot", rdfvizler.writeRDFDotModel(file, Models.RDFformat.rdf));
-        print("Q100000.rdf" + ".dot", rdfvizler.writeDotGraph(file));
-        print("Q100000.rdf" + ".svg", rdfvizler.write(file, Format.SVG_STANDALONE.toString()));
+        print(simpleRdf + ".dot", rdfvizler.writeRDFDotModel(simpleRdf, "ttl"));
+        print(simpleRdf + ".dot2", rdfvizler.writeDotGraph(simpleRdf));
+        print(simpleRdf + ".svg", rdfvizler.write(simpleRdf, Format.SVG_STANDALONE.toString()));
     }
     
 

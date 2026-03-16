@@ -1,37 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>RDFVizler</title>
-<meta name="generator" content="Org mode">
+<meta name="generator" content="Org Mode" />
 <link rel="stylesheet" type="text/css" href="style.css" />
 </head>
 <body>
-<div id="content">
-<nav id="table-of-contents">
+<div id="content" class="content">
+<nav id="table-of-contents" role="doc-toc">
 <h2>Table of Contents</h2>
-<div id="text-table-of-contents">
+<div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#org68be91e">Introduction</a></li>
-<li><a href="#orgcf7fedb">Software</a></li>
-<li><a href="#org7b9e93c">Vocabulary</a></li>
-<li><a href="#org6463caf">Rules</a></li>
-<li><a href="#org3656f33">Contact</a></li>
+<li><a href="#orgbfa4192">Introduction</a></li>
+<li><a href="#orgf735938">Software</a></li>
+<li><a href="#orga9f62ed">Vocabulary</a></li>
+<li><a href="#orgfa3f4a0">Rules</a></li>
+<li><a href="#org9b34b41">Contact</a></li>
 </ul>
 </div>
 </nav>
 
 <center><img src="rdfvizler.png" id="logo" alt="RDFVizler logo"/></center>
 <h1 id="heading">RDFVizler</h1>
-
-<div id="outline-container-org68be91e" class="outline-2">
-<h2 id="org68be91e">Introduction</h2>
-<div class="outline-text-2" id="text-org68be91e">
+<div id="outline-container-orgbfa4192" class="outline-2">
+<h2 id="orgbfa4192">Introduction</h2>
+<div class="outline-text-2" id="text-orgbfa4192">
 <p>
 RDFVizler is a simple RDF visualisation software built with the <a href="https://jena.apache.org/">Apache
 Jena Java API</a> and <a href="https://www.graphviz.org/">Graphviz</a> visualisation software. It requires Java
-8 and Graphviz to be installed on the system.
+11 or later.
 </p>
 
 <p>
@@ -52,16 +51,14 @@ rule set is available, suited for generic RDF graph visualisation.
 </p>
 
 
-<figure>
-<object type="image/svg+xml" data="./example/intro-image.svg" class="org-svg" style="width: 100%">
-Sorry, your browser does not support SVG.</object>
+<figure id="org6b226e4">
+<img src="./example/intro-image.svg" alt="intro-image.svg" class="org-svg" style="width: 100%">
 
 </figure>
 </div>
-
-<div id="outline-container-orgf5d3a34" class="outline-3">
-<h3 id="orgf5d3a34">Example</h3>
-<div class="outline-text-3" id="text-orgf5d3a34">
+<div id="outline-container-orge40bb16" class="outline-3">
+<h3 id="orge40bb16">Example</h3>
+<div class="outline-text-3" id="text-orge40bb16">
 <p>
 This example will show how we can generate the above graph
 visualisation from an RDF graph.
@@ -77,37 +74,37 @@ that fit the input data to make pretty graph visualisation from it.
 
 <div class="org-src-container">
 <pre class="src src-ttl">
-<span style="color: #b0c4de;">@prefix</span> <span style="color: #98fb98;">ex:</span>    <span style="color: #87cefa;"><a href="http://example.com/ns#">&lt;http://example.com/ns#&gt;</a></span><span style="color: #ff7f24;"> .</span>
+@prefix ex:    &lt;http://example.com/ns#&gt; .
 
-ex:<span style="color: #7fffd4;">RulesEngine</span> <span style="color: #00ffff;">a</span> <span style="color: #98fb98;">ex:</span><span style="color: #7fffd4;">Process</span> <span style="color: #00ffff;">;</span>
-  <span style="color: #98fb98;">rdfs:</span><span style="color: #7fffd4;">label</span> <span style="color: #ffa07a;">"Jena Rules\napplication"</span> <span style="color: #00ffff;">;</span>
-  <span style="color: #98fb98;">ex:</span><span style="color: #7fffd4;">in</span> <span style="color: #98fb98;">ex:</span><span style="color: #7fffd4;">RDF</span> <span style="color: #00ffff;">,</span> <span style="color: #98fb98;">ex:</span><span style="color: #7fffd4;">Rules</span> <span style="color: #00ffff;">;</span>
-  <span style="color: #98fb98;">ex:</span><span style="color: #7fffd4;">out</span> <span style="color: #98fb98;">ex:</span><span style="color: #7fffd4;">RDFVizlerRDF</span> <span style="color: #98fb98;">.</span>
+ex:RulesEngine a ex:Process ;
+  rdfs:label "Jena Rules\napplication" ;
+  ex:in ex:RDF , ex:Rules ;
+  ex:out ex:RDFVizlerRDF .
 
-<span style="color: #98fb98;">ex:</span><span style="color: #7fffd4;">Parser</span> <span style="color: #00ffff;">a</span> <span style="color: #98fb98;">ex:</span><span style="color: #7fffd4;">Process</span> <span style="color: #00ffff;">;</span>
-  <span style="color: #98fb98;">rdfs:</span><span style="color: #7fffd4;">label</span> <span style="color: #ffa07a;">"RDFVizler's\nRDF to Dot\nparser"</span> <span style="color: #00ffff;">;</span>
-  <span style="color: #98fb98;">ex:</span><span style="color: #7fffd4;">in</span> <span style="color: #98fb98;">ex:</span><span style="color: #7fffd4;">RDFVizlerRDF</span> <span style="color: #00ffff;">;</span>
-  <span style="color: #98fb98;">ex:</span><span style="color: #7fffd4;">out</span> <span style="color: #98fb98;">ex:</span><span style="color: #7fffd4;">Dot</span> <span style="color: #98fb98;">.</span>
+ex:Parser a ex:Process ;
+  rdfs:label "RDFVizler's\nRDF to Dot\nparser" ;
+  ex:in ex:RDFVizlerRDF ;
+  ex:out ex:Dot .
 
-<span style="color: #98fb98;">ex:</span><span style="color: #7fffd4;">Graphviz</span> <span style="color: #00ffff;">a</span> <span style="color: #98fb98;">ex:</span><span style="color: #7fffd4;">Process</span> <span style="color: #00ffff;">;</span>
-  <span style="color: #98fb98;">rdfs:</span><span style="color: #7fffd4;">label</span> <span style="color: #ffa07a;">"Graphviz\nsoftware"</span> <span style="color: #00ffff;">;</span>
-  <span style="color: #98fb98;">ex:</span><span style="color: #7fffd4;">in</span> <span style="color: #98fb98;">ex:</span><span style="color: #7fffd4;">Dot</span> <span style="color: #00ffff;">;</span>
-  <span style="color: #98fb98;">ex:</span><span style="color: #7fffd4;">out</span> <span style="color: #98fb98;">ex:</span><span style="color: #7fffd4;">Image</span> <span style="color: #98fb98;">.</span>
+ex:Graphviz a ex:Process ;
+  rdfs:label "Graphviz\nsoftware" ;
+  ex:in ex:Dot ;
+  ex:out ex:Image .
 
-<span style="color: #98fb98;">ex:</span><span style="color: #7fffd4;">RDF</span> <span style="color: #00ffff;">a</span> <span style="color: #98fb98;">ex:</span><span style="color: #7fffd4;">Data</span><span style="color: #00ffff;">,</span> <span style="color: #98fb98;">ex:</span><span style="color: #7fffd4;">Input</span> <span style="color: #00ffff;">;</span>
-  <span style="color: #98fb98;">rdfs:</span><span style="color: #7fffd4;">label</span> <span style="color: #ffa07a;">"RDF data"</span> <span style="color: #98fb98;">.</span>
+ex:RDF a ex:Data, ex:Input ;
+  rdfs:label "RDF data" .
 
-<span style="color: #98fb98;">ex:</span><span style="color: #7fffd4;">Rules</span> <span style="color: #00ffff;">a</span> <span style="color: #98fb98;">ex:</span><span style="color: #7fffd4;">Data</span><span style="color: #00ffff;">,</span> <span style="color: #98fb98;">ex:</span><span style="color: #7fffd4;">Input</span> <span style="color: #00ffff;">;</span>
-  <span style="color: #98fb98;">rdfs:</span><span style="color: #7fffd4;">label</span> <span style="color: #ffa07a;">"Jena Rules"</span> <span style="color: #98fb98;">.</span>
+ex:Rules a ex:Data, ex:Input ;
+  rdfs:label "Jena Rules" .
 
-<span style="color: #98fb98;">ex:</span><span style="color: #7fffd4;">RDFVizlerRDF</span> <span style="color: #00ffff;">a</span> <span style="color: #98fb98;">ex:</span><span style="color: #7fffd4;">Data</span><span style="color: #00ffff;">,</span> <span style="color: #98fb98;">ex:</span><span style="color: #7fffd4;">Output</span> <span style="color: #00ffff;">;</span>
-  <span style="color: #98fb98;">rdfs:</span><span style="color: #7fffd4;">label</span> <span style="color: #ffa07a;">"RDFVizler\nsaturated RDF"</span> <span style="color: #98fb98;">.</span>
+ex:RDFVizlerRDF a ex:Data, ex:Output ;
+  rdfs:label "RDFVizler\nsaturated RDF" .
 
-<span style="color: #98fb98;">ex:</span><span style="color: #7fffd4;">Dot</span> <span style="color: #00ffff;">a</span> <span style="color: #98fb98;">ex:</span><span style="color: #7fffd4;">Data</span><span style="color: #00ffff;">,</span> <span style="color: #98fb98;">ex:</span><span style="color: #7fffd4;">Output</span> <span style="color: #00ffff;">;</span>
-  <span style="color: #98fb98;">rdfs:</span><span style="color: #7fffd4;">label</span> <span style="color: #ffa07a;">"DOT syntax"</span> <span style="color: #98fb98;">.</span>
+ex:Dot a ex:Data, ex:Output ;
+  rdfs:label "DOT syntax" .
 
-<span style="color: #98fb98;">ex:</span><span style="color: #7fffd4;">Image</span> <span style="color: #00ffff;">a</span> <span style="color: #98fb98;">ex:</span><span style="color: #7fffd4;">Data</span><span style="color: #00ffff;">,</span> <span style="color: #98fb98;">ex:</span><span style="color: #7fffd4;">Output</span> <span style="color: #00ffff;">;</span>
-  <span style="color: #98fb98;">rdfs:</span><span style="color: #7fffd4;">label</span> <span style="color: #ffa07a;">"Image"</span> <span style="color: #00ffff;">.</span>
+ex:Image a ex:Data, ex:Output ;
+  rdfs:label "Image" .
 </pre>
 </div>
 
@@ -199,9 +196,8 @@ And this is how the svg image looks like:
 </p>
 
 
-<figure>
-<object type="image/svg+xml" data="./example/intro-image.svg" class="org-svg" style="width: 100%">
-Sorry, your browser does not support SVG.</object>
+<figure id="orgbf67fab">
+<img src="./example/intro-image.svg" alt="intro-image.svg" class="org-svg" style="width: 100%">
 
 </figure>
 
@@ -210,35 +206,35 @@ RDFVizler can also output the saturated RDF or the DOT rendering of the
 graph; here is the DOT output of our example:
 </p>
 
-<pre class="example">
+<pre class="example" id="orgbbb9e44">
 digraph "urn:temp#graph" {
-overlap = "false"; rankdir = "LR"; center = "true"; splines = "true";
+overlap = "false"; rankdir = "LR"; splines = "true"; center = "true";
 node  [ fontsize = "10px"; style = "filled"; fontname = "Arial" ];
 edge  [ fontname = "Arial"; fontsize = "10px" ];
 
    // NODES
-   "http://example.com/ns#Parser" [ label = "RDFVizler's
+   "http://example.com/ns#Image" [ fillcolor = "lightskyblue"; style = "filled"; label = "Image"; shape = "box" ];
+   "http://example.com/ns#Graphviz" [ fillcolor = "lightgreen"; label = "Graphviz
+software"; shape = "diamond" ];
+   "http://example.com/ns#Dot" [ fillcolor = "lightskyblue"; style = "filled"; label = "DOT syntax"; shape = "box" ];
+   "http://example.com/ns#Parser" [ fillcolor = "lightgreen"; label = "RDFVizler's
 RDF to Dot
-parser"; fillcolor = "lightgreen"; shape = "diamond" ];
-   "http://example.com/ns#RulesEngine" [ label = "Jena Rules
-application"; fillcolor = "lightgreen"; shape = "diamond" ];
-   "http://example.com/ns#Graphviz" [ label = "Graphviz
-software"; fillcolor = "lightgreen"; shape = "diamond" ];
-   "http://example.com/ns#Dot" [ style = "filled"; shape = "box"; fillcolor = "lightskyblue"; label = "DOT syntax" ];
-   "http://example.com/ns#RDF" [ style = "filled"; shape = "box"; fillcolor = "pink"; label = "RDF data" ];
-   "http://example.com/ns#Image" [ style = "filled"; shape = "box"; fillcolor = "lightskyblue"; label = "Image" ];
-   "http://example.com/ns#RDFVizlerRDF" [ style = "filled"; shape = "box"; fillcolor = "lightskyblue"; label = "RDFVizler
-saturated RDF" ];
-   "http://example.com/ns#Rules" [ style = "filled"; shape = "box"; fillcolor = "pink"; label = "Jena Rules" ];
+parser"; shape = "diamond" ];
+   "http://example.com/ns#RDF" [ fillcolor = "pink"; style = "filled"; label = "RDF data"; shape = "box" ];
+   "http://example.com/ns#RulesEngine" [ fillcolor = "lightgreen"; label = "Jena Rules
+application"; shape = "diamond" ];
+   "http://example.com/ns#Rules" [ fillcolor = "pink"; style = "filled"; label = "Jena Rules"; shape = "box" ];
+   "http://example.com/ns#RDFVizlerRDF" [ fillcolor = "lightskyblue"; style = "filled"; label = "RDFVizler
+saturated RDF"; shape = "box" ];
 
    // EDGES
-   "http://example.com/ns#RDFVizlerRDF" -&gt; "http://example.com/ns#Parser";
-   "http://example.com/ns#Dot" -&gt; "http://example.com/ns#Graphviz";
-   "http://example.com/ns#RulesEngine" -&gt; "http://example.com/ns#RDFVizlerRDF";
    "http://example.com/ns#Graphviz" -&gt; "http://example.com/ns#Image";
+   "http://example.com/ns#Dot" -&gt; "http://example.com/ns#Graphviz";
+   "http://example.com/ns#Parser" -&gt; "http://example.com/ns#Dot";
+   "http://example.com/ns#RDFVizlerRDF" -&gt; "http://example.com/ns#Parser";
    "http://example.com/ns#RDF" -&gt; "http://example.com/ns#RulesEngine";
    "http://example.com/ns#Rules" -&gt; "http://example.com/ns#RulesEngine";
-   "http://example.com/ns#Parser" -&gt; "http://example.com/ns#Dot";
+   "http://example.com/ns#RulesEngine" -&gt; "http://example.com/ns#RDFVizlerRDF";
 }
 
 </pre>
@@ -253,18 +249,16 @@ This is the result of processing the input using the default rule set:
 </div>
 
 
-<figure>
-<object type="image/svg+xml" data="./example/intro-image-default.svg" class="org-svg">
-Sorry, your browser does not support SVG.</object>
+<figure id="orgd140810">
+<img src="./example/intro-image-default.svg" alt="intro-image-default.svg" class="org-svg">
 
 </figure>
 </div>
 </div>
 </div>
-
-<div id="outline-container-orgcf7fedb" class="outline-2">
-<h2 id="orgcf7fedb">Software</h2>
-<div class="outline-text-2" id="text-orgcf7fedb">
+<div id="outline-container-orgf735938" class="outline-2">
+<h2 id="orgf735938">Software</h2>
+<div class="outline-text-2" id="text-orgf735938">
 <p>
 The RDFVizler software is written in Java and is available as a runnable
 jar at <a href="https://github.com/dyreriket/rdfvizler/releases">https://github.com/dyreriket/rdfvizler/releases</a>.
@@ -280,17 +274,17 @@ supported input and output formats.
 </pre>
 </div>
 
-<pre class="example">
+<pre class="example" id="orgbeb39c4">
 
-RDFVizler
+RDFVizler: RDF visualisation
 
 Usage:
-java -jar rdfvizler.jar [--help] [--skipRules] [--version]
-                        [--dotExecutable=&lt;dotExec&gt;]
-                        [--inputFormatRDF=&lt;inputFormatRDF&gt;]
-                        [--outputFormatRDF=&lt;outputFormatRDF&gt;]
-                        [-i=&lt;outputFormatImage&gt;] [-r=&lt;rules&gt;] [-x=&lt;mode&gt;]
-                        RDF_FILES...
+java -jar rdfvizler-[version].jar [--help] [--mergeInput] [--skipRules]
+                                  [--version]
+                                  [--inputFormatRDF=&lt;inputFormatRDF&gt;]
+                                  [--outputFormatRDF=&lt;outputFormatRDF&gt;]
+                                  [-i=&lt;outputFormatImage&gt;] [-r=&lt;rules&gt;]
+                                  [-x=&lt;mode&gt;] RDF_FILES...
 
 Description:
 RDFVizler visualises RDF by parsing a designated RDF RDFVizler vocabulary into
@@ -304,28 +298,24 @@ Options:
   -x, --executionMode=&lt;mode&gt;
                         What output to produce. (legal values: rdf, dot, image;
                           default: image)
-  -r, --rules=&lt;rules&gt;   Input rules: URI or file path (default: http://rdfvizler.
-                          dyreriket.xyz/rules/rdf.jrule)
+  -r, --rules=&lt;rules&gt;   Input rules: URI or file path (default: bundled rules)
       --skipRules       Skip rule application to input? (default: false)
       --inputFormatRDF=&lt;inputFormatRDF&gt;
-                        Format of RDF input (legal values: ttl, rdf, nt, guess;
-                          default: guess -- by file extension as per jena.util.
-                          FileUtils, then Turtle)
+                        Format of RDF input (e.g. ttl, rdf, nt; default: guessed by
+                          file extension, then Turtle)
+      --mergeInput      Merge input files to a single model to visualise?
       --outputFormatRDF=&lt;outputFormatRDF&gt;
-                        Format of RDF output (legal values: ttl, rdf, nt; default:
-                          ttl)
+                        Format of RDF output (e.g. ttl, rdf, nt; default: Turtle)
   -i, --outputFormatImage=&lt;outputFormatImage&gt;
-                        Format of image output (legal values: svg; default: svg)
-      --dotExecutable=&lt;dotExec&gt;
-                        Path to dot executable (default: /usr/bin/dot)
+                        Format of image output (e.g. SVG_STANDALONE, PNG; default:
+                          SVG_STANDALONE)
       --version         Display version info
       --help            Display this help message
 </pre>
 </div>
-
-<div id="outline-container-org5de106e" class="outline-3">
-<h3 id="org5de106e">Contribute</h3>
-<div class="outline-text-3" id="text-org5de106e">
+<div id="outline-container-orga42892f" class="outline-3">
+<h3 id="orga42892f">Contribute</h3>
+<div class="outline-text-3" id="text-orga42892f">
 <p>
 The project is hosted at github,
 <a href="http://github.com/dyreriket/rdfvizler/">http://github.com/dyreriket/rdfvizler/</a>, is open source under LGPL
@@ -339,9 +329,9 @@ different contributors. All tests can be run with
 </p>
 
 <pre class="example">
-mvn package install
-
+mvn clean verify
 </pre>
+
 
 <p>
 The project consists of 3 modules:
@@ -355,10 +345,9 @@ Dot parser, interaction with the dot executable, and output.</li>
 </div>
 </div>
 </div>
-
-<div id="outline-container-org7b9e93c" class="outline-2">
-<h2 id="org7b9e93c">Vocabulary</h2>
-<div class="outline-text-2" id="text-org7b9e93c">
+<div id="outline-container-orga9f62ed" class="outline-2">
+<h2 id="orga9f62ed">Vocabulary</h2>
+<div class="outline-text-2" id="text-orga9f62ed">
 <p>
 This is the RDFVizler vocabulary. Read the <code>rdfs:comment</code> on the ontology
 and see the example below to learn the basics of using the
@@ -372,99 +361,98 @@ Source: <a href="./vocabulary/core.owl.ttl">./vocabulary/core.owl.ttl</a>
 <div class="org-src-container">
 <pre class="src src-ttl">
 
-<span style="color: #87cefa;"><a href="http://rdfvizler.dyreriket.xyz/vocabulary/core">&lt;http://rdfvizler.dyreriket.xyz/vocabulary/core&gt;</a></span> <span style="color: #00ffff;">a</span> <span style="color: #98fb98;">owl:</span><span style="color: #7fffd4;">Ontology</span> <span style="color: #00ffff;">;</span>
+&lt;http://rdfvizler.dyreriket.xyz/vocabulary/core&gt; a owl:Ontology ;
 
-  <span style="color: #98fb98;">owl:</span><span style="color: #7fffd4;">versionIRI</span> <span style="color: #87cefa;"><a href="http://rdfvizler.dyreriket.xyz/vocabulary/core-0.1">&lt;http://rdfvizler.dyreriket.xyz/vocabulary/core-0.1&gt;</a></span> <span style="color: #00ffff;">;</span>
-  <span style="color: #98fb98;">owl:</span><span style="color: #7fffd4;">versionInfo</span> <span style="color: #ffa07a;">"0.1"</span> <span style="color: #00ffff;">;</span>
-  <span style="color: #98fb98;">dc:</span><span style="color: #7fffd4;">date</span> <span style="color: #ffa07a;">"2019-01-03"</span> <span style="color: #00ffff;">;</span>
+  owl:versionIRI &lt;http://rdfvizler.dyreriket.xyz/vocabulary/core-0.1&gt; ;
+  owl:versionInfo "0.1" ;
+  dc:date "2019-01-03" ;
   
-  <span style="color: #98fb98;">rdfs:</span><span style="color: #7fffd4;">label</span> <span style="color: #ffa07a;">"RDFVizler vocabulary"</span> <span style="color: #00ffff;">;</span>
+  rdfs:label "RDFVizler vocabulary" ;
   
-  <span style="color: #98fb98;">rdfs:</span><span style="color: #7fffd4;">comment</span> <span style="color: #ffa07a;">""" </span>
+  rdfs:comment """ 
 
-<span style="color: #ffa07a;">    The RDFVizler vocabulary describes graphs which can be converted to</span>
-<span style="color: #ffa07a;">    Graphviz dot graphs and visualised with Graphviz' dot software.</span>
+    The RDFVizler vocabulary describes graphs which can be converted to
+    Graphviz dot graphs and visualised with Graphviz' dot software.
 
-<span style="color: #ffa07a;">    The basic rules of using the RDFVizler vocabulary are:</span>
+    The basic rules of using the RDFVizler vocabulary are:
 
-<span style="color: #ffa07a;">    - There must be a single rvz:Rootgraph, this graph can also be a</span>
-<span style="color: #ffa07a;">      rvz:StrictGraph and a rvz:DiGraph (directed graph).</span>
-<span style="color: #ffa07a;">    - All rvz:Node-s, rvz:Edge-s and rvz:SubGraph-s must be</span>
-<span style="color: #ffa07a;">      associated with the rvz:Graph to which is belongs, with</span>
-<span style="color: #ffa07a;">      respectively the properties rvz:hasNode, rvz:hasEdge and</span>
-<span style="color: #ffa07a;">      rvz:hasSubGraph.</span>
-<span style="color: #ffa07a;">    - An rvz:Edge must have a rvz:hasSource and rvz:hasTarget</span>
-<span style="color: #ffa07a;">      which are rvz:Node-s.</span>
-<span style="color: #ffa07a;">    - The vocabulary does not specify any resources in the namespaces</span>
-<span style="color: #ffa07a;">      rvz-a, rvz-n and rvz-e, but these are "</span>catch-all<span style="color: #ffa07a;">" namespaces</span>
-<span style="color: #ffa07a;">      that are used to associate Graphviz attributes to Graphs, Nodes,</span>
-<span style="color: #ffa07a;">      and Edges.  Any property placed in these namespaces are</span>
-<span style="color: #ffa07a;">      interpreted as attributes, e.g., the property rvz-a:label is</span>
-<span style="color: #ffa07a;">      used set labels since label is an attribute in the DOT language.</span>
-<span style="color: #ffa07a;">      The namespace rvz-a is used to associate an attribute to any</span>
-<span style="color: #ffa07a;">      class, i.e, rvz:Node, rvz:Egde or rvz:Graph, while the</span>
-<span style="color: #ffa07a;">      namespaces rvz-n and rvz-e are used to specify default node</span>
-<span style="color: #ffa07a;">      and edge attributes, respectively, to a Graph.</span>
-<span style="color: #ffa07a;">   """</span> <span style="color: #00ffff;">;</span>
+    - There must be a single rvz:Rootgraph, this graph can also be a
+      rvz:StrictGraph and a rvz:DiGraph (directed graph).
+    - All rvz:Node-s, rvz:Edge-s and rvz:SubGraph-s must be
+      associated with the rvz:Graph to which is belongs, with
+      respectively the properties rvz:hasNode, rvz:hasEdge and
+      rvz:hasSubGraph.
+    - An rvz:Edge must have a rvz:hasSource and rvz:hasTarget
+      which are rvz:Node-s.
+    - The vocabulary does not specify any resources in the namespaces
+      rvz-a, rvz-n and rvz-e, but these are "catch-all" namespaces
+      that are used to associate Graphviz attributes to Graphs, Nodes,
+      and Edges.  Any property placed in these namespaces are
+      interpreted as attributes, e.g., the property rvz-a:label is
+      used set labels since label is an attribute in the DOT language.
+      The namespace rvz-a is used to associate an attribute to any
+      class, i.e, rvz:Node, rvz:Egde or rvz:Graph, while the
+      namespaces rvz-n and rvz-e are used to specify default node
+      and edge attributes, respectively, to a Graph.
+   """ ;
     
-    <span style="color: #98fb98;">rdfs:</span><span style="color: #7fffd4;">seeAlso</span> <span style="color: #87cefa;"><a href="http://rdfvizler.dyreriket.xyz">&lt;http://rdfvizler.dyreriket.xyz&gt;</a></span> <span style="color: #00ffff;">;</span>
-    <span style="color: #98fb98;">dc:</span><span style="color: #7fffd4;">creator</span> <span style="color: #87cefa;"><a href="http://folk.uio.no/martige/foaf#me">&lt;http://folk.uio.no/martige/foaf#me&gt;</a></span><span style="color: #ff7f24;"> ;</span>
-    <span style="color: #98fb98;">foaf:</span><span style="color: #7fffd4;">logo</span> <span style="color: #87cefa;"><a href="http://rdfvizler.dyreriket.xyz/rdfvizler.png">&lt;http://rdfvizler.dyreriket.xyz/rdfvizler.png&gt;</a></span> <span style="color: #00ffff;">.</span> 
+    rdfs:seeAlso &lt;http://rdfvizler.dyreriket.xyz&gt; ;
+    dc:creator &lt;http://folk.uio.no/martige/foaf#me&gt; ;
+    foaf:logo &lt;http://rdfvizler.dyreriket.xyz/rdfvizler.png&gt; . 
    
-<span style="color: #98fb98;">rvz:</span><span style="color: #7fffd4;">Graph</span> <span style="color: #00ffff;">a</span> <span style="color: #98fb98;">owl:Class.</span>
+rvz:Graph a owl:Class.
 
-<span style="color: #98fb98;">rvz:</span><span style="color: #7fffd4;">RootGraph</span> <span style="color: #00ffff;">a</span> <span style="color: #98fb98;">owl:</span><span style="color: #7fffd4;">Class</span><span style="color: #00ffff;">;</span> 
-  <span style="color: #98fb98;">rdfs:</span><span style="color: #7fffd4;">subClassOf</span> <span style="color: #98fb98;">rvz:</span><span style="color: #7fffd4;">Graph</span> <span style="color: #00ffff;">;</span>
-  <span style="color: #98fb98;">rdfs:</span><span style="color: #7fffd4;">comment</span> <span style="color: #ffa07a;">"Every graph must have exactly one RootGraph."</span> <span style="color: #98fb98;">.</span>
+rvz:RootGraph a owl:Class; 
+  rdfs:subClassOf rvz:Graph ;
+  rdfs:comment "Every graph must have exactly one RootGraph." .
 
-<span style="color: #98fb98;">rvz:</span><span style="color: #7fffd4;">DiGraph</span> <span style="color: #00ffff;">a</span> <span style="color: #98fb98;">owl:</span><span style="color: #7fffd4;">Class</span><span style="color: #00ffff;">;</span> 
-  <span style="color: #98fb98;">rdfs:</span><span style="color: #7fffd4;">subClassOf</span> <span style="color: #98fb98;">rvz:</span><span style="color: #7fffd4;">RootGraph</span> <span style="color: #00ffff;">;</span>
-  <span style="color: #98fb98;">rdfs:</span><span style="color: #7fffd4;">comment</span> <span style="color: #ffa07a;">"A directed graph, i.e., edges have a direction"</span> <span style="color: #98fb98;">.</span>
+rvz:DiGraph a owl:Class; 
+  rdfs:subClassOf rvz:RootGraph ;
+  rdfs:comment "A directed graph, i.e., edges have a direction" .
 
-<span style="color: #98fb98;">rvz:</span><span style="color: #7fffd4;">StrictGraph</span> <span style="color: #00ffff;">a</span> <span style="color: #98fb98;">owl:</span><span style="color: #7fffd4;">Class</span><span style="color: #00ffff;">;</span>
-  <span style="color: #98fb98;">rdfs:</span><span style="color: #7fffd4;">subClassOf</span> <span style="color: #98fb98;">rvz:</span><span style="color: #7fffd4;">RootGraph</span> <span style="color: #00ffff;">;</span>
-  <span style="color: #98fb98;">rdfs:</span><span style="color: #7fffd4;">comment</span> <span style="color: #ffa07a;">"""A strict graph "</span>forbids the creation of multi-edges<span style="color: #ffa07a;">". </span>
-<span style="color: #ffa07a;">    For more details see https://www.graphviz.org/doc/info/lang.html. """</span> <span style="color: #98fb98;">.</span>
+rvz:StrictGraph a owl:Class;
+  rdfs:subClassOf rvz:RootGraph ;
+  rdfs:comment """A strict graph "forbids the creation of multi-edges". 
+    For more details see https://www.graphviz.org/doc/info/lang.html. """ .
 
-<span style="color: #98fb98;">rvz:</span><span style="color: #7fffd4;">Node</span> <span style="color: #00ffff;">a</span> <span style="color: #98fb98;">owl:</span><span style="color: #7fffd4;">Class</span> <span style="color: #00ffff;">;</span>
-  <span style="color: #98fb98;">rdfs:</span><span style="color: #7fffd4;">comment</span> <span style="color: #ffa07a;">"A graph node"</span> <span style="color: #98fb98;">.</span>
+rvz:Node a owl:Class ;
+  rdfs:comment "A graph node" .
 
-<span style="color: #98fb98;">rvz:</span><span style="color: #7fffd4;">Edge</span> <span style="color: #00ffff;">a</span> <span style="color: #98fb98;">owl:</span><span style="color: #7fffd4;">Class</span> <span style="color: #00ffff;">;</span>
-  <span style="color: #98fb98;">rdfs:</span><span style="color: #7fffd4;">comment</span> <span style="color: #ffa07a;">"A graph edge. An edge must have a source node and a target node."</span> <span style="color: #98fb98;">.</span>
+rvz:Edge a owl:Class ;
+  rdfs:comment "A graph edge. An edge must have a source node and a target node." .
 
-<span style="color: #98fb98;">rvz:</span><span style="color: #7fffd4;">hasID</span> <span style="color: #00ffff;">a</span> <span style="color: #98fb98;">owl:</span><span style="color: #7fffd4;">DatatypeProperty</span> <span style="color: #00ffff;">;</span>
-  <span style="color: #98fb98;">rdfs:</span><span style="color: #7fffd4;">comment</span> <span style="color: #ffa07a;">"Associates an ID label to a graph, node or edge."</span><span style="color: #00ffff;">.</span>
+rvz:hasID a owl:DatatypeProperty ;
+  rdfs:comment "Associates an ID label to a graph, node or edge.".
     
-<span style="color: #98fb98;">rvz:</span><span style="color: #7fffd4;">hasNode</span> <span style="color: #00ffff;">a</span> <span style="color: #98fb98;">owl:</span><span style="color: #7fffd4;">ObjectProperty</span> <span style="color: #00ffff;">;</span>
-  <span style="color: #98fb98;">rdfs:</span><span style="color: #7fffd4;">domain</span> <span style="color: #98fb98;">rvz:</span><span style="color: #7fffd4;">Graph</span> <span style="color: #00ffff;">;</span>
-  <span style="color: #98fb98;">rdfs:</span><span style="color: #7fffd4;">range</span> <span style="color: #98fb98;">rvz:</span><span style="color: #7fffd4;">Node</span> <span style="color: #00ffff;">;</span>
-  <span style="color: #98fb98;">rdfs:</span><span style="color: #7fffd4;">comment</span> <span style="color: #ffa07a;">"Associates a node with the graph to which it belongs."</span> <span style="color: #00ffff;">.</span>
+rvz:hasNode a owl:ObjectProperty ;
+  rdfs:domain rvz:Graph ;
+  rdfs:range rvz:Node ;
+  rdfs:comment "Associates a node with the graph to which it belongs." .
   
-<span style="color: #98fb98;">rvz:</span><span style="color: #7fffd4;">hasEdge</span> <span style="color: #00ffff;">a</span> <span style="color: #98fb98;">owl:</span><span style="color: #7fffd4;">ObjectProperty</span> <span style="color: #00ffff;">;</span>
-  <span style="color: #98fb98;">rdfs:</span><span style="color: #7fffd4;">domain</span> <span style="color: #98fb98;">rvz:</span><span style="color: #7fffd4;">Graph</span> <span style="color: #00ffff;">;</span>
-  <span style="color: #98fb98;">rdfs:</span><span style="color: #7fffd4;">range</span> <span style="color: #98fb98;">rvz:</span><span style="color: #7fffd4;">Edge</span> <span style="color: #00ffff;">;</span>
-  <span style="color: #98fb98;">rdfs:</span><span style="color: #7fffd4;">comment</span> <span style="color: #ffa07a;">"Associates an edge with the graph to which it belongs."</span> <span style="color: #00ffff;">.</span>
+rvz:hasEdge a owl:ObjectProperty ;
+  rdfs:domain rvz:Graph ;
+  rdfs:range rvz:Edge ;
+  rdfs:comment "Associates an edge with the graph to which it belongs." .
   
-<span style="color: #98fb98;">rvz:</span><span style="color: #7fffd4;">hasSource</span> <span style="color: #00ffff;">a</span> <span style="color: #98fb98;">owl:</span><span style="color: #7fffd4;">ObjectProperty</span> <span style="color: #00ffff;">;</span>
-  <span style="color: #98fb98;">rdfs:</span><span style="color: #7fffd4;">domain</span> <span style="color: #98fb98;">rvz:</span><span style="color: #7fffd4;">Edge</span> <span style="color: #00ffff;">;</span>
-  <span style="color: #98fb98;">rdfs:</span><span style="color: #7fffd4;">range</span> <span style="color: #98fb98;">rvz:</span><span style="color: #7fffd4;">Node</span> <span style="color: #00ffff;">;</span>
-  <span style="color: #98fb98;">rdfs:</span><span style="color: #7fffd4;">comment</span> <span style="color: #ffa07a;">"Associates an edge with its source node."</span> <span style="color: #00ffff;">.</span>
+rvz:hasSource a owl:ObjectProperty ;
+  rdfs:domain rvz:Edge ;
+  rdfs:range rvz:Node ;
+  rdfs:comment "Associates an edge with its source node." .
   
-<span style="color: #98fb98;">rvz:</span><span style="color: #7fffd4;">hasTarget</span> <span style="color: #00ffff;">a</span> <span style="color: #98fb98;">owl:</span><span style="color: #7fffd4;">ObjectProperty</span> <span style="color: #00ffff;">;</span>
-  <span style="color: #98fb98;">rdfs:</span><span style="color: #7fffd4;">domain</span> <span style="color: #98fb98;">rvz:</span><span style="color: #7fffd4;">Edge</span> <span style="color: #00ffff;">;</span>
-  <span style="color: #98fb98;">rdfs:</span><span style="color: #7fffd4;">range</span> <span style="color: #98fb98;">rvz:</span><span style="color: #7fffd4;">Node</span> <span style="color: #00ffff;">;</span>
-  <span style="color: #98fb98;">rdfs:</span><span style="color: #7fffd4;">comment</span> <span style="color: #ffa07a;">"Associates an edge with its target node."</span> <span style="color: #00ffff;">.</span>
+rvz:hasTarget a owl:ObjectProperty ;
+  rdfs:domain rvz:Edge ;
+  rdfs:range rvz:Node ;
+  rdfs:comment "Associates an edge with its target node." .
   
-<span style="color: #98fb98;">rvz:</span><span style="color: #7fffd4;">hasSubGraph</span> <span style="color: #00ffff;">a</span> <span style="color: #98fb98;">owl:</span><span style="color: #7fffd4;">ObjectProperty</span> <span style="color: #00ffff;">;</span>
-  <span style="color: #98fb98;">rdfs:</span><span style="color: #7fffd4;">domain</span> <span style="color: #98fb98;">rvz:</span><span style="color: #7fffd4;">Graph</span> <span style="color: #00ffff;">;</span>
-  <span style="color: #98fb98;">rdfs:</span><span style="color: #7fffd4;">range</span> <span style="color: #98fb98;">rvz:</span><span style="color: #7fffd4;">Graph</span> <span style="color: #00ffff;">.</span>
+rvz:hasSubGraph a owl:ObjectProperty ;
+  rdfs:domain rvz:Graph ;
+  rdfs:range rvz:Graph .
 </pre>
 </div>
 </div>
-
-<div id="outline-container-orgff1c6ea" class="outline-3">
-<h3 id="orgff1c6ea">Example</h3>
-<div class="outline-text-3" id="text-orgff1c6ea">
+<div id="outline-container-org42d72e9" class="outline-3">
+<h3 id="org42d72e9">Example</h3>
+<div class="outline-text-3" id="text-org42d72e9">
 <p>
 This example illustrates the (direct) use of the RDFVizler vocabulary.
 </p>
@@ -474,44 +462,44 @@ Source: <a href="./vocabulary/example.ttl">./vocabulary/example.ttl</a>
 </p>
 
 <div class="org-src-container">
-<pre class="src src-ttl" id="orgc539aec"><span style="color: #ff7f24;">## This is an example of a graph with nodes, edges, and subgraph.</span>
+<pre class="src src-ttl" id="org8a8a296">## This is an example of a graph with nodes, edges, and subgraph.
 
-<span style="color: #ff7f24;">## This is the root graph resource. This graph is directed and strict.</span>
-:<span style="color: #7fffd4;">root</span> <span style="color: #00ffff;">a</span> <span style="color: #98fb98;">rvz:</span><span style="color: #7fffd4;">RootGraph</span> <span style="color: #00ffff;">,</span> <span style="color: #98fb98;">rvz:</span><span style="color: #7fffd4;">DiGraph</span> <span style="color: #00ffff;">,</span> <span style="color: #98fb98;">rvz:</span><span style="color: #7fffd4;">StrictGraph</span> <span style="color: #00ffff;">;</span>
-  <span style="color: #98fb98;">rvz-a:</span><span style="color: #7fffd4;">rankdir</span> <span style="color: #ffa07a;">"LR"</span><span style="color: #00ffff;">;</span> <span style="color: #98fb98;">rvz-a:</span><span style="color: #7fffd4;">nodesep</span> <span style="color: #ffa07a;">"0.3"</span><span style="color: #00ffff;">;</span>   <span style="color: #ff7f24;">## Set attributes on the graph using rvz-a namespace</span>
-  <span style="color: #98fb98;">rvz-n:</span><span style="color: #7fffd4;">fontsize</span> <span style="color: #ffa07a;">"10px"</span><span style="color: #00ffff;">;</span> <span style="color: #98fb98;">rvz-n:</span><span style="color: #7fffd4;">style</span> <span style="color: #ffa07a;">"box"</span><span style="color: #00ffff;">;</span>  <span style="color: #ff7f24;">## Set default node attributes using rvz-n namespace</span>
-  <span style="color: #98fb98;">rvz-e:</span><span style="color: #7fffd4;">style</span> <span style="color: #ffa07a;">"dashed"</span><span style="color: #00ffff;">;</span>                      <span style="color: #ff7f24;">## Set default edge attribute using rvz-e namespace</span>
-  <span style="color: #98fb98;">rvz:</span><span style="color: #7fffd4;">hasNode</span> <span style="color: #98fb98;">:</span><span style="color: #7fffd4;">n1</span><span style="color: #00ffff;">,</span> <span style="color: #98fb98;">:</span><span style="color: #7fffd4;">n2</span><span style="color: #00ffff;">,</span> <span style="color: #98fb98;">:</span><span style="color: #7fffd4;">n3</span> <span style="color: #00ffff;">;</span>                <span style="color: #ff7f24;">## List the nodes of the graph</span>
-  <span style="color: #98fb98;">rvz:</span><span style="color: #7fffd4;">hasEdge</span> <span style="color: #98fb98;">:</span><span style="color: #7fffd4;">e1</span><span style="color: #00ffff;">,</span> <span style="color: #98fb98;">:</span><span style="color: #7fffd4;">e2</span><span style="color: #00ffff;">,</span> <span style="color: #98fb98;">:</span><span style="color: #7fffd4;">e3</span> <span style="color: #00ffff;">;</span>                <span style="color: #ff7f24;">## List the edges of the graph</span>
-  <span style="color: #98fb98;">rvz:</span><span style="color: #7fffd4;">hasSubGraph</span> <span style="color: #98fb98;">:</span><span style="color: #7fffd4;">g1</span><span style="color: #00ffff;">.</span>                       <span style="color: #ff7f24;">## List the subgraphs of the graph</span>
+## This is the root graph resource. This graph is directed and strict.
+:root a rvz:RootGraph , rvz:DiGraph , rvz:StrictGraph ;
+  rvz-a:rankdir "LR"; rvz-a:nodesep "0.3";   ## Set attributes on the graph using rvz-a namespace
+  rvz-n:fontsize "10px"; rvz-n:style "box";  ## Set default node attributes using rvz-n namespace
+  rvz-e:style "dashed";                      ## Set default edge attribute using rvz-e namespace
+  rvz:hasNode :n1, :n2, :n3 ;                ## List the nodes of the graph
+  rvz:hasEdge :e1, :e2, :e3 ;                ## List the edges of the graph
+  rvz:hasSubGraph :g1.                       ## List the subgraphs of the graph
 
-<span style="color: #ff7f24;">## This is a node.</span>
-:<span style="color: #7fffd4;">n1</span> <span style="color: #98fb98;">rvz:</span><span style="color: #7fffd4;">hasID</span> <span style="color: #ffa07a;">"asdf"</span> <span style="color: #00ffff;">;</span>                                               <span style="color: #ff7f24;">## Specify ID for node.</span>
-  <span style="color: #98fb98;">rvz-a:</span><span style="color: #7fffd4;">shape</span> <span style="color: #ffa07a;">"box"</span><span style="color: #00ffff;">;</span> <span style="color: #98fb98;">rvz-a:</span><span style="color: #7fffd4;">style</span> <span style="color: #ffa07a;">"filled"</span><span style="color: #00ffff;">;</span> <span style="color: #98fb98;">rvz-a:</span><span style="color: #7fffd4;">fillcolor</span> <span style="color: #ffa07a;">"blue"</span> <span style="color: #00ffff;">.</span>  <span style="color: #ff7f24;">## Node attributes using rvz-a namespace.</span>
+## This is a node.
+:n1 rvz:hasID "asdf" ;                                               ## Specify ID for node.
+  rvz-a:shape "box"; rvz-a:style "filled"; rvz-a:fillcolor "blue" .  ## Node attributes using rvz-a namespace.
 
-<span style="color: #ff7f24;">## This is an edge.</span>
-:<span style="color: #7fffd4;">e1</span>
-  <span style="color: #98fb98;">rvz:</span><span style="color: #7fffd4;">hasSource</span> <span style="color: #98fb98;">:</span><span style="color: #7fffd4;">n1</span> <span style="color: #00ffff;">;</span> <span style="color: #98fb98;">rvz:</span><span style="color: #7fffd4;">hasTarget</span> <span style="color: #98fb98;">:</span><span style="color: #7fffd4;">m1</span> <span style="color: #00ffff;">;</span>  <span style="color: #ff7f24;">## Source and target node for edge.</span>
-  <span style="color: #98fb98;">rvz-a:</span><span style="color: #7fffd4;">style</span> <span style="color: #ffa07a;">"dotted"</span><span style="color: #00ffff;">.</span>                    <span style="color: #ff7f24;">## Edge attribute using rvz-a namespace.</span>
+## This is an edge.
+:e1
+  rvz:hasSource :n1 ; rvz:hasTarget :m1 ;  ## Source and target node for edge.
+  rvz-a:style "dotted".                    ## Edge attribute using rvz-a namespace.
 
-:<span style="color: #7fffd4;">e2</span>
-  <span style="color: #98fb98;">rvz:</span><span style="color: #7fffd4;">hasSource</span> <span style="color: #98fb98;">:</span><span style="color: #7fffd4;">n1</span> <span style="color: #00ffff;">;</span>
-  <span style="color: #98fb98;">rvz:</span><span style="color: #7fffd4;">hasTarget</span> <span style="color: #98fb98;">:</span><span style="color: #7fffd4;">n3</span> <span style="color: #00ffff;">;</span>
-  <span style="color: #98fb98;">rvz-a:</span><span style="color: #7fffd4;">color</span> <span style="color: #ffa07a;">"red"</span><span style="color: #00ffff;">.</span>
+:e2
+  rvz:hasSource :n1 ;
+  rvz:hasTarget :n3 ;
+  rvz-a:color "red".
 
-:<span style="color: #7fffd4;">e3</span>
-  <span style="color: #98fb98;">rvz:</span><span style="color: #7fffd4;">hasSource</span> <span style="color: #98fb98;">:</span><span style="color: #7fffd4;">n2</span> <span style="color: #00ffff;">;</span>
-  <span style="color: #98fb98;">rvz:</span><span style="color: #7fffd4;">hasTarget</span> <span style="color: #98fb98;">:</span><span style="color: #7fffd4;">n3</span> <span style="color: #00ffff;">.</span>
+:e3
+  rvz:hasSource :n2 ;
+  rvz:hasTarget :n3 .
 
-<span style="color: #ff7f24;">## This is a subgraph.</span>
-:<span style="color: #7fffd4;">g1</span>
-  <span style="color: #98fb98;">rvz:</span><span style="color: #7fffd4;">hasID</span> <span style="color: #ffa07a;">"clusterG1"</span> <span style="color: #00ffff;">;</span>
-  <span style="color: #98fb98;">rvz:</span><span style="color: #7fffd4;">hasNode</span> <span style="color: #98fb98;">:</span><span style="color: #7fffd4;">m1</span><span style="color: #00ffff;">,</span> <span style="color: #98fb98;">:</span><span style="color: #7fffd4;">m2</span><span style="color: #00ffff;">;</span>
-  <span style="color: #98fb98;">rvz:</span><span style="color: #7fffd4;">hasEdge</span> <span style="color: #98fb98;">:</span><span style="color: #7fffd4;">f1</span> <span style="color: #98fb98;">.</span>
+## This is a subgraph.
+:g1
+  rvz:hasID "clusterG1" ;
+  rvz:hasNode :m1, :m2;
+  rvz:hasEdge :f1 .
 
-<span style="color: #98fb98;">:</span><span style="color: #7fffd4;">f1</span>
-  <span style="color: #98fb98;">rvz:</span><span style="color: #7fffd4;">hasSource</span> <span style="color: #98fb98;">:</span><span style="color: #7fffd4;">m1</span><span style="color: #00ffff;">;</span>
-  <span style="color: #98fb98;">rvz:</span><span style="color: #7fffd4;">hasTarget</span> <span style="color: #98fb98;">:</span><span style="color: #7fffd4;">m2</span><span style="color: #00ffff;">.</span>
+:f1
+  rvz:hasSource :m1;
+  rvz:hasTarget :m2.
 </pre>
 </div>
 
@@ -531,18 +519,16 @@ The resulting output is this:
 </p>
 
 
-<figure>
-<object type="image/svg+xml" data="./vocabulary/example.svg" class="org-svg">
-Sorry, your browser does not support SVG.</object>
+<figure id="orgacd17a4">
+<img src="./vocabulary/example.svg" alt="example.svg" class="org-svg">
 
 </figure>
 </div>
 </div>
 </div>
-
-<div id="outline-container-org6463caf" class="outline-2">
-<h2 id="org6463caf">Rules</h2>
-<div class="outline-text-2" id="text-org6463caf">
+<div id="outline-container-orgfa3f4a0" class="outline-2">
+<h2 id="orgfa3f4a0">Rules</h2>
+<div class="outline-text-2" id="text-orgfa3f4a0">
 <p>
 This is the default rule set. 
 </p>
@@ -646,10 +632,9 @@ Source: <a href="./rules/rdf.jrule">./rules/rdf.jrule</a>.
 </pre>
 </div>
 </div>
-
-<div id="outline-container-org4ac5ce4" class="outline-3">
-<h3 id="org4ac5ce4">Built-in and custom rule functions</h3>
-<div class="outline-text-3" id="text-org4ac5ce4">
+<div id="outline-container-org8dfdd81" class="outline-3">
+<h3 id="org8dfdd81">Built-in and custom rule functions</h3>
+<div class="outline-text-3" id="text-org8dfdd81">
 <p>
 The functionality of rules may be extended in different ways, see
 <a href="https://jena.apache.org/documentation/inference/#extensions">https://jena.apache.org/documentation/inference/#extensions</a>. RDFVizler
@@ -663,10 +648,9 @@ preferably also unit tests.
 </div>
 </div>
 </div>
-
-<div id="outline-container-org3656f33" class="outline-2">
-<h2 id="org3656f33">Contact</h2>
-<div class="outline-text-2" id="text-org3656f33">
+<div id="outline-container-org9b34b41" class="outline-2">
+<h2 id="org9b34b41">Contact</h2>
+<div class="outline-text-2" id="text-org9b34b41">
 <p>
 Please use the issues in the github project for all requests:
 <a href="https://github.com/dyreriket/rdfvizler/issues">https://github.com/dyreriket/rdfvizler/issues</a>.

@@ -3,29 +3,35 @@ package xyz.dyreriket.rdfvizler;
 import guru.nidi.graphviz.engine.Format;
 import guru.nidi.graphviz.engine.Graphviz;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.charset.Charset;
-import java.util.Arrays;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.function.BiFunction;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.reasoner.rulesys.Rule;
+import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFLanguages;
 import org.apache.jena.shared.PrefixMapping;
 import xyz.dyreriket.rdfvizler.util.Models;
-import xyz.dyreriket.rdfvizler.util.Models.RDFformat;
 
 public class RDFVizler {
 
-    private String pathRules = DEFAULT_RULES.toString();
-    private Models.RDFformat inputFormat = null; // null means we guess format.
+    private String pathRules = null; // null means use bundled classpath rules
+    private Lang inputFormat = null; // null means we guess format.
     private boolean skipRules = false;
-    
-    private BiFunction<Enum<?>[], String, Boolean> contains = (es, e) -> Arrays.stream(es).allMatch(t -> t.name().equals(e));
-    
+
     public static final URI DEFAULT_RULES = makeURI("http://rdfvizler.dyreriket.xyz/rules/rdf.jrule");
+
+    private static URI makeURI(String urlString) {
+        try {
+            return new URI(urlString);
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
 
     private static void addPrefixes(Model model) {
         model.withDefaultMappings(PrefixMapping.Standard);
@@ -40,19 +46,13 @@ public class RDFVizler {
     }
 
     public static List<Rule> getRules(InputStream inputStream) {
-        return Rule.parseRules(
-            Rule.rulesParserFromReader(
-                new BufferedReader(
-                    new InputStreamReader(inputStream, Charset.forName("UTF-8")))));
-    }
-
-    private static URI makeURI(String urlString) {
-        try {
-            return new URI(urlString);
-        } catch (URISyntaxException e) {
-            throw new IllegalArgumentException(e);
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+            return Rule.parseRules(Rule.rulesParserFromReader(reader));
+        } catch (IOException e) {
+            throw new RuntimeException("Error reading rules from stream", e);
         }
     }
+
 
     private Model readModel(String pathRDF) {
         if (this.inputFormat == null) {
@@ -69,18 +69,28 @@ public class RDFVizler {
     }
 
     public Model getRDFDotModel(Model model) {
-        return getRDFDotModel(model, getRules(this.pathRules));
+        List<Rule> rules = this.pathRules == null
+            ? getRules(RDFVizler.class.getResourceAsStream("/rdf.jrule"))
+            : getRules(this.pathRules);
+        return getRDFDotModel(model, rules);
     }
 
     private Model getRDFDotModel(String pathRDF) {
         return getRDFDotModel(this.readModel(pathRDF));
     }
 
-    public void setInputFormat(Models.RDFformat inputFormat) {
-        if (Models.RDFformat.guess == inputFormat) {
+    public void setInputFormat(String lang) {
+        if (lang == null || lang.isEmpty()) {
             this.inputFormat = null;
         } else {
-            this.inputFormat = Models.RDFformat.valueOf(inputFormat.toString());    
+            Lang l = RDFLanguages.shortnameToLang(lang);
+            if (l == null) {
+                l = RDFLanguages.fileExtToLang(lang);
+            }
+            if (l == null) {
+                throw new IllegalArgumentException("Unknown RDF language/format: '" + lang + "'");
+            }
+            this.inputFormat = l;
         }
     }
 
@@ -93,8 +103,8 @@ public class RDFVizler {
     }
 
     public String write(String pathRDF, String format) {
-        if (this.contains.apply(RDFformat.values(), format)) {
-            return this.writeRDFDotModel(pathRDF, Models.RDFformat.valueOf(format));
+        if (RDFLanguages.shortnameToLang(format) != null) {
+            return this.writeRDFDotModel(pathRDF, format);
         } else {
             return this.getDotImage(writeDotGraph(pathRDF), Format.valueOf(format));
         }
@@ -121,8 +131,8 @@ public class RDFVizler {
             .toString();
     }
 
-    public String writeRDFDotModel(String pathRDF, Models.RDFformat format) {
+    public String writeRDFDotModel(String pathRDF, String lang) {
         Model model = this.getRDFDotModel(pathRDF);
-        return Models.writeModel(model, format);
+        return Models.writeModel(model, lang);
     }
 }
