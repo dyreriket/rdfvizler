@@ -13,7 +13,7 @@ import xyz.dyreriket.rdfvizler.util.Models;
 
 @Command(
     name = "java -jar rdfvizler-[version].jar", 
-    versionProvider = xyz.dyreriket.rdfvizler.cli.RDFVizlerCLI.VersionProvider.class,
+    versionProvider = RDFVizlerCLI.VersionProvider.class,
     sortOptions = false, 
     synopsisHeading = "Usage:%n", 
     descriptionHeading = "%nDescription:%n", 
