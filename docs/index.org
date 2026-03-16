@@ -31,7 +31,7 @@
 * Init                                                             :noexport:
 
 #+BEGIN_SRC sh
-wget https://github.com/dyreriket/rdfvizler/releases/download/v0.1.0-alpha/rdfvizler.jar
+cp ../rdfvizler-cli/target/rdfvizler.jar rdfvizler.jar
 #+END_SRC
 
 #+RESULTS:
@@ -40,7 +40,7 @@ wget https://github.com/dyreriket/rdfvizler/releases/download/v0.1.0-alpha/rdfvi
 
   RDFVizler is a simple RDF visualisation software built with the [[https://jena.apache.org/][Apache
   Jena Java API]] and [[https://www.graphviz.org/][Graphviz]] visualisation software. It requires Java
-  8 and Graphviz to be installed on the system.
+  11 or later.
 
   RDFVizler visualises RDF graphs by parsing a designated RDFVizler OWL vocabulary
   into [[https://www.graphviz.org/doc/info/lang.html][Graphviz's DOT language]] and then straight-forwardly to images using the Graphviz
@@ -197,37 +197,6 @@ java -jar rdfvizler.jar --rules example/intro-rules.jrule example/intro-data.ttl
 
 
 #+RESULTS:
-#+begin_example
-digraph "urn:temp#graph" {
-rankdir = "LR"; splines = "true"; overlap = "false"; center = "true";
-node  [ fontsize = "10px"; fontname = "Arial" ];
-edge  [ fontsize = "10px"; fontname = "Arial" ];
-
-   // NODES
-   "http://example.com/ns#Image" [ fillcolor = "lightskyblue"; style = "filled"; shape = "box"; label = "Image" ];
-   "http://example.com/ns#Graphviz" [ label = "Graphviz
-software"; fillcolor = "lightgreen"; style = "filled"; shape = "diamond" ];
-   "http://example.com/ns#Rules" [ fillcolor = "lightskyblue"; style = "filled"; shape = "box"; label = "Jena Rules" ];
-   "http://example.com/ns#RulesEngine" [ label = "Jena Rules
-application"; fillcolor = "lightgreen"; style = "filled"; shape = "diamond" ];
-   "http://example.com/ns#RDFVizlerRDF" [ fillcolor = "lightskyblue"; style = "filled"; shape = "box"; label = "RDFVizler saturated RDF" ];
-   "http://example.com/ns#Parser" [ label = "RDFVizler's
-RDF to Dot
-parser"; fillcolor = "lightgreen"; style = "filled"; shape = "diamond" ];
-   "http://example.com/ns#Input" [ fillcolor = "lightskyblue"; style = "filled"; shape = "box"; label = "RDF data" ];
-   "http://example.com/ns#Dot" [ fillcolor = "lightskyblue"; style = "filled"; shape = "box"; label = "DOT syntax" ];
-
-   // EDGES
-   "http://example.com/ns#Graphviz" -> "http://example.com/ns#Image";
-   "http://example.com/ns#Dot" -> "http://example.com/ns#Graphviz";
-   "http://example.com/ns#RulesEngine" -> "http://example.com/ns#RDFVizlerRDF";
-   "http://example.com/ns#Rules" -> "http://example.com/ns#RulesEngine";
-   "http://example.com/ns#RDFVizlerRDF" -> "http://example.com/ns#Parser";
-   "http://example.com/ns#Parser" -> "http://example.com/ns#Dot";
-   "http://example.com/ns#Input" -> "http://example.com/ns#RulesEngine";
-}
-
-#+end_example
 
 This is the result of processing the input using the default rule set:
 
@@ -281,16 +250,15 @@ java -jar rdfvizler.jar --help
 
 #+RESULTS:
 #+begin_example
-
-RDFVizler
+RDFVizler: RDF visualisation
 
 Usage:
-java -jar rdfvizler.jar [--help] [--skipRules] [--version]
-                        [--dotExecutable=<dotExec>]
-                        [--inputFormatRDF=<inputFormatRDF>]
-                        [--outputFormatRDF=<outputFormatRDF>]
-                        [-i=<outputFormatImage>] [-r=<rules>] [-x=<mode>]
-                        RDF_FILES...
+java -jar rdfvizler-[version].jar [--help] [--mergeInput] [--skipRules]
+                                  [--version]
+                                  [--inputFormatRDF=<inputFormatRDF>]
+                                  [--outputFormatRDF=<outputFormatRDF>]
+                                  [-i=<outputFormatImage>] [-r=<rules>]
+                                  [-x=<mode>] RDF_FILES...
 
 Description:
 RDFVizler visualises RDF by parsing a designated RDF RDFVizler vocabulary into
@@ -304,20 +272,17 @@ Options:
   -x, --executionMode=<mode>
                         What output to produce. (legal values: rdf, dot, image;
                           default: image)
-  -r, --rules=<rules>   Input rules: URI or file path (default: http://rdfvizler.
-                          dyreriket.xyz/rules/rdf.jrule)
+  -r, --rules=<rules>   Input rules: URI or file path (default: bundled rules)
       --skipRules       Skip rule application to input? (default: false)
       --inputFormatRDF=<inputFormatRDF>
-                        Format of RDF input (legal values: ttl, rdf, nt, guess;
-                          default: guess -- by file extension as per jena.util.
-                          FileUtils, then Turtle)
+                        Format of RDF input (e.g. ttl, rdf, nt; default: guessed by
+                          file extension, then Turtle)
+      --mergeInput      Merge input files to a single model to visualise?
       --outputFormatRDF=<outputFormatRDF>
-                        Format of RDF output (legal values: ttl, rdf, nt; default:
-                          ttl)
+                        Format of RDF output (e.g. ttl, rdf, nt; default: Turtle)
   -i, --outputFormatImage=<outputFormatImage>
-                        Format of image output (legal values: svg; default: svg)
-      --dotExecutable=<dotExec>
-                        Path to dot executable (default: /usr/bin/dot)
+                        Format of image output (e.g. SVG_STANDALONE, PNG; default:
+                          SVG_STANDALONE)
       --version         Display version info
       --help            Display this help message
 #+end_example
@@ -332,7 +297,7 @@ Options:
    code style regime in order to let the code remain consistent across
    different contributors. All tests can be run with
 
- : mvn package install
+ : mvn clean verify
 
    The project consists of 3 modules:
    1. ~core~ contains the core functionality: RDF processing, RDF to

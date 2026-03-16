@@ -1,8 +1,8 @@
 package xyz.dyreriket.rdfvizler.cli;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import guru.nidi.graphviz.engine.Format;
 import java.net.URI;
+import org.apache.jena.sys.JenaSystem;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.IVersionProvider;
@@ -47,81 +47,30 @@ public class RDFVizlerCLI implements Runnable {
             description = "What output to produce. (legal values: ${COMPLETION-CANDIDATES}; default: ${DEFAULT-VALUE})")
     private ExecutionMode mode = ExecutionMode.image;
 
-    @Option(names = { "-r", "--rules" }, 
-            description = "Input rules: URI or file path (default: ${DEFAULT-VALUE})")
-    private URI rules = RDFVizler.DEFAULT_RULES;
+    @Option(names = { "-r", "--rules" },
+            description = "Input rules: URI or file path (default: bundled rules)")
+    private URI rules = null;
 
-    // TODO
-    /*
-     * @Option(names = { "--stdin" }, description =
-     * "Read input from stdin (default: ${DEFAULT-VALUE})") private boolean stdin =
-     * false;
-     */
-
-    /* 
-    @Option(names = { "--stdout" }, 
-            description = "Write output to stdout (default: ${DEFAULT-VALUE})") 
-    private boolean stdout = true;
-
-    @Option(names = { "-o", "--out" }, 
-            description = "Output file. Defaults to input file + --outExtension value. "
-                    + "NB! If this option is set to a specific value when processing multiple inputs, "
-                    + "then all output will be written to this single output file.") 
-    private File outFile;
-
-    @Option(names = { "-of", "--outFolder" }, 
-            description = "Output folder. Defaults to current directory.") 
-    private File outFolder;
-
-    @Option(names = { "-oe", "--outExtension" }, 
-            description = "Extension appended to output files when written to folder. Defaults to outputFormat value." ) 
-    private String outExtension; 
-    */
-    
     @Option(names = { "--skipRules" }, 
             description = "Skip rule application to input? (default: ${DEFAULT-VALUE})")
     private boolean skipRules = false;
 
-    @Option(names = { "--inputFormatRDF" }, 
-            description = "Format of RDF input (legal values: ${COMPLETION-CANDIDATES}; "
-                    + "default: ${DEFAULT-VALUE} -- by file extension as per jena.util.FileUtils, then Turtle)")
-    private Models.RDFformat inputFormatRDF = Models.RDFformat.guess;
+    @Option(names = { "--inputFormatRDF" },
+            description = "Format of RDF input (e.g. ttl, rdf, nt; "
+                    + "default: guessed by file extension, then Turtle)")
+    private String inputFormatRDF = null;
 
     @Option(names = { "--mergeInput" },
         description = "Merge input files to a single model to visualise?")
     private boolean merge = false;
 
-    /*
-    @Option(names = { "--outputFormatDot" }, 
-            description = "Format of Dot output (legal values: ${COMPLETION-CANDIDATES}, default: ${DEFAULT-VALUE})") 
-    private DotProcess.TextOutputFormat outputFormatDot = DotProcess.DEFAULT_TEXT_FORMAT;
-    */
-    
-    @Option(names = { "--outputFormatRDF" }, 
-            description = "Format of RDF output (legal values: ${COMPLETION-CANDIDATES}; default: ${DEFAULT-VALUE})")
-    private Models.RDFformat outputFormatRDF = Models.DEFAULT_RDF_FORMAT;
+    @Option(names = { "--outputFormatRDF" },
+            description = "Format of RDF output (e.g. ttl, rdf, nt; default: ${DEFAULT-VALUE})")
+    private String outputFormatRDF = Models.DEFAULT_RDF_FORMAT_NAME;
 
-    @Option(names = { "-i", "--outputFormatImage" }, 
-            description = "Format of image output (legal values: ${COMPLETION-CANDIDATES}; default: ${DEFAULT-VALUE})")
-    private Format outputFormatImage = Format.SVG_STANDALONE;
-
-    /*
-     * // TODO flag
-     * 
-     * @Option(names = {"--quiet"}) boolean quiet = false;
-     * HINTS: 
-     * if (line.hasOption(quiet)) {
-           org.apache.log4j.Logger rootLogger = org.apache.log4j.Logger.getRootLogger();
-             rootLogger.setLevel(Level.OFF);
-       }
-     */
-
-    /*
-    // TODO flag
-    @Option(names = { "--dryrun" }, 
-            description = "Produces no output other than what is written to console")
-    boolean dryrun = false;
-    */
+    @Option(names = { "-i", "--outputFormatImage" },
+            description = "Format of image output (e.g. SVG_STANDALONE, PNG; default: ${DEFAULT-VALUE})")
+    private String outputFormatImage = "SVG_STANDALONE";
 
     @Option(names = { "--version" }, versionHelp = true, description = "Display version info")
     private boolean versionInfoRequested;
@@ -130,6 +79,7 @@ public class RDFVizlerCLI implements Runnable {
     private boolean usageHelpRequested;
     
     public static void main(String[] args) {
+        JenaSystem.init();
         CommandLine.run(new RDFVizlerCLI(), args);
     }
     
@@ -139,7 +89,9 @@ public class RDFVizlerCLI implements Runnable {
     
     private void init() {
         viz.setSkipRules(this.skipRules);
-        viz.setRulesPath(this.rules.toString());
+        if (this.rules != null) {
+            viz.setRulesPath(this.rules.toString());
+        }
         viz.setInputFormat(this.inputFormatRDF);
     }
     
