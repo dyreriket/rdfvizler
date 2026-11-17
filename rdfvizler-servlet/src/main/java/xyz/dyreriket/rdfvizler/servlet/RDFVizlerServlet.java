@@ -86,14 +86,16 @@ public class RDFVizlerServlet extends Servlet {
     }
 
     private String getErrorMessage(int responseCode, String pathRDF, String pathRules, Exception e) {
+        String escapedPathRDF = StringEscapeUtils.escapeHtml4(String.valueOf(pathRDF));
+        String escapedPathRules = StringEscapeUtils.escapeHtml4(String.valueOf(pathRules));
         StringBuilder str = new StringBuilder();
         str.append("<html><head><meta http-equiv=\"Content-type\" content=\"text/html;charset=UTF-8\" />");
         str.append("<title>RDFVizler - Error " + responseCode + "</title>");
         str.append("</head><body>");
         str.append("<h1>RDFVizler - Error " + responseCode + "</h1>");
         str.append("<dl>");
-        str.append("<dt>RDF:</dt><dd> " + pathRDF + "</dd>");
-        str.append("<dt>Rules:</dt><dd> " + pathRules + "</dd>");
+        str.append("<dt>RDF:</dt><dd> " + escapedPathRDF + "</dd>");
+        str.append("<dt>Rules:</dt><dd> " + escapedPathRules + "</dd>");
         str.append("<dt>Error message:</dt><dd><code>" + StringEscapeUtils.escapeHtml4(e.getMessage()) + "</code></dd>");
         str.append("<dt>Error stack:</dt>"
                 + "<dd><pre>" + StringEscapeUtils.escapeHtml4(Arrays.toString(e.getStackTrace())).replaceAll(",", "<br/>") + "</pre></dd>");
