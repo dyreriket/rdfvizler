@@ -19,22 +19,23 @@ public class RDFVizlerServlet extends Servlet {
     private static final String pRules = "rules";
     private static final String pRDFFormat = "in";
     private static final String pDotFormat = "out";
-    
+
     // defaults, also available in web.xml
     private String defaultPathRules;
     private String defaultInputFormat;
     private String defaultOutputFormat;
 
-    
     private static <T> T getValue(T value, T defaultValue) {
         return value != null ? value : defaultValue;
     }
-    
-    private static String getInitValue(ServletConfig config, String paramName, String defaultValue) {
+
+    private static String getInitValue(
+            ServletConfig config, String paramName, String defaultValue) {
         return getValue(config.getInitParameter(paramName), defaultValue);
     }
-    
-    private static String getURLParamValue(HttpServletRequest request, String paramName, String defaultValue) {
+
+    private static String getURLParamValue(
+            HttpServletRequest request, String paramName, String defaultValue) {
         return getValue(request.getParameter(paramName), defaultValue);
     }
 
@@ -45,19 +46,23 @@ public class RDFVizlerServlet extends Servlet {
         try {
             maxFileSize = Integer.parseInt(getInitValue(config, "MaxInput", "30000"));
         } catch (NumberFormatException e) {
-            throw new ServletException("Invalid MaxInput configuration value: must be an integer", e);
+            throw new ServletException(
+                    "Invalid MaxInput configuration value: must be an integer", e);
         }
         defaultPathRules = getInitValue(config, "DefaultRules", RDFVizler.DEFAULT_RULES.toString());
-        defaultInputFormat = getInitValue(config, "DefaultFormatRDF", Models.DEFAULT_RDF_FORMAT_NAME);
-        defaultOutputFormat = getInitValue(config, "DefaultFormatDot", Models.DEFAULT_RDF_FORMAT_NAME);
+        defaultInputFormat =
+                getInitValue(config, "DefaultFormatRDF", Models.DEFAULT_RDF_FORMAT_NAME);
+        defaultOutputFormat =
+                getInitValue(config, "DefaultFormatDot", Models.DEFAULT_RDF_FORMAT_NAME);
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
 
         String pathRDF = null;
         String pathRules = null;
-       
+
         try {
             pathRDF = request.getParameter(pRDF);
             if (pathRDF == null || pathRDF.isEmpty()) {
@@ -85,18 +90,27 @@ public class RDFVizlerServlet extends Servlet {
         }
     }
 
-    private String getErrorMessage(int responseCode, String pathRDF, String pathRules, Exception e) {
+    private String getErrorMessage(
+            int responseCode, String pathRDF, String pathRules, Exception e) {
         StringBuilder str = new StringBuilder();
-        str.append("<html><head><meta http-equiv=\"Content-type\" content=\"text/html;charset=UTF-8\" />");
+        str.append(
+                "<html><head><meta http-equiv=\"Content-type\" content=\"text/html;charset=UTF-8\" />");
         str.append("<title>RDFVizler - Error " + responseCode + "</title>");
         str.append("</head><body>");
         str.append("<h1>RDFVizler - Error " + responseCode + "</h1>");
         str.append("<dl>");
         str.append("<dt>RDF:</dt><dd> " + pathRDF + "</dd>");
         str.append("<dt>Rules:</dt><dd> " + pathRules + "</dd>");
-        str.append("<dt>Error message:</dt><dd><code>" + StringEscapeUtils.escapeHtml4(e.getMessage()) + "</code></dd>");
-        str.append("<dt>Error stack:</dt>"
-                + "<dd><pre>" + StringEscapeUtils.escapeHtml4(Arrays.toString(e.getStackTrace())).replaceAll(",", "<br/>") + "</pre></dd>");
+        str.append(
+                "<dt>Error message:</dt><dd><code>"
+                        + StringEscapeUtils.escapeHtml4(e.getMessage())
+                        + "</code></dd>");
+        str.append(
+                "<dt>Error stack:</dt>"
+                        + "<dd><pre>"
+                        + StringEscapeUtils.escapeHtml4(Arrays.toString(e.getStackTrace()))
+                                .replaceAll(",", "<br/>")
+                        + "</pre></dd>");
         str.append("</dl>");
         str.append("</body></html>");
         return str.toString();

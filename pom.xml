@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>xyz.dyreriket.rdfvizler</groupId>
     <artifactId>rdfvizler</artifactId>
-    <version>0.1.0</version>
+    <version>0.1.2-SNAPSHOT</version>
     <packaging>pom</packaging>
     <modules>
         <module>rdfvizler-core</module>
@@ -37,7 +37,7 @@
         <url>https://github.com/dyreriket/rdfvizler</url>
         <connection>scm:git:https://github.com/dyreriket/rdfvizler.git</connection>
         <developerConnection>scm:git:https://github.com/dyreriket/rdfvizler.git</developerConnection>
-    <tag>v0.1.0</tag>
+    <tag>HEAD</tag>
   </scm>
 
     <build>
@@ -106,6 +106,25 @@
                         <goals>
                             <goal>check</goal>
                             <goal>cpd-check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>com.spotify.fmt</groupId>
+                <artifactId>fmt-maven-plugin</artifactId>
+                <version>2.29</version>
+                <configuration>
+                    <!-- AOSP style = 4-space indent, matching .checkstyle.xml -->
+                    <style>aosp</style>
+                    <!-- Import order is enforced by checkstyle (single alphabetical block) -->
+                    <skipSortingImports>true</skipSortingImports>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>format</goal>
                         </goals>
                     </execution>
                 </executions>

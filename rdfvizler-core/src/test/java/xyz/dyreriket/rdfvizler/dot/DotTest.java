@@ -1,5 +1,6 @@
 package xyz.dyreriket.rdfvizler.dot;
 
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import guru.nidi.graphviz.engine.Format;
@@ -19,18 +20,17 @@ import xyz.dyreriket.rdfvizler.util.Models;
 public class DotTest {
 
     private final boolean stdout = false; // print files also to stdout?
-    
+
     private final String file1 = "test1.ttl";
     private final String simpleRdf = "simple_rdf.ttl";
 
-    @Rule
-    public TemporaryFolder testFolder = new TemporaryFolder();
+    @Rule public TemporaryFolder testFolder = new TemporaryFolder();
 
     /**
-     * Attempts to create the dot output for a simple RDF file applying
-     * the default rules. This should produce a DOT graph with nodes and edges
-     * This is tested by counting the number of polygons in the svg produced.
-     * This should be more than 1, as there is always one polygon in an empty svg     *
+     * Attempts to create the dot output for a simple RDF file applying the default rules. This
+     * should produce a DOT graph with nodes and edges This is tested by counting the number of
+     * polygons in the svg produced. This should be more than 1, as there is always one polygon in
+     * an empty svg *
      *
      * @throws IOException Exception thrown when file is not found
      */
@@ -42,7 +42,6 @@ public class DotTest {
         assertTrue(numberOfPolygons > 1);
     }
 
-   
     @Test
     public void shouldOutputDot() throws IOException {
         String dot = toDot(file1);
@@ -62,12 +61,30 @@ public class DotTest {
         print(simpleRdf + ".dot2", rdfvizler.writeDotGraph(simpleRdf));
         print(simpleRdf + ".svg", rdfvizler.write(simpleRdf, Format.SVG_STANDALONE.toString()));
     }
-    
+
+    @Test
+    public void shouldRenderWithOtherEngines() {
+        RDFVizler rdfvizler = new RDFVizler();
+        String dotOut = rdfvizler.write(simpleRdf, Format.SVG_STANDALONE.toString());
+
+        for (String engine : new String[] {"neato", "circo", "FDP"}) {
+            rdfvizler.setEngine(engine);
+            String out = rdfvizler.write(simpleRdf, Format.SVG_STANDALONE.toString());
+            assertTrue(engine + " should produce SVG", out.contains("<svg"));
+        }
+
+        rdfvizler.setEngine("circo");
+        String circoOut = rdfvizler.write(simpleRdf, Format.SVG_STANDALONE.toString());
+        assertNotEquals("circo layout should differ from dot layout", dotOut, circoOut);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldRejectUnknownEngine() {
+        new RDFVizler().setEngine("foo");
+    }
 
     private String runDot(String content, Format format) throws IOException {
-        return Graphviz.fromString(content)
-            .render(format)
-            .toString();
+        return Graphviz.fromString(content).render(format).toString();
     }
 
     private String toDot(String file) {

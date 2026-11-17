@@ -18,7 +18,6 @@ import org.apache.jena.vocabulary.RDF;
 
 public abstract class Models {
 
-
     public static final Lang DEFAULT_RDF_FORMAT = Lang.TURTLE;
     public static final String DEFAULT_RDF_FORMAT_NAME = DEFAULT_RDF_FORMAT.getName();
 
@@ -43,9 +42,7 @@ public abstract class Models {
 
     public static Model readModel(String file, Lang lang) {
         Model model = ModelFactory.createDefaultModel();
-        RDFParser.source(file)
-             .forceLang(lang)
-             .parse(model);
+        RDFParser.source(file).forceLang(lang).parse(model);
         return model;
     }
 
@@ -67,10 +64,7 @@ public abstract class Models {
 
     public static String writeModel(Model model, String lang) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        RDFWriter.create()
-             .source(model)
-             .lang(RDFLanguages.shortnameToLang(lang))
-             .output(out);
+        RDFWriter.create().source(model).lang(RDFLanguages.shortnameToLang(lang)).output(out);
         return out.toString(StandardCharsets.UTF_8);
     }
 
@@ -78,5 +72,4 @@ public abstract class Models {
     private Models() {
         throw new IllegalStateException("Utility class");
     }
-
 }

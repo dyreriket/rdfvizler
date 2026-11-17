@@ -283,8 +283,8 @@ java -jar rdfvizler-[version].jar [--help] [--mergeInput] [--skipRules]
                                   [--version]
                                   [--inputFormatRDF=&lt;inputFormatRDF&gt;]
                                   [--outputFormatRDF=&lt;outputFormatRDF&gt;]
-                                  [-i=&lt;outputFormatImage&gt;] [-r=&lt;rules&gt;]
-                                  [-x=&lt;mode&gt;] RDF_FILES...
+                                  [-e=&lt;engine&gt;] [-i=&lt;outputFormatImage&gt;]
+                                  [-r=&lt;rules&gt;] [-x=&lt;mode&gt;] RDF_FILES...
 
 Description:
 RDFVizler visualises RDF by parsing a designated RDF RDFVizler vocabulary into
@@ -309,7 +309,9 @@ Options:
   -i, --outputFormatImage=&lt;outputFormatImage&gt;
                         Format of image output (e.g. SVG_STANDALONE, PNG; default:
                           SVG_STANDALONE)
-      --version         Display version info
+  -e, --engine=&lt;engine&gt; Graphviz layout engine (e.g. dot, neato, fdp, circo, twopi,
+                          osage; default: dot)
+      --version        Display version info
       --help            Display this help message
 </pre>
 </div>
