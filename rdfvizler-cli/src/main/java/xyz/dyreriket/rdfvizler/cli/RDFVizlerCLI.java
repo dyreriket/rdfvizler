@@ -72,6 +72,11 @@ public class RDFVizlerCLI implements Runnable {
             description = "Format of image output (e.g. SVG_STANDALONE, PNG; default: ${DEFAULT-VALUE})")
     private String outputFormatImage = "SVG_STANDALONE";
 
+    @Option(names = { "-e", "--engine" },
+            description = "Graphviz layout engine (e.g. dot, neato, fdp, circo, twopi, osage; "
+                    + "default: ${DEFAULT-VALUE})")
+    private String engine = "dot";
+
     @Option(names = { "--version" }, versionHelp = true, description = "Display version info")
     private boolean versionInfoRequested;
     
@@ -93,6 +98,7 @@ public class RDFVizlerCLI implements Runnable {
             viz.setRulesPath(this.rules.toString());
         }
         viz.setInputFormat(this.inputFormatRDF);
+        viz.setEngine(this.engine);
     }
     
     private void processFile(URI file) {

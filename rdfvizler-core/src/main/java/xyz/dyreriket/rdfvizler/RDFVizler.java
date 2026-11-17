@@ -1,5 +1,6 @@
 package xyz.dyreriket.rdfvizler;
 
+import guru.nidi.graphviz.engine.Engine;
 import guru.nidi.graphviz.engine.Format;
 import guru.nidi.graphviz.engine.Graphviz;
 import java.io.BufferedReader;
@@ -9,7 +10,9 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.reasoner.rulesys.Rule;
 import org.apache.jena.riot.Lang;
@@ -22,6 +25,7 @@ public class RDFVizler {
     private String pathRules = null; // null means use bundled classpath rules
     private Lang inputFormat = null; // null means we guess format.
     private boolean skipRules = false;
+    private Engine engine = Engine.DOT;
 
     public static final URI DEFAULT_RULES = makeURI("http://rdfvizler.dyreriket.xyz/rules/rdf.jrule");
 
@@ -94,6 +98,19 @@ public class RDFVizler {
         }
     }
 
+    public void setEngine(String name) {
+        if (name == null || name.isEmpty()) {
+            this.engine = Engine.DOT;
+        } else {
+            try {
+                this.engine = Engine.valueOf(name.toUpperCase(Locale.ROOT));
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("Unknown Graphviz engine: '" + name
+                    + "' (legal values: " + Arrays.toString(Engine.values()).toLowerCase(Locale.ROOT) + ")", e);
+            }
+        }
+    }
+
     public void setRulesPath(String path) {
         this.pathRules = path;
     }
@@ -127,6 +144,7 @@ public class RDFVizler {
 
     public String getDotImage(String dot, Format format) {
         return Graphviz.fromString(dot)
+            .engine(this.engine)
             .render(format)
             .toString();
     }

@@ -1,5 +1,6 @@
 package xyz.dyreriket.rdfvizler.dot;
 
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import guru.nidi.graphviz.engine.Format;
@@ -63,6 +64,27 @@ public class DotTest {
         print(simpleRdf + ".svg", rdfvizler.write(simpleRdf, Format.SVG_STANDALONE.toString()));
     }
     
+
+    @Test
+    public void shouldRenderWithOtherEngines() {
+        RDFVizler rdfvizler = new RDFVizler();
+        String dotOut = rdfvizler.write(simpleRdf, Format.SVG_STANDALONE.toString());
+
+        for (String engine : new String[] {"neato", "circo", "FDP"}) {
+            rdfvizler.setEngine(engine);
+            String out = rdfvizler.write(simpleRdf, Format.SVG_STANDALONE.toString());
+            assertTrue(engine + " should produce SVG", out.contains("<svg"));
+        }
+
+        rdfvizler.setEngine("circo");
+        String circoOut = rdfvizler.write(simpleRdf, Format.SVG_STANDALONE.toString());
+        assertNotEquals("circo layout should differ from dot layout", dotOut, circoOut);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldRejectUnknownEngine() {
+        new RDFVizler().setEngine("foo");
+    }
 
     private String runDot(String content, Format format) throws IOException {
         return Graphviz.fromString(content)
