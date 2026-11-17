@@ -5,10 +5,7 @@ import org.apache.jena.graph.Node;
 import org.apache.jena.reasoner.rulesys.RuleContext;
 import org.apache.jena.reasoner.rulesys.builtins.BaseBuiltin;
 
-/**
- * excludeType(?node, ?type) Returns true if ?node does NOT have ?type as an
- * rdf:type.
- */
+/** excludeType(?node, ?type) Returns true if ?node does NOT have ?type as an rdf:type. */
 public class ExcludeType extends BaseBuiltin {
 
     @Override

@@ -16,8 +16,7 @@ import org.junit.rules.TemporaryFolder;
 
 public class RDFVizlerCLITest {
 
-    @Rule
-    public TemporaryFolder testFolder = new TemporaryFolder();
+    @Rule public TemporaryFolder testFolder = new TemporaryFolder();
 
     private PrintStream originalOut;
     private ByteArrayOutputStream capturedOut;
@@ -87,7 +86,9 @@ public class RDFVizlerCLITest {
         String dotFromRdfExtensionForcedTtl = capturedOut.toString();
 
         assertFalse("Expected non-empty DOT output", dotFromTtlExtension.isBlank());
-        assertTrue("Expected same DOT output regardless of input format", dotFromTtlExtension.equals(dotFromRdfExtensionForcedTtl));
+        assertTrue(
+                "Expected same DOT output regardless of input format",
+                dotFromTtlExtension.equals(dotFromRdfExtensionForcedTtl));
     }
 
     // -- --outputFormatRDF controls serialisation of the output RDF model --
@@ -95,19 +96,25 @@ public class RDFVizlerCLITest {
     @Test
     public void shouldOutputTurtleByDefault() throws Exception {
         run(path("input1.ttl") + " --executionMode rdf");
-        assertTrue("Expected Turtle PREFIX declarations in output", capturedOut.toString().contains("PREFIX"));
+        assertTrue(
+                "Expected Turtle PREFIX declarations in output",
+                capturedOut.toString().contains("PREFIX"));
     }
 
     @Test
     public void shouldOutputTurtleWhenRequested() throws Exception {
         run(path("input1.ttl") + " --executionMode rdf --outputFormatRDF ttl");
-        assertTrue("Expected Turtle PREFIX declarations in output", capturedOut.toString().contains("PREFIX"));
+        assertTrue(
+                "Expected Turtle PREFIX declarations in output",
+                capturedOut.toString().contains("PREFIX"));
     }
 
     @Test
     public void shouldOutputRdfXmlWhenRequested() throws Exception {
         run(path("input1.ttl") + " --executionMode rdf --outputFormatRDF RDFXML");
-        assertTrue("Expected RDF/XML opening tag in output", capturedOut.toString().contains("<rdf:RDF"));
+        assertTrue(
+                "Expected RDF/XML opening tag in output",
+                capturedOut.toString().contains("<rdf:RDF"));
     }
 
     @Test
@@ -136,7 +143,8 @@ public class RDFVizlerCLITest {
 
     @Test
     public void shouldLoadRulesFromURI() throws Exception {
-        String rulesURI = "https://raw.githubusercontent.com/dyreriket/rdfvizler/refs/heads/master/docs/rules/rdf.jrule";
+        String rulesURI =
+                "https://raw.githubusercontent.com/dyreriket/rdfvizler/refs/heads/master/docs/rules/rdf.jrule";
 
         run(path("input1.ttl") + " --rules " + rulesURI + " --executionMode dot");
         String withURIRules = capturedOut.toString();
@@ -145,8 +153,11 @@ public class RDFVizlerCLITest {
         run(path("input1.ttl") + " --executionMode dot");
         String withDefaultRules = capturedOut.toString();
 
-        assertFalse("Expected non-empty output when loading rules from URI", withURIRules.isBlank());
-        assertTrue("Expected URI rules output to match bundled rules output", withURIRules.equals(withDefaultRules));
+        assertFalse(
+                "Expected non-empty output when loading rules from URI", withURIRules.isBlank());
+        assertTrue(
+                "Expected URI rules output to match bundled rules output",
+                withURIRules.equals(withDefaultRules));
     }
 
     // -- ignored / unfinished --

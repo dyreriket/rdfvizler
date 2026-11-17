@@ -15,7 +15,8 @@ import xyz.dyreriket.rdfvizler.util.Strings;
 
 public abstract class RuleUtils {
 
-    public static final Comparator<Node> stringValueComparator = (Node p1, Node p2) -> p1.toString().compareTo(p2.toString());
+    public static final Comparator<Node> stringValueComparator =
+            (Node p1, Node p2) -> p1.toString().compareTo(p2.toString());
 
     public static boolean bindArgNode(Node arg, Node value, RuleContext context) {
         return context.getEnv().bind(arg, value);
@@ -29,7 +30,8 @@ public abstract class RuleUtils {
 
     public static List<Node> getTypes(Node node, RuleContext context) {
         List<Node> types = new ArrayList<>();
-        context.find(node, RDF.type.asNode(), Node.ANY).forEachRemaining(t -> types.add(t.getObject()));
+        context.find(node, RDF.type.asNode(), Node.ANY)
+                .forEachRemaining(t -> types.add(t.getObject()));
         return types;
     }
 
@@ -69,5 +71,4 @@ public abstract class RuleUtils {
     public static Node stringAsNode(String string) {
         return ResourceFactory.createPlainLiteral(string).asNode();
     }
-
 }

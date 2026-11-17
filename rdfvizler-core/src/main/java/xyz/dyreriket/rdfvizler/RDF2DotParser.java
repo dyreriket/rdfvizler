@@ -33,30 +33,34 @@ public class RDF2DotParser {
     private static final String BR = "\n";
     private static final String SC = ";";
     private static final String QT = "\"";
-    
+
     private static final String EDGE_OP_DIGRAPH = " -> ";
-    private static final String EDGE_OP_GRAPH   = " -- ";
-    
+    private static final String EDGE_OP_GRAPH = " -- ";
+
     private Model model;
     private String edgeOperator;
-     
+
     public RDF2DotParser(Model model) {
         this.model = model;
     }
 
     public String toDot() {
         // get root graph
-        List<Resource> rootgraphs = Models.listInstancesOfClass(model, RDFVizlerVocabulary.RootGraph);
+        List<Resource> rootgraphs =
+                Models.listInstancesOfClass(model, RDFVizlerVocabulary.RootGraph);
         if (rootgraphs.size() != 1) {
-            throw new IllegalArgumentException("Error getting root graph. Expected exactly 1 instance, but found " 
-                    + rootgraphs.size() + ": " + Models.shortName(model, rootgraphs));
+            throw new IllegalArgumentException(
+                    "Error getting root graph. Expected exactly 1 instance, but found "
+                            + rootgraphs.size()
+                            + ": "
+                            + Models.shortName(model, rootgraphs));
         }
         return parseRootGraph(rootgraphs.get(0));
     }
-    
+
     private String parseRootGraph(Resource rootGraph) {
         StringBuilder str = new StringBuilder();
-        
+
         if (Models.isOfType(model, rootGraph, RDFVizlerVocabulary.StrictGraph)) {
             str.append(STRICT);
         }
@@ -73,73 +77,105 @@ public class RDF2DotParser {
     }
 
     private String parseGraph(String graphtype, Resource graph, String tabs) {
-        return tabs 
-                + graphtype + getID(graph) + " {" + BR // start graph
-                + parseGraphAttributes(EMPTY, parseAttributes(graph, RDFVizlerVocabulary.NAMESPACE_ATTR), tabs) 
-                + parseGraphAttributes(NODE, parseAttributeList(graph, RDFVizlerVocabulary.NAMESPACE_ATTRNODE), tabs)
-                + parseGraphAttributes(EDGE, parseAttributeList(graph, RDFVizlerVocabulary.NAMESPACE_ATTREDGE), tabs)
+        return tabs
+                + graphtype
+                + getID(graph)
+                + " {"
+                + BR // start graph
+                + parseGraphAttributes(
+                        EMPTY, parseAttributes(graph, RDFVizlerVocabulary.NAMESPACE_ATTR), tabs)
+                + parseGraphAttributes(
+                        NODE,
+                        parseAttributeList(graph, RDFVizlerVocabulary.NAMESPACE_ATTRNODE),
+                        tabs)
+                + parseGraphAttributes(
+                        EDGE,
+                        parseAttributeList(graph, RDFVizlerVocabulary.NAMESPACE_ATTREDGE),
+                        tabs)
                 + parseGraphElements(graph, tabs + TAB)
-                + tabs + "}" + BR; // end graph
+                + tabs
+                + "}"
+                + BR; // end graph
     }
-    
+
     private String parseGraphAttributes(String element, String attributes, String tabs) {
-        return Strings.processNonEmpty(
-            attributes, 
-            s -> tabs + element + s + SC + BR);
+        return Strings.processNonEmpty(attributes, s -> tabs + element + s + SC + BR);
     }
-    
+
     private String parseGraphElements(Resource graph, String tabs) {
         return parseElements(graph, RDFVizlerVocabulary.hasNode, x -> parseNode(x), tabs)
                 + parseElements(graph, RDFVizlerVocabulary.hasEdge, x -> parseEdge(x), tabs)
-                + parseElements(graph, RDFVizlerVocabulary.hasSubGraph, x -> parseGraph(SUBGRAPH, x, tabs), tabs);
+                + parseElements(
+                        graph,
+                        RDFVizlerVocabulary.hasSubGraph,
+                        x -> parseGraph(SUBGRAPH, x, tabs),
+                        tabs);
     }
-    
-    private String parseElements(Resource resource, Property element, Function<Resource, String> parser, String tabs) {
+
+    private String parseElements(
+            Resource resource, Property element, Function<Resource, String> parser, String tabs) {
         return Strings.processNonEmpty(
-            Strings.toString(resource.listProperties(element).toList(),
-                s -> parser.apply(toResource(s.getObject())), tabs),
-            s -> BR + tabs + "// " + getElementType(element) + BR // comment "headline"
-                + tabs + s);
+                Strings.toString(
+                        resource.listProperties(element).toList(),
+                        s -> parser.apply(toResource(s.getObject())),
+                        tabs),
+                s ->
+                        BR
+                                + tabs
+                                + "// "
+                                + getElementType(element)
+                                + BR // comment "headline"
+                                + tabs
+                                + s);
     }
-    
+
     private String getElementType(Property element) {
         return element.getLocalName().replaceAll("has", EMPTY).toUpperCase(Locale.ENGLISH) + "S";
     }
 
     private String parseAttributes(Resource resource, String namespace) {
         return resource.listProperties().toList().stream()
-            .filter(s -> s.getPredicate().getNameSpace().equals(namespace))
-            .collect(groupingBy(Statement::getPredicate)).entrySet().stream()
-            .map(entry ->
-                entry.getKey().getLocalName()
-                    + " = "
-                    + entry.getValue().stream()
-                    .map(Statement::getObject)
-                    .map(RDFNode::toString)
-                    .collect(Collectors.joining(",", QT, QT)))
-            .collect(Collectors.joining(SC + " "));
+                .filter(s -> s.getPredicate().getNameSpace().equals(namespace))
+                .collect(groupingBy(Statement::getPredicate))
+                .entrySet()
+                .stream()
+                .map(
+                        entry ->
+                                entry.getKey().getLocalName()
+                                        + " = "
+                                        + entry.getValue().stream()
+                                                .map(Statement::getObject)
+                                                .map(RDFNode::toString)
+                                                .collect(Collectors.joining(",", QT, QT)))
+                .collect(Collectors.joining(SC + " "));
     }
 
     private String parseAttributeList(Resource resource, String namespace) {
-        return Strings.processNonEmpty(
-            parseAttributes(resource, namespace), 
-            s -> " [ " + s + " ]");
+        return Strings.processNonEmpty(parseAttributes(resource, namespace), s -> " [ " + s + " ]");
     }
-    
+
     private String parseNode(Resource resource) {
         return getID(resource) // ID
-            + parseAttributeList(resource,RDFVizlerVocabulary.NAMESPACE_ATTR)
-            + SC + BR;
+                + parseAttributeList(resource, RDFVizlerVocabulary.NAMESPACE_ATTR)
+                + SC
+                + BR;
     }
 
     private String parseEdge(Resource resource) {
-        return getID(toResource(resource.getRequiredProperty(RDFVizlerVocabulary.hasSource).getObject())) // source node
-            + edgeOperator
-            + getID(toResource(resource.getRequiredProperty(RDFVizlerVocabulary.hasTarget).getObject())) // target node
-            + parseAttributeList(resource, RDFVizlerVocabulary.NAMESPACE_ATTR)
-            + SC + BR;
+        return getID(
+                        toResource(
+                                resource.getRequiredProperty(RDFVizlerVocabulary.hasSource)
+                                        .getObject())) // source node
+                + edgeOperator
+                + getID(
+                        toResource(
+                                resource.getRequiredProperty(RDFVizlerVocabulary.hasTarget)
+                                        .getObject())) // target node
+                + parseAttributeList(resource, RDFVizlerVocabulary.NAMESPACE_ATTR)
+                + SC
+                + BR;
     }
-    
+
     private static Resource toResource(RDFNode node) {
         if (!node.isResource()) {
             throw new IllegalArgumentException("Expected RDF resource but got literal: " + node);
@@ -157,5 +193,4 @@ public class RDF2DotParser {
         }
         return QT + id + QT;
     }
-
 }

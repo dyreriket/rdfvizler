@@ -10,12 +10,10 @@ public class TypedValue extends ShortValue {
     public String getName() {
         return "typedvalue";
     }
-    
+
     protected Node value(Node node, RuleContext context) {
 
-        String nodeString = node.isBlank()
-            ? ""
-            : RuleUtils.getShortForm(node, context);
+        String nodeString = node.isBlank() ? "" : RuleUtils.getShortForm(node, context);
 
         String types = RuleUtils.printSortedTypes(node, context);
 
@@ -25,5 +23,4 @@ public class TypedValue extends ShortValue {
 
         return RuleUtils.stringAsNode(types + nodeString);
     }
-
 }

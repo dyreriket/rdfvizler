@@ -112,6 +112,25 @@
             </plugin>
 
             <plugin>
+                <groupId>com.spotify.fmt</groupId>
+                <artifactId>fmt-maven-plugin</artifactId>
+                <version>2.29</version>
+                <configuration>
+                    <!-- AOSP style = 4-space indent, matching .checkstyle.xml -->
+                    <style>aosp</style>
+                    <!-- Import order is enforced by checkstyle (single alphabetical block) -->
+                    <skipSortingImports>true</skipSortingImports>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>format</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
                 <groupId>com.github.spotbugs</groupId>
                 <artifactId>spotbugs-maven-plugin</artifactId>
                 <version>4.4.2.2</version>

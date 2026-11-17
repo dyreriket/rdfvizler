@@ -15,7 +15,7 @@ public class RuleRegistrar {
         register(new CreateUniqueIfLit());
         register(new EqualsSome());
     }
-    
+
     public static void register(Builtin rule) {
         BuiltinRegistry.theRegistry.register(rule);
     }

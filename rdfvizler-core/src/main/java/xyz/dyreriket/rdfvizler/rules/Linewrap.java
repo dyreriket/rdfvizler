@@ -7,8 +7,8 @@ import org.apache.jena.reasoner.rulesys.RuleContext;
 import org.apache.jena.reasoner.rulesys.builtins.BaseBuiltin;
 
 /**
- * linewrap(?bind, ?literal, ?integer) Will bind a new literal to ?bind that is
- * like ?literal but with a linefeed at position ?integer.
+ * linewrap(?bind, ?literal, ?integer) Will bind a new literal to ?bind that is like ?literal but
+ * with a linefeed at position ?integer.
  */
 public class Linewrap extends BaseBuiltin {
 
@@ -37,7 +37,8 @@ public class Linewrap extends BaseBuiltin {
         try {
             splitPoint = Integer.parseInt(splitStr);
         } catch (NumberFormatException e) {
-            throw new BuiltinException(this, context, "Third argument must be an integer, got: " + splitStr);
+            throw new BuiltinException(
+                    this, context, "Third argument must be an integer, got: " + splitStr);
         }
         String val = RuleUtils.lexicalValue(literal, this, context);
         String valWrapped = WordUtils.wrap(val, splitPoint);

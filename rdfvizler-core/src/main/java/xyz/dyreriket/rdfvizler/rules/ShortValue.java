@@ -12,9 +12,9 @@ public class ShortValue extends NodeFunction {
     }
 
     protected Node value(Node node, RuleContext context) {
-        if (! (node.isBlank() || node.isURI() || node.isLiteral())) {
+        if (!(node.isBlank() || node.isURI() || node.isLiteral())) {
             throw new BuiltinException(this, context, "Illegal node type: " + node);
-        } 
+        }
         String string = RuleUtils.getShortForm(node, context);
         return RuleUtils.stringAsNode(string);
     }

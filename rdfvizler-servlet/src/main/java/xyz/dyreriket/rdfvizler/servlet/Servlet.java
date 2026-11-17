@@ -12,12 +12,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletResponse;
 
 public abstract class Servlet extends HttpServlet {
-    
-    //protected static final List<Integer> OKCodes = Arrays.toUnmodifiableList(200);
+
+    // protected static final List<Integer> OKCodes = Arrays.toUnmodifiableList(200);
     protected int maxFileSize;
 
     private static final long serialVersionUID = -7780985876220754149L;
-    
+
     private static final String UTF8 = "UTF-8";
     private static final Map<String, String> MIMETYPE;
 
@@ -30,7 +30,7 @@ public abstract class Servlet extends HttpServlet {
         m.put("N-TRIPLES", "application/rdf+xml");
         MIMETYPE = Collections.unmodifiableMap(m);
     }
-    
+
     public static String setMimetype(String format) {
         return MIMETYPE.getOrDefault(format, "text/plain");
     }
@@ -55,7 +55,8 @@ public abstract class Servlet extends HttpServlet {
             URL url = URI.create(path).toURL();
             connection = (HttpURLConnection) url.openConnection();
         } catch (IOException ex) {
-            throw new IOException("Error handling URI: '" + path + "': Malformed URL " + ex.getMessage());
+            throw new IOException(
+                    "Error handling URI: '" + path + "': Malformed URL " + ex.getMessage());
         }
         return connection;
     }
@@ -63,8 +64,11 @@ public abstract class Servlet extends HttpServlet {
     protected boolean checkHttpCode(HttpURLConnection connection) throws IOException {
         int httpCode = connection.getResponseCode();
         if (httpCode != 200) {
-            throw new IOException("Error retrieving URI: '" + connection.getURL().toString() 
-                    + "'. URI returned code " + httpCode);
+            throw new IOException(
+                    "Error retrieving URI: '"
+                            + connection.getURL().toString()
+                            + "'. URI returned code "
+                            + httpCode);
         }
         return true;
     }
@@ -72,14 +76,21 @@ public abstract class Servlet extends HttpServlet {
     protected boolean checkHttpContentSize(HttpURLConnection connection, int maxSize) {
         int size = connection.getContentLength();
         if (size > maxSize) {
-            throw new IllegalArgumentException("Error loading URI: '" + connection.getURL().toString() + "'. " 
-                    + "File size (" + size + ") exceeds the max file size set to: " + maxSize);
+            throw new IllegalArgumentException(
+                    "Error loading URI: '"
+                            + connection.getURL().toString()
+                            + "'. "
+                            + "File size ("
+                            + size
+                            + ") exceeds the max file size set to: "
+                            + maxSize);
         }
         return true;
     }
 
     // pass content on to response's writer
-    protected static void respond(HttpServletResponse response, String content, String mimetype) throws IOException {
+    protected static void respond(HttpServletResponse response, String content, String mimetype)
+            throws IOException {
         response.setCharacterEncoding(UTF8);
         response.setContentType(mimetype);
         try (PrintWriter writer = response.getWriter()) {
@@ -87,5 +98,4 @@ public abstract class Servlet extends HttpServlet {
             writer.flush();
         }
     }
-
 }

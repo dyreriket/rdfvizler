@@ -48,5 +48,4 @@ public abstract class RDFVizlerVocabulary {
     private static Property getProperty(String url) {
         return ResourceFactory.createProperty(url);
     }
-
 }
